@@ -7,7 +7,7 @@
   <meta name="description" content="카카오톡·채널톡 CS 자동 응답, HITL 운영자 검토, hplan 개선 후보 변환 — PMF Signal Radar 의 3 use case 영상." />
   <meta property="og:title" content="PMF Radar — 3 use case 영상" />
   <meta property="og:description" content="일반 CS 자동 응답 · 위험 CS 운영자 검토 · CS 데이터 → hplan 개선 후보. 각 30초 시연 영상." />
-  <meta property="og:image" content="https://radar.habix.ai/assets/auto-reply-demo-poster.png" />
+  <meta property="og:image" content="https://radar.habix.ai/assets/hplan-pmf-demo-poster.png" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a1a2e'/%3E%3Ctext x='14' y='41' font-family='monospace' font-size='24' font-weight='700' fill='%23c8623a'%3EH%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,6 +41,7 @@
     html { scroll-behavior: smooth; }
     body {
       min-height: 100vh;
+      padding-top: 56px;  /* site-system GNB (fixed 56px) 보정 */
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
@@ -96,16 +97,15 @@
       align-items: center;
       gap: 8px;
       padding: 11px 22px;
-      border-radius: 6px;
-      font-family: var(--mono);
-      font-size: 13px;
+      border-radius: 4px;
+      font-size: 15px;
       font-weight: 700;
-      letter-spacing: .03em;
+      letter-spacing: 0;
       transition: transform .15s ease, background .15s ease;
     }
     .btn:hover { transform: translateY(-1px); }
     .btn-primary { background: var(--accent); color: #fff; }
-    .btn-ghost { background: var(--bg-2); color: var(--dark); border: 1px solid var(--border); }
+    .btn-outline { background: var(--bg-2); color: var(--dark); border: 1px solid var(--border); }
 
     .cases {
       padding: 72px 0 96px;
@@ -215,7 +215,7 @@
       <p class="hero-desc">카카오톡·Channel Talk 로 들어오는 CS 가 어떻게 자동 응답·운영자 검토·제품 개선 후보로 갈라지는지 30초씩 시연합니다. 모든 데이터는 강의 카논 fixtures (`data/sample_inquiries.json`) 그대로.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/#workflow">전체 흐름도 보기 →</a>
-        <a class="btn btn-ghost" href="/">메인 데모로</a>
+        <a class="btn btn-outline" href="/">메인 데모로</a>
       </div>
     </div>
   </header>
@@ -224,7 +224,7 @@
 
     <article class="case">
       <div class="case-video">
-        <video src="assets/auto-reply-demo.mp4" poster="assets/auto-reply-demo-poster.png"
+        <video src="assets/auto-reply-demo.mp4"
                autoplay muted loop playsinline controls
                aria-label="V1 — 일반 CS 의 AI 자동 응답 흐름"></video>
       </div>
@@ -243,7 +243,7 @@
 
     <article class="case">
       <div class="case-video">
-        <video src="assets/hitl-demo.mp4" poster="assets/hitl-demo-poster.png"
+        <video src="assets/hitl-demo.mp4"
                autoplay muted loop playsinline controls
                aria-label="V2 — 주요/위험 CS 의 운영자 수동 검토 흐름"></video>
       </div>
@@ -262,7 +262,7 @@
 
     <article class="case">
       <div class="case-video">
-        <video src="assets/data-to-hplan-demo.mp4" poster="assets/data-to-hplan-demo-poster.png"
+        <video src="assets/data-to-hplan-demo.mp4"
                autoplay muted loop playsinline controls
                aria-label="V3 — CS 데이터가 hplan 개선 후보로 변환되는 흐름"></video>
       </div>
@@ -296,6 +296,6 @@
     </div>
   </footer>
 
-  <script src="https://habix.ai/_shared/site-system.v1.js" defer></script>
+  <script type="module" src="https://habix.ai/_shared/site-system.v1.js"></script>
 </body>
 </html>
