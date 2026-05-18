@@ -1,0 +1,25 @@
+{
+  "name": "data-ingest",
+  "version": "0.1.0",
+  "private": true,
+  "description": "T6 Data Ingest Worker — Excel/CSV 업로드 + URL share 인입",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.4",
+    "wrangler": "^3.80.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

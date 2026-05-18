@@ -87,7 +87,9 @@ wrangler secret put SNS_TOPIC_ARN
 wrangler deploy
 ```
 
-각 Worker (`channel-talk`, `auto-reply`) 도 동일한 패턴.
+각 Worker (`channel-talk`, `auto-reply`, `data-ingest`) 도 동일한 패턴.
+
+`data-ingest` 는 `INTERNAL_API_KEY` (X-Internal-Auth 헤더) + `SUPABASE_SERVICE_ROLE_KEY` 두 secret 만 필요. SNS·Telegram 미사용.
 
 ### Supabase 마이그레이션
 ```bash
@@ -120,19 +122,21 @@ python3 scripts/validate_schemas.py --report           # 27 check
 cd workers/email-inbound && npm test                   # vitest
 cd workers/channel-talk  && npm test
 cd workers/auto-reply    && npm test
+cd workers/data-ingest   && npm test                   # 15 test (parsers + normalize)
 ```
 
-전수 통과 기준: **92 test PASS** (Python 40 + TS 49 + retention 3).
+전수 통과 기준: **107 test PASS** (Python 40 + TS 64 + retention 3).
 
 ## 디렉토리 구조
 
 ```text
 pmf_radar/
-├── workers/                 # Cloudflare Workers 4개
+├── workers/                 # Cloudflare Workers 5개
 │   ├── _shared/             # PII 마스킹·idempotency·product_scope
 │   ├── email-inbound/       # SES → SNS → Worker
 │   ├── channel-talk/        # URL token 검증
-│   └── auto-reply/          # Tiered Auto-Reply
+│   ├── auto-reply/          # Tiered Auto-Reply
+│   └── data-ingest/         # XLSX/CSV 업로드 + URL share
 ├── supabase/migrations/     # DB 스키마 3개
 ├── server.py                # P1 데모 백엔드 (/api/classify)
 ├── scripts/                 # 운영 스크립트 (Telegram, retention, validate)

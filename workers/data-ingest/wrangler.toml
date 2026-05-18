@@ -1,0 +1,35 @@
+name = "data-ingest"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# T6 Data Ingest Worker
+# 엑셀(.xlsx)/CSV 파일 업로드 + URL share 로 CS 데이터 인입
+# habix.ai Cloudflare 계정에 배포
+
+[vars]
+# Supabase URL (공개값)
+SUPABASE_URL = "https://ypbsgiqyeztzdhtaedfi.supabase.co"
+
+# 업로드 파일 크기 상한 (bytes) — Workers 메모리 + Supabase batch 한계 고려
+MAX_UPLOAD_BYTES = "5242880"  # 5 MiB
+
+# URL fetch 응답 크기 상한
+MAX_URL_FETCH_BYTES = "10485760"  # 10 MiB
+
+# ---------------------------------------------------------------------------
+# Secrets — wrangler secret put 으로 설정
+# ---------------------------------------------------------------------------
+# wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+# wrangler secret put INTERNAL_API_KEY   ← demo/index.html 또는 운영자 인증
+
+# ---------------------------------------------------------------------------
+# Routes — habix.ai 도메인 연결 (선택)
+# ---------------------------------------------------------------------------
+# routes = [
+#   { pattern = "data-ingest.habix.ai/*", zone_name = "habix.ai" }
+# ]
+
+[observability]
+enabled = true
+head_sampling_rate = 1
