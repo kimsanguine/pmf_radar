@@ -1,0 +1,32 @@
+name = "auto-reply"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# T5 Auto-Reply Worker
+# habix.ai Cloudflare 계정에 배포
+
+[vars]
+# Supabase URL (공개값, secret 아님)
+SUPABASE_URL = "https://ypbsgiqyeztzdhtaedfi.supabase.co"
+
+# ---------------------------------------------------------------------------
+# Secrets — wrangler secret put 으로 설정 (절대 이 파일에 명시 금지)
+# ---------------------------------------------------------------------------
+# wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+# wrangler secret put INTERNAL_API_KEY   ← email-inbound → auto-reply 내부 인증
+
+# ---------------------------------------------------------------------------
+# Workers Cron Trigger — dwell queue 처리 (매 1분)
+# 30초 dwell 이 최소 단위이고 Workers Cron 최소 주기 = 1분 → 실질 지연 최대 30+30=60초
+# PRD US-22: "30초 취소 창" (60초 이내 발송 허용)
+# ---------------------------------------------------------------------------
+[triggers]
+crons = ["* * * * *"]
+
+# ---------------------------------------------------------------------------
+# Observability
+# ---------------------------------------------------------------------------
+[observability]
+enabled = true
+head_sampling_rate = 1

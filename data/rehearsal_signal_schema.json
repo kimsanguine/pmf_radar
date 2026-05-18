@@ -1,0 +1,48 @@
+{
+  "schema_name": "pmf_signal_extraction_rehearsal_v1",
+  "description": "30분 압축 리허설용 축약 스키마. signal_schema.json(전체 18필드) 중 evidence 토론에 필수적인 8필드만 남긴다. live Claude Code 실행이 흔들릴 때 fallback으로 outputs/rehearsal_signal_extraction_10.json을 같이 본다.",
+  "parent_schema": "data/signal_schema.json",
+  "relationship": "subset_with_renames_plus_locals",
+  "rename_map": {
+    "buying_or_retention_trigger": "trigger"
+  },
+  "local_additions": {
+    "cluster": "리허설 record-level에 평탄화한 cluster 라벨. parent signal_schema에서는 record가 아니라 별도 clusters[] 배열에 묶여 있으므로, 30분 토론에서 빠르게 호명할 수 있도록 rehearsal 출력에만 record 안으로 끌어내린다."
+  },
+  "fields": {
+    "id": "string - 원본 문의 ID (signal_schema와 동일)",
+    "evidence_strength": "string - strong | medium | weak (signal_schema와 동일)",
+    "cluster": "string - 같은 pain을 공유하는 신호 묶음 이름. 리허설에서 7개 cluster 중 어디에 속하는지 즉답할 수 있도록 record-level에 평탄화한다.",
+    "push": "string - 기존 방식에서 밀려나게 만드는 압력 (signal_schema와 동일)",
+    "anxiety": "string - 전환/구매/실습을 막는 불안 (signal_schema와 동일)",
+    "workaround": "string - 고객이 이미 쓰는 임시 해결책 (signal_schema와 동일)",
+    "trigger": "string - 결제/재수강/추천/이탈을 가르는 트리거. signal_schema의 buying_or_retention_trigger를 30분 토론에서 부르기 쉽게 축약한 이름.",
+    "suggested_action": "string - reply | improve_material | create_faq | interview | product_experiment | human_escalation (signal_schema와 동일)"
+  },
+  "omitted_from_parent": [
+    "channel",
+    "customer_segment",
+    "raw_message",
+    "category",
+    "emotion",
+    "pain",
+    "pull",
+    "habit",
+    "evidence_reason",
+    "hplan_gate",
+    "priority"
+  ],
+  "omission_reason": "리허설 30분 안에서는 강사가 (1) evidence_strength 판정 근거 (2) cluster 묶음 (3) 다음 행동 세 가지만 시연한다. 나머지 11필드는 90분 본편에서 다룬다.",
+  "required_sections_in_output": [
+    "metadata",
+    "records",
+    "clusters",
+    "what_not_to_build",
+    "human_checkpoint"
+  ],
+  "evidence_strength_rules": {
+    "strong": "최근 실제 막힘, 반복되는 워크어라운드, 시간/돈 손실, 이탈/환불/구매 트리거가 명시됨",
+    "medium": "불편은 분명하지만 빈도, 최근성, 경제적 영향, 대체 행동이 일부만 있음",
+    "weak": "칭찬, 막연한 희망, 단순 기능 요청, 구체적 사건 없는 의견"
+  }
+}

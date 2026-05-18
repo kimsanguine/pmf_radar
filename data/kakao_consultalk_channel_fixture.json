@@ -1,0 +1,138 @@
+{
+  "fixture_name": "kakao_consultalk_channel_mvp_fixture",
+  "description": "Kakao 상담톡 inbound message와 Kakao Channel 관계 이벤트를 브라우저-only MVP에서 테스트하기 위한 샘플",
+  "raw_payloads": [
+    {
+      "raw_payload_ref": "kakao-raw-001",
+      "source": "kakao_consultalk",
+      "event_type": "consultalk.message.created",
+      "payload": {
+        "messageId": "kt-msg-20260517-001",
+        "talkChannelId": "ch_hplan_lab",
+        "chatId": "kt-room-1001",
+        "userKey": "user_8f21_masked",
+        "createdAt": "2026-05-17T09:12:31+09:00",
+        "message": {
+          "type": "text",
+          "text": "맥 설치하다가 zsh: command not found가 떠요. 30분 넘게 막혀서 오늘 실습을 못 시작했습니다."
+        },
+        "attachments": []
+      }
+    },
+    {
+      "raw_payload_ref": "kakao-raw-002",
+      "source": "kakao_consultalk",
+      "event_type": "consultalk.message.created",
+      "payload": {
+        "messageId": "kt-msg-20260517-002",
+        "talkChannelId": "ch_hplan_lab",
+        "chatId": "kt-room-1002",
+        "userKey": "user_3ab9_masked",
+        "createdAt": "2026-05-17T10:04:08+09:00",
+        "message": {
+          "type": "text",
+          "text": "회사 고객문의 데이터를 넣어보고 싶은데 개인정보가 섞여 있습니다. 익명화한 샘플로만 실습해도 결과가 의미 있나요?"
+        },
+        "attachments": []
+      }
+    },
+    {
+      "raw_payload_ref": "kakao-raw-003",
+      "source": "kakao_consultalk",
+      "event_type": "consultalk.message.created",
+      "payload": {
+        "messageId": "kt-msg-20260517-003",
+        "talkChannelId": "ch_hplan_lab",
+        "chatId": "kt-room-1003",
+        "userKey": "user_b71c_masked",
+        "createdAt": "2026-05-17T11:22:44+09:00",
+        "message": {
+          "type": "text",
+          "text": "2강까지 들었는데 CLI 사용법만 배우는 느낌이면 환불하고 싶습니다. PMF 판단에 어떻게 연결되는지 더 보고 싶어요."
+        },
+        "attachments": []
+      }
+    },
+    {
+      "raw_payload_ref": "kakao-raw-004",
+      "source": "kakao_channel_event",
+      "event_type": "channel_added",
+      "payload": {
+        "eventId": "kc-event-20260517-001",
+        "talkChannelId": "ch_hplan_lab",
+        "userKey": "user_51dd_masked",
+        "createdAt": "2026-05-17T11:51:12+09:00",
+        "relation": "added"
+      }
+    }
+  ],
+  "normalized_messages": [
+    {
+      "source": "kakao_consultalk",
+      "message_id": "kt-msg-20260517-001",
+      "conversation_id": "kt-room-1001",
+      "sender_id_hash": "hash_user_8f21",
+      "received_at": "2026-05-17T09:12:31+09:00",
+      "text": "맥 설치하다가 zsh: command not found가 떠요. 30분 넘게 막혀서 오늘 실습을 못 시작했습니다.",
+      "attachments": [],
+      "consent_state": "anonymized",
+      "raw_payload_ref": "kakao-raw-001"
+    },
+    {
+      "source": "kakao_consultalk",
+      "message_id": "kt-msg-20260517-002",
+      "conversation_id": "kt-room-1002",
+      "sender_id_hash": "hash_user_3ab9",
+      "received_at": "2026-05-17T10:04:08+09:00",
+      "text": "회사 고객문의 데이터를 넣어보고 싶은데 개인정보가 섞여 있습니다. 익명화한 샘플로만 실습해도 결과가 의미 있나요?",
+      "attachments": [],
+      "consent_state": "anonymized",
+      "raw_payload_ref": "kakao-raw-002"
+    },
+    {
+      "source": "kakao_consultalk",
+      "message_id": "kt-msg-20260517-003",
+      "conversation_id": "kt-room-1003",
+      "sender_id_hash": "hash_user_b71c",
+      "received_at": "2026-05-17T11:22:44+09:00",
+      "text": "2강까지 들었는데 CLI 사용법만 배우는 느낌이면 환불하고 싶습니다. PMF 판단에 어떻게 연결되는지 더 보고 싶어요.",
+      "attachments": [],
+      "consent_state": "anonymized",
+      "raw_payload_ref": "kakao-raw-003"
+    },
+    {
+      "source": "kakao_channel_event",
+      "message_id": "kc-event-20260517-001",
+      "conversation_id": "ch_hplan_lab",
+      "sender_id_hash": "hash_user_51dd",
+      "received_at": "2026-05-17T11:51:12+09:00",
+      "text": "",
+      "attachments": [],
+      "consent_state": "unknown",
+      "raw_payload_ref": "kakao-raw-004"
+    }
+  ],
+  "sample_inquiries": [
+    {
+      "id": "kakao-001",
+      "channel": "kakao_consultalk",
+      "segment": "Claude Code 첫 설치 수강생",
+      "message": "맥 설치하다가 zsh: command not found가 떠요. 30분 넘게 막혀서 오늘 실습을 못 시작했습니다.",
+      "label_hint": "setup"
+    },
+    {
+      "id": "kakao-002",
+      "channel": "kakao_consultalk",
+      "segment": "B2B 구매 담당",
+      "message": "회사 고객문의 데이터를 넣어보고 싶은데 개인정보가 섞여 있습니다. 익명화한 샘플로만 실습해도 결과가 의미 있나요?",
+      "label_hint": "privacy"
+    },
+    {
+      "id": "kakao-003",
+      "channel": "kakao_consultalk",
+      "segment": "환불 고민 수강생",
+      "message": "2강까지 들었는데 CLI 사용법만 배우는 느낌이면 환불하고 싶습니다. PMF 판단에 어떻게 연결되는지 더 보고 싶어요.",
+      "label_hint": "refund_price"
+    }
+  ]
+}

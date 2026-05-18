@@ -1,0 +1,123 @@
+{
+  "fixture_name": "channel_talk_mvp_fixture",
+  "description": "Channel Talk user chat 이벤트를 adapter record와 sample inquiry로 정규화한 브라우저 MVP 샘플",
+  "raw_payloads": [
+    {
+      "raw_payload_ref": "channel-talk-raw-001",
+      "source": "channel_talk",
+      "event_type": "user_chat.created",
+      "payload": {
+        "eventId": "ct-event-20260517-001",
+        "messageId": "ct-msg-20260517-001",
+        "channelId": "hplan-lab",
+        "userChatId": "ct-chat-2201",
+        "personId": "person_0da2_masked",
+        "createdAt": "2026-05-17T12:18:03+09:00",
+        "plainText": "수강생 질문이 채널톡, 카카오, 메일로 흩어져서 어디서 많이 막히는지 모르겠습니다. 모아서 우선순위를 보고 싶어요.",
+        "files": []
+      }
+    },
+    {
+      "raw_payload_ref": "channel-talk-raw-002",
+      "source": "channel_talk",
+      "event_type": "user_chat.created",
+      "payload": {
+        "eventId": "ct-event-20260517-002",
+        "messageId": "ct-msg-20260517-002",
+        "channelId": "hplan-lab",
+        "userChatId": "ct-chat-2202",
+        "personId": "person_4c91_masked",
+        "createdAt": "2026-05-17T13:37:25+09:00",
+        "plainText": "팀원 8명 교육으로 검토 중입니다. 결과물을 서로 비교할 수 있는 루브릭과 리포트 export가 있으면 바로 도입 논의가 가능합니다.",
+        "files": []
+      }
+    },
+    {
+      "raw_payload_ref": "channel-talk-raw-003",
+      "source": "channel_talk",
+      "event_type": "user_chat.created",
+      "payload": {
+        "eventId": "ct-event-20260517-003",
+        "messageId": "ct-msg-20260517-003",
+        "channelId": "hplan-lab",
+        "userChatId": "ct-chat-2203",
+        "personId": "person_c8f0_masked",
+        "createdAt": "2026-05-17T14:05:59+09:00",
+        "plainText": "Claude가 만든 결과가 맞는지 판단이 안 됩니다. 좋은 예시와 나쁜 예시를 같이 보여주면 복습할 때 덜 불안할 것 같아요.",
+        "files": [
+          {
+            "id": "ct-file-001",
+            "name": "practice-result.png",
+            "mimeType": "image/png",
+            "url": "fixture://channel-talk/practice-result.png"
+          }
+        ]
+      }
+    }
+  ],
+  "normalized_messages": [
+    {
+      "source": "channel_talk",
+      "message_id": "ct-msg-20260517-001",
+      "conversation_id": "ct-chat-2201",
+      "sender_id_hash": "hash_person_0da2",
+      "received_at": "2026-05-17T12:18:03+09:00",
+      "text": "수강생 질문이 채널톡, 카카오, 메일로 흩어져서 어디서 많이 막히는지 모르겠습니다. 모아서 우선순위를 보고 싶어요.",
+      "attachments": [],
+      "consent_state": "anonymized",
+      "raw_payload_ref": "channel-talk-raw-001"
+    },
+    {
+      "source": "channel_talk",
+      "message_id": "ct-msg-20260517-002",
+      "conversation_id": "ct-chat-2202",
+      "sender_id_hash": "hash_person_4c91",
+      "received_at": "2026-05-17T13:37:25+09:00",
+      "text": "팀원 8명 교육으로 검토 중입니다. 결과물을 서로 비교할 수 있는 루브릭과 리포트 export가 있으면 바로 도입 논의가 가능합니다.",
+      "attachments": [],
+      "consent_state": "anonymized",
+      "raw_payload_ref": "channel-talk-raw-002"
+    },
+    {
+      "source": "channel_talk",
+      "message_id": "ct-msg-20260517-003",
+      "conversation_id": "ct-chat-2203",
+      "sender_id_hash": "hash_person_c8f0",
+      "received_at": "2026-05-17T14:05:59+09:00",
+      "text": "Claude가 만든 결과가 맞는지 판단이 안 됩니다. 좋은 예시와 나쁜 예시를 같이 보여주면 복습할 때 덜 불안할 것 같아요.",
+      "attachments": [
+        {
+          "type": "image",
+          "name": "practice-result.png",
+          "url_or_ref": "fixture://channel-talk/practice-result.png",
+          "mime_type": "image/png"
+        }
+      ],
+      "consent_state": "anonymized",
+      "raw_payload_ref": "channel-talk-raw-003"
+    }
+  ],
+  "sample_inquiries": [
+    {
+      "id": "channel-talk-001",
+      "channel": "channel_talk",
+      "segment": "강의 운영자",
+      "message": "수강생 질문이 채널톡, 카카오, 메일로 흩어져서 어디서 많이 막히는지 모르겠습니다. 모아서 우선순위를 보고 싶어요.",
+      "label_hint": "practice_blocker"
+    },
+    {
+      "id": "channel-talk-002",
+      "channel": "channel_talk",
+      "segment": "팀 교육 담당",
+      "message": "팀원 8명 교육으로 검토 중입니다. 결과물을 서로 비교할 수 있는 루브릭과 리포트 export가 있으면 바로 도입 논의가 가능합니다.",
+      "label_hint": "buying_trigger"
+    },
+    {
+      "id": "channel-talk-003",
+      "channel": "channel_talk",
+      "segment": "실습 중인 PM",
+      "message": "Claude가 만든 결과가 맞는지 판단이 안 됩니다. 좋은 예시와 나쁜 예시를 같이 보여주면 복습할 때 덜 불안할 것 같아요.",
+      "label_hint": "output_quality"
+    }
+  ]
+}

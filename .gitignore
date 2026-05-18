@@ -1,0 +1,94 @@
+# =============================================================================
+# pmf_radar — .gitignore
+# Public repo. Secret 누출 차단 우선.
+# =============================================================================
+
+# --- Secrets (가장 중요) ---
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+*.key
+*.pem
+*.p12
+credentials.json
+secrets.json
+service-account.json
+
+# --- Node / Cloudflare Workers ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.wrangler/
+.npm/
+package-lock.json.bak
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# --- 작업 결과물 / 캐시 ---
+outputs/
+backups/
+remotion/out/
+*.log
+logs/
+dist/
+build/
+.next/
+
+# --- IDE / OS ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Local-only configs ---
+*.local
+.env.local
+
+# =============================================================================
+# Showcase 비공개 영역 (hplan 방법론·내부 진행·영업 정보)
+# =============================================================================
+
+# --- Internal docs (5개만 화이트리스트) ---
+docs/*
+!docs/PRD.md
+!docs/PRD-P2.md
+!docs/P2_DESIGN.md
+!docs/SPEC.md
+
+# --- hplan 방법론 (skill 비공개 원칙) ---
+hplan/
+tasks/
+harness/
+prompts/
+
+# --- 강의 전용 도구 (docs 의존) ---
+scripts/lint_docs.py
+
+# --- hplan internal persona/round 문서 (A안 정책 일관성) ---
+scripts/ralph_verify_integration.md
+workers/channel-talk/tests/integration_sandbox_dump.md
+
+# --- Stub placeholders (460B 빈 파일) ---
+demo/landing-v1-editorial.html
+demo/landing-v2-kakao-ops.html

@@ -1,0 +1,47 @@
+name = "email-inbound"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Workers 런타임 — 이메일 인입 전용
+# habix.ai 기존 Cloudflare 계정에 배포
+
+[vars]
+# SNS Topic ARN (서울/도쿄 리전 확인 후 실제 값으로 교체)
+# 예: arn:aws:sns:ap-northeast-1:123456789012:habix-ses-inbound
+SNS_TOPIC_ARN = "arn:aws:sns:ap-northeast-1:ACCOUNT_ID:habix-ses-inbound"
+
+# Supabase URL (공개값, secret 아님 — ypbsgiqyeztzdhtaedfi 신규 신설 P2 전용 project)
+SUPABASE_URL = "https://ypbsgiqyeztzdhtaedfi.supabase.co"
+
+# ---------------------------------------------------------------------------
+# Secrets — wrangler secret put 으로 설정 (절대 wrangler.toml 에 명시하지 말 것)
+# ---------------------------------------------------------------------------
+# wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+
+# ---------------------------------------------------------------------------
+# Routes — habix.ai 서브도메인으로 연결
+# Cloudflare 대시보드에서 Custom Domain 또는 Route 추가:
+#   email-inbound.habix.ai/* 또는 /api/webhooks/email/*
+# ---------------------------------------------------------------------------
+# routes = [
+#   { pattern = "email-inbound.habix.ai/*", zone_name = "habix.ai" }
+# ]
+
+# ---------------------------------------------------------------------------
+# Rate limiting (Cloudflare WAF 룰 별도 설정 권장)
+# 기본값: 60 req/min per IP
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Workers Cron Triggers (Round 2: retention cleanup)
+# ---------------------------------------------------------------------------
+# [triggers]
+# crons = ["0 0 * * *"]  # 매일 00:00 UTC (09:00 KST)
+
+# ---------------------------------------------------------------------------
+# Observability
+# ---------------------------------------------------------------------------
+[observability]
+enabled = true
+head_sampling_rate = 1

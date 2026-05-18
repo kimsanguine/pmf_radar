@@ -1,0 +1,106 @@
+# =============================================================================
+# wrangler.toml — cs-inbox-pmf-radar-lab (P2 Multi-Channel Inbox)
+# Created : 2026-05-18
+#
+# 주의:
+#   실제 값(account_id, zone_id, SUPABASE_URL 등)은 여기에 기입하지 않는다.
+#   민감 값은 npx wrangler secret put 으로 등록한다.
+#   이 파일은 git 에 커밋되어도 안전한 placeholder 만 포함한다.
+# =============================================================================
+
+name = "cs-inbox-pmf-radar-lab"
+main = "workers/src/index.ts"
+compatibility_date = "2024-11-01"
+
+# account_id 는 .dev.vars 또는 CI/CD 환경변수로 주입
+# account_id = ""
+
+# ---------------------------------------------------------------------------
+# Production route — habix.ai 서브도메인
+# zone_id 는 Cloudflare 대시보드 > habix.ai zone 에서 확인
+# ---------------------------------------------------------------------------
+[[routes]]
+pattern = "inbox.habix.ai/*"
+zone_name = "habix.ai"
+# zone_id = ""
+
+# ---------------------------------------------------------------------------
+# 환경변수 (non-secret placeholder)
+# ---------------------------------------------------------------------------
+[vars]
+# 빌드 버전 — 캐시 키 무효화에 사용 (Cache API key에 포함)
+BUILD_VERSION = "p2-20260518"
+
+# 오프타임 가드 (KST 기준, UTC+9)
+OFFHOURS_START_KST = "22"
+OFFHOURS_END_KST   = "8"
+
+# auto-reply 일일 상한
+AUTO_REPLY_DAILY_CAP = "20"
+
+# auto-reply dwell timer (초)
+AUTO_REPLY_DWELL_SECONDS = "30"
+
+# ---------------------------------------------------------------------------
+# Secrets (실제 값은 npx wrangler secret put 으로 등록)
+# ---------------------------------------------------------------------------
+# 아래 항목은 wrangler.toml 에 값을 기입하지 않는다.
+# Workers 코드에서 env.SUPABASE_URL 등으로 접근한다.
+#
+# 등록 명령:
+#   npx wrangler secret put SUPABASE_URL
+#   npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+#   npx wrangler secret put SUPABASE_ANON_KEY
+#   npx wrangler secret put INBOX_READ_TOKEN
+#   npx wrangler secret put CHANNEL_TALK_WEBHOOK_SECRET
+#   npx wrangler secret put AWS_SNS_TOPIC_ARN
+#   npx wrangler secret put TELEGRAM_BOT_TOKEN
+#   npx wrangler secret put TELEGRAM_OPERATOR_CHAT_ID
+#
+# Supabase 관련:
+#   SUPABASE_URL              — https://<project>.supabase.co
+#   SUPABASE_SERVICE_ROLE_KEY — RLS bypass 쓰기/읽기용 (Workers 전용)
+#   SUPABASE_ANON_KEY         — 클라이언트 노출 금지. 주입만 해두고 코드에서 직접 사용 X
+#
+# 보안 주의:
+#   service_role key 는 RLS 를 완전히 우회한다. Workers 코드 외부에 노출되면
+#   모든 테이블 데이터가 무방비 상태가 된다.
+#   SUPABASE_ANON_KEY 로는 RLS 에 의해 모든 쓰기가 silent fail (HTTP 200 + [])한다.
+
+# ---------------------------------------------------------------------------
+# Workers Service Binding (같은 zone 내 Worker 간 통신, same-zone 521 회피)
+# ---------------------------------------------------------------------------
+# 이메일 인바운드 Worker (Phase 3)
+[[services]]
+binding = "EMAIL_INBOUND"
+service = "cs-email-inbound"
+
+# Channel Talk receiver Worker (Phase 3)
+[[services]]
+binding = "CHANNEL_TALK"
+service = "cs-channel-talk"
+
+# ---------------------------------------------------------------------------
+# Cron Triggers (Phase 3 — retention cleanup + Telegram batch flush)
+# ---------------------------------------------------------------------------
+# pg_cron 이 비활성화된 경우의 fallback cleanup.
+# 정상 운영 시 pg_cron 이 primary.
+#
+# Round 2 추가:
+#   "5 23 * * *" = 매일 23:05 UTC = KST 08:05
+#     → pending_batch_queue flush (오프타임 알림 일괄 발송, US-9)
+#     → check_telegram_health (round-trip health check, PRD §12 NFR)
+[triggers]
+crons = [
+  # 매일 03:00 UTC — retention audit (Workers → Supabase SELECT count 확인)
+  "0 3 * * *",
+  # 매일 23:05 UTC (= KST 08:05) — pending batch flush + Telegram health check
+  "5 23 * * *"
+]
+
+# ---------------------------------------------------------------------------
+# Dev (local 개발용)
+# ---------------------------------------------------------------------------
+[dev]
+port = 8787
+local_protocol = "http"

@@ -1,0 +1,51 @@
+{
+  "schema_name": "pmf_signal_extraction_v1",
+  "description": "고객문의 원문을 PMF 판단 가능한 hplan evidence record로 변환하기 위한 스키마",
+  "fields": {
+    "id": "string - 원본 문의 ID",
+    "channel": "string - normalized output channel produced by server.py::normalize_channel. Canonical values: kakao | channel_talk | openchat | manual. Upstream adapter sources (data/channel_adapter_schema.json::source: kakao_consultalk | kakao_channel_event | channel_talk | manual_import) and teaching fixtures (mock_kakao | mock_channel_talk) are normalized into these four values before they reach this schema.",
+    "customer_segment": "string - 수강생/잠재고객의 상황 기반 세그먼트",
+    "raw_message": "string - 고객문의 원문",
+    "category": "string - setup | basic_faq | practice_blocker | concept_confusion | output_quality | motivation | refund_price | community | praise | bug | other",
+    "emotion": "string - frustrated | anxious | confused | curious | excited | neutral | angry",
+    "pain": "string - 고객이 겪는 구체적 불편",
+    "push": "string - 기존 방식에서 밀려나게 만드는 압력",
+    "pull": "string - 새 해결책으로 끌어당기는 기대",
+    "habit": "string - 현재 하던 방식 또는 익숙한 행동",
+    "anxiety": "string - 전환/구매/실습을 막는 불안",
+    "workaround": "string - 고객이 이미 쓰는 임시 해결책",
+    "buying_or_retention_trigger": "string - 결제, 재수강, 추천, 이탈을 가르는 트리거",
+    "evidence_strength": "string - strong | medium | weak",
+    "evidence_reason": "string - strong/medium/weak 판정 근거",
+    "suggested_action": "string - reply | improve_material | create_faq | interview | product_experiment | human_escalation",
+    "hplan_gate": "string - evidence | product | build",
+    "priority": "integer - 1 to 5"
+  },
+  "evidence_strength_rules": {
+    "strong": "최근 실제 막힘, 반복되는 워크어라운드, 시간/돈 손실, 이탈/환불/구매 트리거가 명시됨",
+    "medium": "불편은 분명하지만 빈도, 최근성, 경제적 영향, 대체 행동이 일부만 있음",
+    "weak": "칭찬, 막연한 희망, 단순 기능 요청, 구체적 사건 없는 의견"
+  },
+  "automation_boundary": {
+    "auto_reply_ok": ["setup", "basic_faq", "community", "praise"],
+    "manager_review_required": ["refund_price", "angry", "legal", "privacy", "high_value_lead", "unknown_blocker"],
+    "product_review_required": ["practice_blocker", "concept_confusion", "output_quality", "repeated_workaround"],
+    "auto_reply_trigger_rules": {
+      "mode": "tiered",
+      "activated_channels": ["email"],
+      "required_conditions_all_of": [
+        "category ∈ auto_reply_ok",
+        "evidence_strength == 'weak'",
+        "approved_template_db_hit (data/auto_reply_templates.json)",
+        "dwell_seconds >= 30 (operator cancel window via Telegram)",
+        "pii_masking_passed",
+        "template_text_exact_match (no LLM-generated variation)"
+      ],
+      "daily_send_cap": 20,
+      "audit_log_required": "supabase.auto_reply_log (7 days retention)",
+      "llm_generated_text_send_forbidden": true,
+      "fallback": "fall_through_to_HITL_queue",
+      "channel_expansion_gate": "1주 운영 데이터 + 운영자 결정 후 카카오톡/Channel Talk 확대 검토"
+    }
+  }
+}

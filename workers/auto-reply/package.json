@@ -1,0 +1,22 @@
+{
+  "name": "auto-reply",
+  "version": "0.1.0",
+  "private": true,
+  "description": "T5 Auto-Reply Worker — 5조건 평가 + 30초 dwell queue + 취소",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.4",
+    "wrangler": "^3.80.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

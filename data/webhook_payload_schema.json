@@ -1,0 +1,154 @@
+{
+  "schema_name": "p2_webhook_payload_v1",
+  "description": "P2 외부 webhook 소스별 raw payload 형식 + normalize 매핑. validate_schemas check 16-18 의 ground truth. required_fields 는 validate_schemas.py checks_16_18 이 fixture top-level key 세트와 교차 검증하는 기준 목록.",
+  "required_fields": [
+    "fixture_name",
+    "description",
+    "raw_payloads",
+    "normalized_messages",
+    "sample_inquiries"
+  ],
+  "sources": {
+    "channel_talk": {
+      "auth_method": "URL query token (?token=<CHANNEL_TALK_WEBHOOK_TOKEN>). HMAC 서명 헤더 없음 — workers/channel-talk/src/index.ts verifyChannelTalkToken 참조. B1 closed 2026-05-18, P2_PENDING_INPUTS.md D1.",
+      "event_filter": "event == 'userMessage' 만 처리. operatorMessage / botMessage 는 200 반환 후 스킵.",
+      "required_fields": [
+        "event",
+        "channelId",
+        "conversation",
+        "message",
+        "user"
+      ],
+      "conversation_required_fields": ["id", "createdAt"],
+      "message_required_fields": ["id", "plainText", "createdAt"],
+      "user_required_fields": ["id"],
+      "optional_fields": ["files"],
+      "example_payload_ref": "data/channel_talk_fixture.json",
+      "normalize_to": {
+        "id": "payload.message.id 또는 payload.conversation.id (우선순위: message.id)",
+        "source": "channel_talk",
+        "channel": "channel_talk",
+        "segment": "channel_talk customer",
+        "message": "payload.message.plainText — mask_pii 적용 후 (900자 truncation)",
+        "received_at": "new Date(payload.message.createdAt).toISOString() (ms → ISO-8601)",
+        "sender_id_hash": "SHA-256 hex of payload.user.id",
+        "product_scope": "classifyScope(maskedMessage) — habix_course | pmf_radar_lab | other (키워드 기반, LLM 사용 금지)",
+        "token_verified": "true (verifyChannelTalkToken PASS 후에만 normalize 진입)"
+      },
+      "idempotency_key": "channel_talk:<message.id>",
+      "adapter_source_value": "channel_talk",
+      "normalized_channel_value": "channel_talk (signal_schema normalized output)"
+    },
+    "kakao_consultalk": {
+      "auth_method": "TBD — P2.4 Sinch 파트너 권한 또는 Kakao 비즈니스 파트너 API key. P2_PENDING_INPUTS.md 참조. MVP 브라우저-only 단계에서는 fixture 기반 데모.",
+      "event_filter": "event_type == 'consultalk.message.created' 만 문의로 처리. kakao_channel_event (channel_added / channel_blocked) 는 관계 이벤트로 분류하여 PMF extraction 대상 제외 — docs/P2_DESIGN.md §3 C2 및 channel_adapter_schema.json::empty_text_policy 참조.",
+      "required_fields": [
+        "messageId",
+        "talkChannelId",
+        "chatId",
+        "userKey",
+        "createdAt",
+        "message"
+      ],
+      "message_required_fields": ["type", "text"],
+      "optional_fields": ["attachments"],
+      "example_payload_ref": "data/kakao_consultalk_channel_fixture.json",
+      "normalize_to": {
+        "id": "payload.messageId",
+        "source": "kakao_consultalk",
+        "channel": "kakao (signal_schema normalized output via server.py::normalize_channel)",
+        "segment": "kakao_consultalk customer",
+        "message": "payload.message.text — mask_pii 적용 후",
+        "received_at": "payload.createdAt (ISO-8601 그대로)",
+        "sender_id_hash": "hash(payload.userKey)",
+        "conversation_id": "payload.chatId",
+        "consent_state": "anonymized (userKey 해시 후)"
+      },
+      "kakao_channel_event_handling": {
+        "event_types": ["channel_added", "channel_blocked"],
+        "action": "PMF extraction 제외. source/risk filter 에만 기록. text 필드 빈 문자열로 정규화.",
+        "idempotency_key": "kakao_channel_event:<eventId>"
+      },
+      "idempotency_key": "kakao_consultalk:<messageId>",
+      "adapter_source_value": "kakao_consultalk",
+      "normalized_channel_value": "kakao (signal_schema normalized output)"
+    },
+    "email_ses_inbound": {
+      "auth_method": "AWS SNS Message Signature Version 1 (X-Amz-SNS-Signature header, RSA SHA1 over canonical string). workers/email-inbound/src 의 sns-verify.ts 참조.",
+      "wrapper": "SNS Notification JSON → Message 필드 (문자열) → JSON.parse → SES payload. notificationType == 'Received' 만 처리.",
+      "required_fields": [
+        "Type",
+        "MessageId",
+        "TopicArn",
+        "Subject",
+        "Message",
+        "Timestamp",
+        "SignatureVersion",
+        "Signature",
+        "SigningCertURL"
+      ],
+      "ses_inner_required": [
+        "notificationType",
+        "mail.messageId",
+        "mail.source",
+        "mail.destination",
+        "mail.timestamp",
+        "mail.commonHeaders.subject",
+        "content"
+      ],
+      "optional_fields": ["mail.commonHeaders.from", "mail.headers", "receipt"],
+      "example_payload_ref": "TBD — workers/email-inbound/tests fixture 신설 권고 (Round 4 이후). 현재 fixture 없음.",
+      "normalize_to": {
+        "id": "mail.messageId 또는 'ses-' + Date.now() (fallback)",
+        "source": "ses_inbound",
+        "channel": "email (signal_schema normalized output)",
+        "segment": "email customer",
+        "message": "extractTextFromMime(content) — text/plain 우선, subject fallback. mask_pii 후 900자 truncation.",
+        "received_at": "mail.timestamp (ISO-8601)",
+        "sender_id_hash": "SHA-256 hex of mail.source (소문자 trim 후)",
+        "product_scope": "classifyProductScope(subject, body) — habix_course | pmf_radar_lab | other (키워드 기반, LLM 사용 금지)",
+        "signature_verified": "SNS RSA 서명 검증 결과 bool"
+      },
+      "idempotency_key": "email_ses_inbound:<mail.messageId>",
+      "adapter_source_value": "email_ses_inbound",
+      "normalized_channel_value": "email (signal_schema normalized output via server.py::normalize_channel)"
+    },
+    "manual_import": {
+      "auth_method": "operator paste (no auth). 브라우저-only MVP 데모용. 공식 API 연결 전 수동 import.",
+      "format": "CSV (data/manual_import_sample.csv) 또는 JSON paste 또는 카카오톡 대화 복사 텍스트",
+      "required_fields": [
+        "id",
+        "channel",
+        "segment",
+        "message",
+        "label_hint"
+      ],
+      "optional_fields": ["received_at", "conversation_id", "attachments"],
+      "example_payload_ref": "data/manual_import_sample.csv",
+      "normalize_to": "channel_adapter_schema.json::normalized_inquiry_fields 그대로 (1:1 매핑). id → id, channel → channel, segment → segment, message → message (mask_pii 권고), label_hint → label_hint.",
+      "idempotency_key": "manual_import:<id>",
+      "adapter_source_value": "manual_import",
+      "normalized_channel_value": "manual (signal_schema normalized output via server.py::normalize_channel)"
+    }
+  },
+  "validation_rules": {
+    "required_per_source": {
+      "channel_talk": ["event", "channelId", "conversation", "message", "user"],
+      "kakao_consultalk": ["messageId", "talkChannelId", "chatId", "userKey", "createdAt", "message"],
+      "email_ses_inbound": ["Type", "MessageId", "TopicArn", "Subject", "Message", "Timestamp", "SignatureVersion", "Signature", "SigningCertURL"],
+      "manual_import": ["id", "channel", "segment", "message", "label_hint"]
+    },
+    "idempotency_key": "source + ':' + message_id (channel_adapter_schema.json::validation_rules.idempotency_key 와 동일)",
+    "idempotency_key_format_note": "source 값은 adapter_source_value (예: channel_talk, kakao_consultalk, email_ses_inbound, manual_import). message_id 는 각 source 의 normalize_to.id 와 동일.",
+    "pii_masking_required_before_classify": true,
+    "pii_masking_fields": ["전화번호", "이메일", "이름", "회사명", "주문번호"],
+    "empty_text_policy": "channel_adapter_schema.json::validation_rules.empty_text_policy 준용 — 본문 없는 관계 이벤트(kakao_channel_event)는 PMF extraction 제외, source/risk filter 에만 유지",
+    "max_message_bytes": 900,
+    "signature_verification_required": {
+      "email_ses_inbound": true,
+      "channel_talk": "token_verified via URL query (no HMAC)",
+      "kakao_consultalk": "TBD (P2.4)",
+      "manual_import": false
+    }
+  }
+}

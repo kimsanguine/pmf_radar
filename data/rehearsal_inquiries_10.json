@@ -1,0 +1,82 @@
+[
+  {
+    "id": "inq-001",
+    "channel": "mock_kakao",
+    "segment": "Claude Code 첫 설치 수강생",
+    "message": "맥에서 설치하다가 zsh: command not found가 떠서 40분째 멈춰있어요. 강의는 좋은데 여기서 막히니까 시작도 못 하겠어요.",
+    "label_hint": "setup",
+    "teaching_role": "strong evidence: recent painful event + time loss + churn risk"
+  },
+  {
+    "id": "inq-002",
+    "channel": "mock_kakao",
+    "segment": "비개발 PM",
+    "message": "코드가 나오긴 하는데 제가 뭘 승인해야 하는지 모르겠어요. 그냥 엔터만 치다가 뭔가 망칠까 봐 무섭습니다.",
+    "label_hint": "concept_confusion",
+    "teaching_role": "strong evidence: anxiety blocks action"
+  },
+  {
+    "id": "inq-005",
+    "channel": "mock_channel_talk",
+    "segment": "수강 완료자",
+    "message": "와 고객 인터뷰 내용을 PRD로 바꾸는 부분은 진짜 신기했어요. 이걸 제 업무에 바로 써볼 수 있을 것 같아요.",
+    "label_hint": "praise",
+    "teaching_role": "medium evidence: praise with possible work application"
+  },
+  {
+    "id": "inq-009",
+    "channel": "mock_kakao",
+    "segment": "환불 고민 수강생",
+    "message": "2강까지 봤는데 개발자용으로 느껴져요. PM 사고를 배운다기보다 CLI 사용법만 배우는 느낌이면 환불하고 싶습니다.",
+    "label_hint": "refund_price",
+    "teaching_role": "strong evidence: refund trigger + positioning risk"
+  },
+  {
+    "id": "inq-010",
+    "channel": "mock_kakao",
+    "segment": "실습 중인 PM",
+    "message": "Claude가 만든 결과가 맞는지 틀린지 판단하는 기준을 모르겠어요. 좋은 결과물 예시와 나쁜 예시를 같이 보여주면 좋겠어요.",
+    "label_hint": "output_quality",
+    "teaching_role": "strong evidence: output evaluation blocker"
+  },
+  {
+    "id": "inq-014",
+    "channel": "mock_channel_talk",
+    "segment": "B2B 구매 담당",
+    "message": "사내 보안 때문에 실제 고객 데이터는 못 넣습니다. 익명화된 샘플 데이터로만 실습 가능한 커리큘럼인가요?",
+    "label_hint": "privacy",
+    "teaching_role": "strong evidence: B2B blocker"
+  },
+  {
+    "id": "inq-030",
+    "channel": "mock_kakao",
+    "segment": "수강생",
+    "message": "시각화 화면이 있으면 훨씬 이해가 빠를 것 같아요. 지금은 결과가 텍스트로만 나와서 임팩트가 덜합니다.",
+    "label_hint": "visualization",
+    "teaching_role": "medium evidence: wow moment / comprehension"
+  },
+  {
+    "id": "inq-036",
+    "channel": "mock_kakao",
+    "segment": "수강 완료자",
+    "message": "고객 불만을 Opportunity Solution Tree로 바꾸는 파트가 제일 좋았습니다. 이걸 더 길게 다뤄주세요.",
+    "label_hint": "praise",
+    "teaching_role": "medium evidence: praise tied to specific PM workflow"
+  },
+  {
+    "id": "inq-039",
+    "channel": "mock_kakao",
+    "segment": "예비 수강생",
+    "message": "강의 소개 페이지에서 완성 결과물을 먼저 보고 싶습니다. 뭘 만들게 되는지 보이면 결제할 것 같아요.",
+    "label_hint": "buying_trigger",
+    "teaching_role": "strong evidence: buying trigger"
+  },
+  {
+    "id": "inq-049",
+    "channel": "mock_kakao",
+    "segment": "강의 팬",
+    "message": "와 이건 진짜 멋집니다. 그냥 툴 강의가 아니라 일하는 방식이 바뀌는 느낌이에요.",
+    "label_hint": "praise",
+    "teaching_role": "weak evidence: applause without concrete behavior"
+  }
+]

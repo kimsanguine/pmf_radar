@@ -1,0 +1,19 @@
+{
+  "name": "pmf-signal-radar-remotion",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "render": "remotion render src/index.ts HplanPmfDemo ../demo/assets/hplan-pmf-demo.mp4 --codec=h264 --pixel-format=yuv420p",
+    "still": "remotion still src/index.ts HplanPmfDemo ../demo/assets/hplan-pmf-demo-poster.png --frame=45"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.392",
+    "remotion": "^4.0.392",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,4 @@
+source,message_id,conversation_id,sender_id_hash,received_at,text,attachments,consent_state,raw_payload_ref,segment,label_hint
+manual_import,manual-kakao-001,kakao-copy-room-001,hash_manual_001,2026-05-17T15:01:11+09:00,"[이름]님이 카카오로 문의했습니다. 윈도우 화면이 강의와 달라서 npm install부터 막혔고, 오늘 안에 해결 못 하면 환불을 고민할 것 같습니다.",[],anonymized,manual-row-001,윈도우 수강생,setup
+manual_import,manual-kakao-002,kakao-copy-room-001,hash_manual_002,2026-05-17T15:18:42+09:00,"카카오 대화 복사본을 넣어서 반복 질문을 보고 싶습니다. 지금은 노션, 채널톡, 카카오를 번갈아 보느라 무엇부터 고칠지 모르겠습니다.",[],anonymized,manual-row-002,강의 운영자,practice_blocker
+manual_import,manual-kakao-003,kakao-copy-room-002,hash_manual_003,2026-05-17T16:04:09+09:00,"결제 전에 완성 결과물 예시를 먼저 볼 수 있나요? PM 보고서나 backlog export가 있으면 팀장님께 공유하고 구매를 설득할 수 있습니다.",[],anonymized,manual-row-003,예비 수강생,buying_trigger

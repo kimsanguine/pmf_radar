@@ -1,0 +1,75 @@
+{
+  "schema_name": "channel_adapter_v1",
+  "description": "Kakao 상담톡, Kakao Channel event, Channel Talk, manual import를 PMF signal extraction 입력으로 정규화하기 위한 브라우저 MVP 스키마",
+  "adapter_fields": {
+    "source": "string - kakao_consultalk | kakao_channel_event | channel_talk | manual_import",
+    "message_id": "string - source 안에서 고유한 원본 이벤트/메시지 ID",
+    "conversation_id": "string - 대화방, 채팅, 상담 세션 ID",
+    "sender_id_hash": "string - 원본 고객 ID를 해시/마스킹한 값",
+    "received_at": "string - ISO-8601 timestamp",
+    "text": "string - 개인정보 마스킹 후 분석할 고객 문의 원문",
+    "attachments": "array - {type, name, url_or_ref, mime_type} 객체 목록",
+    "consent_state": "string - unknown | consented | anonymized",
+    "raw_payload_ref": "string - fixture/raw_payloads 또는 업로드 원본을 가리키는 참조 ID"
+  },
+  "normalized_inquiry_fields": {
+    "id": "string - sample_inquiries와 호환되는 문의 ID",
+    "channel": "string - kakao_consultalk | kakao_channel_event | channel_talk | manual_import",
+    "segment": "string - 고객/수강생 상황 기반 세그먼트",
+    "message": "string - PMF signal extraction에 전달할 마스킹된 문의 본문",
+    "label_hint": "string - setup | practice_blocker | concept_confusion | output_quality | motivation | refund_price | community | praise | bug | privacy | buying_trigger | retention | visualization | other"
+  },
+  "source_mapping": {
+    "kakao_consultalk": {
+      "provider": "KakaoTalk Channel 상담톡 partner/API path",
+      "expected_use": "고객 상담 메시지 수신 MVP의 1순위 후보"
+    },
+    "kakao_channel_event": {
+      "provider": "KakaoTalk Channel callback",
+      "expected_use": "채널 추가/차단 같은 관계 이벤트만 수집하고 고객 문의 메시지로 취급하지 않음"
+    },
+    "channel_talk": {
+      "provider": "Channel Talk webhook/open API",
+      "expected_use": "Kakao 상담톡 전 실서비스형 webhook 데모와 human review handoff"
+    },
+    "manual_import": {
+      "provider": "CSV/JSON paste 또는 Kakao-style 대화 복사 텍스트",
+      "expected_use": "공식 API 준비 전 브라우저-only 데모용 수동 import"
+    }
+  },
+  "validation_rules": {
+    "required_adapter_fields": [
+      "source",
+      "message_id",
+      "conversation_id",
+      "sender_id_hash",
+      "received_at",
+      "text",
+      "attachments",
+      "consent_state",
+      "raw_payload_ref"
+    ],
+    "required_normalized_inquiry_fields": [
+      "id",
+      "channel",
+      "segment",
+      "message",
+      "label_hint"
+    ],
+    "idempotency_key": "source + ':' + message_id",
+    "empty_text_policy": "kakao_channel_event처럼 본문이 없는 관계 이벤트는 PMF extraction 대상에서 제외하고 source/risk filter에는 남긴다",
+    "pii_masking": "전화번호, 이메일, 실명, 회사명, 주문번호는 분석 전 [전화번호], [이메일], [이름], [회사명], [주문번호]로 치환한다"
+  },
+  "human_review_defaults": {
+    "reply_draft_only": true,
+    "auto_send_allowed": false,
+    "manager_review_required_when": [
+      "refund_price",
+      "privacy",
+      "angry",
+      "legal",
+      "high_value_lead",
+      "unknown_blocker"
+    ]
+  }
+}
