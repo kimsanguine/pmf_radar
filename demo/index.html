@@ -8,8 +8,12 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a1a2e'/%3E%3Ctext x='14' y='41' font-family='monospace' font-size='24' font-weight='700' fill='%23c8623a'%3EH%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap"></noscript>
+  <!-- Pretendard: site-system.v1.css 가 제공하지만 demo standalone 환경 보장 -->
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
   <style>
     :root {
       --bg: #faf8f4;
@@ -33,7 +37,7 @@
     html { scroll-behavior: smooth; }
     body {
       min-height: 100vh;
-      padding-top: 56px;
+      padding-top: 56px; /* site-system GNB (fixed 56px) 보정 */
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
@@ -43,61 +47,6 @@
 
     a { color: inherit; text-decoration: none; }
     button { font: inherit; }
-
-    .nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 20;
-      height: 56px;
-      padding: 0 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 28px;
-      background: rgba(250,248,244,.95);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(20px);
-    }
-
-    .nav-logo {
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: .25em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .nav-logo span { color: var(--dark); }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 26px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text);
-      font-size: 13px;
-      transition: color .2s ease;
-    }
-
-    .nav-links a:hover { color: var(--accent); }
-
-    .nav-cta {
-      padding: 9px 20px;
-      border-radius: 6px;
-      background: var(--accent);
-      color: #fff !important;
-      font-family: var(--mono);
-      font-size: 12px !important;
-      font-weight: 700;
-      letter-spacing: .04em;
-    }
 
     .sw {
       width: min(1180px, calc(100vw - 64px));
@@ -1282,58 +1231,6 @@
       line-height: 1.7;
     }
 
-    .queue {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 24px;
-    }
-
-    .queue-card {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg-2);
-      padding: 24px;
-      transition: transform .2s ease, background .2s ease;
-    }
-
-    .queue-card:hover {
-      transform: translateY(-2px);
-      background: var(--bg);
-    }
-
-    .queue-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--c);
-    }
-
-    .queue-card small {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 11px;
-      text-transform: uppercase;
-    }
-
-    .queue-card h3 {
-      margin: 10px 0 8px;
-      color: var(--dark);
-      font-size: 17px;
-      font-weight: 800;
-    }
-
-    .queue-card p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.75;
-    }
-
     .flow {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1614,7 +1511,6 @@
       }
 
       .stats,
-      .queue,
       .flow,
       .workflow-rail {
         grid-template-columns: repeat(2, 1fr);
@@ -1623,20 +1519,6 @@
 
     @media (max-width: 720px) {
       body { padding-top: 0; }
-      .nav {
-        position: static;
-        height: auto;
-        padding: 18px 20px;
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .nav-links {
-        width: 100%;
-        flex-wrap: wrap;
-        gap: 14px;
-      }
-
       .sw { width: min(100% - 32px, 1180px); }
       .hero { padding: 58px 0 54px; }
       h1 {
@@ -1647,7 +1529,6 @@
       .hero-desc { font-size: 16px; }
       .hero-tag { font-size: 11px; }
       .stats,
-      .queue,
       .flow,
       .workflow-rail { grid-template-columns: 1fr; }
       .stat { padding: 26px 24px; }
@@ -1656,7 +1537,7 @@
       .signal-row { grid-template-columns: 1fr; gap: 4px; }
     }
 
-      @media (prefers-reduced-motion: reduce) {
+    @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after {
         animation-duration: .001ms !important;
@@ -1674,7 +1555,7 @@
     .hx-mobile-drawer__switch-link,
     .hx-mobile-drawer__divider { display: none !important; }
   </style>
-  <script src="https://habix.ai/_shared/site-system.v1.js" defer></script>
+  <script type="module" src="https://habix.ai/_shared/site-system.v1.js"></script>
 </head>
 <body>
   <div data-hx-header data-domain="habix"></div>
@@ -1734,7 +1615,7 @@
 
   <!-- 15초 요약 · 알아두면 좋은 용어 (라이트 타겟 진입 보강 — habix.ai site-system v1 .hx-* 컴포넌트) -->
   <section style="padding: 40px 0;">
-    <div class="sw" style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+    <div class="sw">
       <div class="hx-summary">
         <span class="hx-summary-label">⏱ 15초 요약</span>
         <p>
@@ -2108,7 +1989,7 @@
 
     <!-- CAVEAT — radar 를 안 써도 되는 때 (라이트 타겟 신뢰감 ↑) -->
     <section style="padding: 40px 0;">
-      <div class="sw" style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+      <div class="sw">
         <div class="hx-caveat">
           <span class="hx-caveat-label">근데 말이죠</span>
           <h3 class="hx-caveat-title">radar 를 안 써도 되는 때도 있어요</h3>
@@ -2437,7 +2318,6 @@
         const scoreB = b.signals.length * 10 + b.strong * 6 + b.riskTotal;
         return scoreB - scoreA;
       });
-      const maxCount = Math.max(1, ...clusters.map((cluster) => cluster.signals.length));
 
       const total = clusters.length;
       return clusters.map((cluster, index) => {
