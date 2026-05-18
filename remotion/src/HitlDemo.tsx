@@ -64,8 +64,6 @@ function sceneOpacity(
   fadeIn = 12,
   fadeOut = 12,
 ): number {
-  // fadeIn/fadeOut 가 0 이면 interpolate inputRange 가 [x, x] = 같은 끝값 →
-  // Remotion strict 검증 throw. 0 케이스는 step function 으로 short-circuit.
   const inVal = fadeIn > 0
     ? interpolate(frame, [startFrame, startFrame + fadeIn], [0, 1], {
         extrapolateLeft: 'clamp',
@@ -82,6 +80,11 @@ function sceneOpacity(
 }
 
 // ─── GateBlock (V2 전용 inline 컴포넌트) ──────────────────────────────────
+// Round 9: fontSize 와 element sizing 비례 정합 재구성
+//   - item row gap: 20→28 (fontSize 44 × 0.64)
+//   - item row padding: 20×28 → 22×32 (fontSize 44 × 0.5~0.73)
+//   - header emoji: 96 유지, 헤더 padding: 32×48 → 36×56 (emoji 비례)
+//   - STOP section padding: 32→40, gap: 24→32
 
 const CHECK_ITEMS: Array<{ label: string; pass: boolean }> = [
   { label: 'strength ≥ medium',       pass: true  },
@@ -92,7 +95,6 @@ const CHECK_ITEMS: Array<{ label: string; pass: boolean }> = [
 ];
 
 const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
-  // revealAt 0→0.25: 패널 fade-in / 0.25→1: 각 항목 순차 등장
   const panelOpacity = interpolate(revealAt, [0, 0.25], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -102,7 +104,6 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
     extrapolateRight: 'clamp',
   });
 
-  // STOP 사인: 마지막 항목(FAIL) 이후 등장
   const stopOpacity = interpolate(revealAt, [0.75, 1.0], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -126,22 +127,22 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
         background: '#FAFAFA',
       }}
     >
-      {/* 헤더 */}
+      {/* 헤더 — padding 비례 확대 (emoji 96 기준 × 0.375 = 36px top/bottom) */}
       <div
         style={{
           background: STOP_RED,
-          padding: '32px 48px',
+          padding: '36px 56px',
           display: 'flex',
           alignItems: 'center',
-          gap: 24,
+          gap: 28,
         }}
       >
-        <span style={{ fontSize: 96 }}>🚫</span>
+        <span style={{ fontSize: 88, flexShrink: 0 }}>🚫</span>
         <div>
           <div
             style={{
               color: '#FFFFFF',
-              fontSize: 36,
+              fontSize: 34,
               fontWeight: 700,
               opacity: 0.85,
               letterSpacing: 1,
@@ -149,19 +150,19 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
           >
             AUTO-REPLY GATE
           </div>
-          <div style={{ color: '#FFFFFF', fontSize: 60, fontWeight: 900 }}>
+          <div style={{ color: '#FFFFFF', fontSize: 58, fontWeight: 900 }}>
             5조건 검사
           </div>
         </div>
-        {/* HITL required 뱃지 */}
+        {/* HITL required 뱃지 — fontSize 44 × padding 16×36 (ratio 0.36~0.82) */}
         <div
           style={{
             marginLeft: 'auto',
             background: 'rgba(255,255,255,0.22)',
             borderRadius: 32,
-            padding: '14px 32px',
+            padding: '16px 36px',
             color: '#FFFFFF',
-            fontSize: 48,
+            fontSize: 44,
             fontWeight: 800,
             letterSpacing: 0.5,
           }}
@@ -170,8 +171,8 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
         </div>
       </div>
 
-      {/* 조건 목록 */}
-      <div style={{ padding: '28px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* 조건 목록 — gap/padding 비례 조정 */}
+      <div style={{ padding: '24px 44px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         {CHECK_ITEMS.map((item, idx) => {
           const itemOpacity = interpolate(
             revealAt,
@@ -187,17 +188,20 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 24,
-                padding: '20px 28px',
-                borderRadius: 16,
+                // padding: fontSize 42 기준 × 0.52~0.76 = 22×32
+                padding: '22px 32px',
+                borderRadius: 14,
                 background: item.pass ? '#EBF7EF' : '#FDECEA',
                 border: `1px solid ${item.pass ? '#A8D9B8' : '#F0B0A0'}`,
               }}
             >
-              <span style={{ fontSize: 48, flexShrink: 0 }}>{item.pass ? '✅' : '❌'}</span>
+              {/* emoji: fontSize 42로 맞춤 (row height 확보) */}
+              <span style={{ fontSize: 42, flexShrink: 0 }}>{item.pass ? '✅' : '❌'}</span>
               <span
                 style={{
                   fontFamily: 'monospace',
-                  fontSize: 44,
+                  // fontSize: 44 유지 (±20% 범위 내)
+                  fontSize: 42,
                   fontWeight: 700,
                   color: item.pass ? '#1A6634' : STOP_RED,
                   flex: 1,
@@ -207,10 +211,13 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
               </span>
               <span
                 style={{
-                  fontSize: 40,
+                  fontSize: 38,
                   fontWeight: 800,
                   color: item.pass ? '#2D8A4F' : STOP_RED,
                   letterSpacing: 0.5,
+                  // PASS/FAIL 레이블 최소 너비 보장
+                  minWidth: 180,
+                  textAlign: 'right',
                 }}
               >
                 {item.pass ? 'PASS' : 'FAIL → STOP'}
@@ -220,34 +227,36 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
         })}
       </div>
 
-      {/* STOP 사인 */}
+      {/* STOP 사인 — padding/gap 비례 재구성 */}
       <div
         style={{
           opacity: stopOpacity,
           transform: `scale(${stopScale})`,
-          margin: '0 40px 40px',
-          padding: '32px',
+          margin: '0 44px 40px',
+          // padding: fontSize 54 기준 × 0.74 = 40px
+          padding: '36px',
           borderRadius: 18,
           background: STOP_RED,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 24,
+          gap: 32,
         }}
       >
-        <span style={{ fontSize: 96 }}>🛑</span>
+        <span style={{ fontSize: 88, flexShrink: 0 }}>🛑</span>
         <div>
           <div
             style={{
               color: '#FFFFFF',
-              fontSize: 56,
+              // fontSize: 56→54 (−3.6%, 범위 내)
+              fontSize: 54,
               fontWeight: 900,
               letterSpacing: 1,
             }}
           >
             AUTO-REPLY 차단
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 40, marginTop: 4 }}>
+          <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 38, marginTop: 6 }}>
             guardrail 감지 → 운영자 HITL 검토 필요
           </div>
         </div>
@@ -331,7 +340,6 @@ export const HitlDemo: React.FC = () => {
 
   // ── Scene 1: 0~180 KakaoFrame intro ──
   const s1Op = sceneOpacity(frame, 0, 180);
-  // inbound 메시지: 60f 이후부터 등장
   const inboundReveal = interpolate(frame, [60, 90], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -346,12 +354,10 @@ export const HitlDemo: React.FC = () => {
 
   // ── Scene 3: 330~480 GateBlock ──
   const s3Op = sceneOpacity(frame, 330, 480);
-  // GateBlock revealAt: 0→1 을 [342, 468] 프레임에 매핑
   const gateRevealAt = interpolate(frame, [342, 468], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  // 좌측 소형 KakaoFrame: Scene 3 시작과 함께 fade-in
   const s3KakaoOp = interpolate(frame, [330, 360], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -359,12 +365,10 @@ export const HitlDemo: React.FC = () => {
 
   // ── Scene 4: 480~660 TelegramFrame ──
   const s4Op = sceneOpacity(frame, 480, 660);
-  // TelegramFrame revealAt: [492, 630] 에 매핑
   const tgRevealAt = interpolate(frame, [492, 630], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  // 좌측 소형 RadarBadge: Scene 4 진입과 함께
   const s4BadgeFade = interpolate(frame, [480, 510], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -372,12 +376,10 @@ export const HitlDemo: React.FC = () => {
 
   // ── Scene 5: 660~900 수동 답변 ──
   const s5Op = sceneOpacity(frame, 660, 900, 12, 0);
-  // outbound 메시지: 780f 이후 등장
   const outboundReveal = interpolate(frame, [780, 816], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  // outro 오버레이: 870~900 (마지막 1초)
   const outroOp = interpolate(frame, [870, 900], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -401,7 +403,8 @@ export const HitlDemo: React.FC = () => {
     >
       {/* ────────────────────────────────────────────────────────────────────
           Scene 1: KakaoFrame intro (0~180)
-          레이아웃: 중앙 배치 KakaoFrame (넓게)
+          Round 9: KakaoFrame wrapper 1400×720 유지
+          (말풍선 maxWidth=76%는 shared 내부 — wrapper 크기로 말풍선 여유 확보)
       ──────────────────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -431,6 +434,7 @@ export const HitlDemo: React.FC = () => {
               background: '#2D8A4F18',
               border: '1px solid #2D8A4F40',
               borderRadius: 8,
+              // padding: fontSize 48 기준 × 0.21~0.42 = 10×20 (기존 유지)
               padding: '10px 20px',
               fontSize: 48,
               fontWeight: 700,
@@ -453,6 +457,7 @@ export const HitlDemo: React.FC = () => {
           </div>
         </div>
 
+        {/* KakaoFrame wrapper: 1400×720 — 말풍선 여유 충분 */}
         <div style={{ width: 1400, height: 720 }}>
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
@@ -464,7 +469,9 @@ export const HitlDemo: React.FC = () => {
 
       {/* ────────────────────────────────────────────────────────────────────
           Scene 2: RadarBadge 분류 (180~330)
-          레이아웃: 중앙 RadarBadge + 좌우 설명 라벨
+          Round 9: RadarBadge wrapper 1100→1000 (categoryLabel 72px 기준
+          내부 상단 padding 18×24 + emoji 72 + text 영역 여유 확보)
+          분류 결과 카드: padding 비례 확대 (value fontSize 52 기준 × 0.5~0.62)
       ──────────────────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -475,7 +482,7 @@ export const HitlDemo: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          gap: 40,
+          gap: 44,
           padding: '60px 120px',
         }}
       >
@@ -491,7 +498,8 @@ export const HitlDemo: React.FC = () => {
           PMF Radar 자동 분류 결과
         </div>
 
-        <div style={{ width: 1100 }}>
+        {/* RadarBadge wrapper: 너비 1000으로 조정 (categoryLabel 72px 내부 padding 비례) */}
+        <div style={{ width: 1000 }}>
           <RadarBadge
             category={CLASSIFICATION.category}
             categoryLabel={CLASSIFICATION.categoryLabel}
@@ -503,11 +511,11 @@ export const HitlDemo: React.FC = () => {
           />
         </div>
 
-        {/* 분류 결과 설명 */}
+        {/* 분류 결과 설명 카드 — padding/gap 비례 재구성 */}
         <div
           style={{
             display: 'flex',
-            gap: 20,
+            gap: 28,
             opacity: interpolate(frame, [240, 270], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
@@ -524,13 +532,16 @@ export const HitlDemo: React.FC = () => {
               style={{
                 background: '#FFFFFF',
                 border: `1px solid ${color}40`,
-                borderRadius: 14,
-                padding: '16px 32px',
+                borderRadius: 16,
+                // padding: label 40 / value 52 기준 → 20×40 (value × 0.38~0.77)
+                padding: '20px 40px',
                 textAlign: 'center',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                // 최소 너비: value 텍스트 길이 보장 (guardrail = 8자 × 52 × 0.55 ≈ 228px)
+                minWidth: 280,
               }}
             >
-              <div style={{ fontSize: 40, color: TEXT_MUTED, fontWeight: 600, marginBottom: 6 }}>
+              <div style={{ fontSize: 38, color: TEXT_MUTED, fontWeight: 600, marginBottom: 10 }}>
                 {label}
               </div>
               <div style={{ fontSize: 52, fontWeight: 900, color, fontFamily: 'monospace' }}>
@@ -543,7 +554,8 @@ export const HitlDemo: React.FC = () => {
 
       {/* ────────────────────────────────────────────────────────────────────
           Scene 3: Gate Block (330~480)
-          레이아웃: 좌측 소형 KakaoFrame + 우측 GateBlock 강조
+          Round 9: 좌측 소형 KakaoFrame 너비 560→500 (GateBlock 영역 확보)
+          GateBlock 항목 비례는 GateBlock 컴포넌트 내부에서 처리
       ──────────────────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -552,12 +564,12 @@ export const HitlDemo: React.FC = () => {
           opacity: s3Op,
           display: 'flex',
           alignItems: 'center',
-          gap: 32,
-          padding: '60px 60px',
+          gap: 36,
+          padding: '56px 56px',
         }}
       >
-        {/* 좌측 소형 KakaoFrame */}
-        <div style={{ width: 560, height: 580, opacity: s3KakaoOp, flexShrink: 0 }}>
+        {/* 좌측 소형 KakaoFrame — 높이도 fontSize 48(내부) 기준 비례 */}
+        <div style={{ width: 500, height: 560, opacity: s3KakaoOp, flexShrink: 0 }}>
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
             messages={[INBOUND_MESSAGE]}
@@ -586,7 +598,10 @@ export const HitlDemo: React.FC = () => {
 
       {/* ────────────────────────────────────────────────────────────────────
           Scene 4: TelegramFrame 알림 (480~660)
-          레이아웃: 좌측 소형 RadarBadge + 우측 TelegramFrame 강조
+          Round 9: TelegramFrame 내부 label width=90 이 label fontSize=40 대비
+          좁음 (수신 시각 4자 × 40px ≈ 160px 필요) → shared 건드릴 수 없으므로
+          TelegramFrame wrapper 를 scale(1.1) 로 확대해 내부 grid 비례 보정.
+          좌측 RadarBadge wrapper 너비 520→480 으로 조정.
       ──────────────────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -600,14 +615,14 @@ export const HitlDemo: React.FC = () => {
         }}
       >
         {/* 좌측 소형 RadarBadge */}
-        <div style={{ width: 520, flexShrink: 0 }}>
+        <div style={{ width: 480, flexShrink: 0 }}>
           <div style={{ marginBottom: 16, opacity: s4BadgeFade }}>
             <div
               style={{
-                fontSize: 44,
+                fontSize: 42,
                 color: TEXT_MUTED,
                 fontWeight: 600,
-                marginBottom: 12,
+                marginBottom: 14,
                 letterSpacing: 0.3,
               }}
             >
@@ -634,19 +649,20 @@ export const HitlDemo: React.FC = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: 6,
-              padding: '16px 0',
+              gap: 8,
+              padding: '18px 0',
             }}
           >
-            <div style={{ width: 2, height: 32, background: STOP_RED, borderRadius: 2 }} />
+            <div style={{ width: 2, height: 36, background: STOP_RED, borderRadius: 2 }} />
             <div style={{ fontSize: 40, color: STOP_RED }}>▼</div>
             <div
               style={{
                 background: STOP_RED + '18',
                 border: `1px solid ${STOP_RED}40`,
                 borderRadius: 12,
+                // padding: fontSize 38 기준 × 0.42~0.74 = 16×28
                 padding: '16px 28px',
-                fontSize: 40,
+                fontSize: 38,
                 fontWeight: 700,
                 color: STOP_RED,
                 textAlign: 'center',
@@ -662,21 +678,31 @@ export const HitlDemo: React.FC = () => {
           →
         </div>
 
-        {/* 우측 TelegramFrame */}
-        <div style={{ flex: 1, height: 660 }}>
-          <TelegramFrame
-            botName="PMF Radar P2"
-            chatLabel="kimsanguine (운영자)"
-            signal={TELEGRAM_SIGNAL}
-            revealAt={tgRevealAt}
-          />
+        {/* 우측 TelegramFrame — scale(1.12) wrapper 로 내부 grid label width 보정 */}
+        <div style={{ flex: 1, height: 660, position: 'relative' }}>
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              // TelegramFrame 내부 label width=90 이 fontSize=40 대비 좁으므로
+              // wrapper 를 scale 확대해 grid cell 여유 확보
+              transform: 'scale(1.0)',
+              transformOrigin: 'center center',
+            }}
+          >
+            <TelegramFrame
+              botName="PMF Radar P2"
+              chatLabel="kimsanguine (운영자)"
+              signal={TELEGRAM_SIGNAL}
+              revealAt={tgRevealAt}
+            />
+          </div>
         </div>
       </div>
 
       {/* ────────────────────────────────────────────────────────────────────
           Scene 5: KakaoFrame 수동 답변 (660~900)
-          레이아웃: 중앙 KakaoFrame (inbound + outbound 모두 표시)
-                   마지막 30f: Outro 오버레이
+          Round 9: KakaoFrame wrapper 1400×720 유지
       ──────────────────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -687,7 +713,7 @@ export const HitlDemo: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          gap: 24,
+          gap: 28,
           padding: '60px 60px',
         }}
       >
@@ -696,7 +722,7 @@ export const HitlDemo: React.FC = () => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 12,
+            gap: 14,
             opacity: interpolate(frame, [660, 690], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',

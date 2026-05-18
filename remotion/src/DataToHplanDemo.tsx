@@ -65,12 +65,19 @@ const CATEGORY_COLOR: Record<string, string> = {
   output_quality: '#C8623A',
 };
 
+// Round 9: BubbleMap cluster radius 확대
+// 기존: r=55/40/34/34/34 → 후: r=72/52/44/44/44
+// BubbleMap 내부 fontSize = max(40, r×1.04)
+//   r=55 → fontSize≈57 (버블 d=110, 2글자 한글 클리핑 위험)
+//   r=72 → fontSize≈75 (버블 d=144, 2글자 한글 여유 확보)
+//   r=52 → fontSize≈54 (버블 d=104, 적정)
+//   r=44 → fontSize≈46 (버블 d=88, 짧은 이름 OK)
 const CLUSTERS: BubbleCluster[] = [
-  { x: 200, y: 220, r: 55, color: '#C8623A', name: '설치 실패', count: 2 },
-  { x: 400, y: 160, r: 40, color: '#C8623A', name: 'PM 사고 연결', count: 1 },
-  { x: 580, y: 250, r: 34, color: '#2D8A4F', name: '개인정보', count: 1 },
-  { x: 700, y: 160, r: 34, color: '#D6A238', name: '재방문 의향', count: 1 },
-  { x: 300, y: 330, r: 34, color: '#C8623A', name: '품질 판단', count: 1 },
+  { x: 210, y: 230, r: 72, color: '#C8623A', name: '설치 실패', count: 2 },
+  { x: 430, y: 160, r: 52, color: '#C8623A', name: 'PM 사고 연결', count: 1 },
+  { x: 620, y: 260, r: 44, color: '#2D8A4F', name: '개인정보', count: 1 },
+  { x: 740, y: 155, r: 44, color: '#D6A238', name: '재방문 의향', count: 1 },
+  { x: 320, y: 345, r: 44, color: '#C8623A', name: '품질 판단', count: 1 },
 ];
 
 const FOCUS_CLUSTER = {
@@ -89,6 +96,7 @@ const PRIORITY_DISTRIBUTION = [
 ];
 
 // ─── 셀 2/4: PriorityChart (Scene 4 전용 inline 컴포넌트) ───────────────────
+// Round 9: bar height 24→44 (fontSize 42 × 1.05), gap 14→22
 
 const PRIORITY_BAR_COLOR: Record<number, string> = {
   5: '#C8623A',
@@ -98,7 +106,7 @@ const PRIORITY_BAR_COLOR: Record<number, string> = {
 
 const PriorityChart: React.FC<{
   data: Array<{ priority: number; count: number; label: string }>;
-  revealAt: number; // 0~1, 각 bar 가 이 값 따라 오른쪽으로 확장
+  revealAt: number;
 }> = ({ data, revealAt }) => {
   const maxCount = Math.max(...data.map((d) => d.count));
 
@@ -108,24 +116,24 @@ const PriorityChart: React.FC<{
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: 14,
+        // gap: fontSize 42 × 0.52 = 22
+        gap: 22,
         fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
       }}
     >
       <div
         style={{
-          fontSize: 44,
+          fontSize: 42,
           fontWeight: 800,
           color: '#888888',
           letterSpacing: 1,
           textTransform: 'uppercase',
-          marginBottom: 8,
+          marginBottom: 12,
         }}
       >
         Priority 분포
       </div>
       {data.map((item, i) => {
-        // stagger: 각 bar 가 revealAt 0→(i+1)/n 시점에 등장
         const n = data.length;
         const threshold = i / n;
         const barProgress = interpolate(
@@ -147,15 +155,15 @@ const PriorityChart: React.FC<{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: 8,
+                marginBottom: 12,
               }}
             >
-              <span style={{ fontSize: 44, fontWeight: 700, color: '#1A1A1A' }}>
+              <span style={{ fontSize: 42, fontWeight: 700, color: '#1A1A1A' }}>
                 {item.label}
               </span>
               <span
                 style={{
-                  fontSize: 44,
+                  fontSize: 42,
                   fontWeight: 800,
                   color: PRIORITY_BAR_COLOR[item.priority],
                 }}
@@ -166,9 +174,10 @@ const PriorityChart: React.FC<{
             <div
               style={{
                 width: '100%',
-                height: 24,
+                // height: fontSize 42 × 1.05 = 44
+                height: 44,
                 background: '#F0EDE8',
-                borderRadius: 12,
+                borderRadius: 14,
                 overflow: 'hidden',
               }}
             >
@@ -177,7 +186,7 @@ const PriorityChart: React.FC<{
                   width: `${barWidth}%`,
                   height: '100%',
                   background: PRIORITY_BAR_COLOR[item.priority],
-                  borderRadius: 12,
+                  borderRadius: 14,
                   transition: 'width 0.05s linear',
                 }}
               />
@@ -243,39 +252,30 @@ const SubtitleBar: React.FC<{ frame: number }> = ({ frame }) => {
 // ─── 셀 4/4: Scene 구현 + 메인 컴포넌트 ─────────────────────────────────────
 
 // Scene 1: KakaoFrame burst (0~240)
-// 6 메시지, 각 ~40프레임 간격으로 등장
-// 카카오 채널과 Channel Talk 를 교대로 전환
+// Round 9:
+//   - KakaoFrame wrapper: 960×780 유지 (버블 maxWidth=76% → 실 너비≈730px, 텍스트 수용 충분)
+//   - 카운터 카드: padding 24×40 → 36×56 (숫자 112 × 0.32~0.5)
+//   - 채널 태그: padding 16×32 유지 (fontSize 44 × 0.36~0.73, 적정)
 const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
-  const MSG_INTERVAL = 40; // 각 메시지 간격 (1.33s)
+  const MSG_INTERVAL = 40;
 
-  // revealUpTo: 몇 번째 메시지까지 보일지 (0~6, float)
   const revealUpTo = frame / MSG_INTERVAL;
-
-  // 현재 보여야 할 메시지 인덱스 (최대 2개씩 보여주되 마지막 보이는 것 기준)
   const visibleEndIdx = Math.min(5, Math.floor(frame / MSG_INTERVAL));
 
-  // 채널별로 분리 — kakao 와 channel_talk 번갈아 포커싱
-  // 짝수 번째(0,2,4) = kakao, 홀수(1,3,5) = 양쪽 중 현재 포커스
   const focusIsChannelTalk =
     visibleEndIdx >= 0 &&
     BURST_MESSAGES[visibleEndIdx]?.channel === 'channel_talk';
 
   const channelLabel = focusIsChannelTalk ? 'Channel Talk' : '카카오톡 오픈채팅';
 
-  // 현재 채널에 맞는 메시지만 필터
   const currentChannel = focusIsChannelTalk ? 'channel_talk' : 'kakao';
   const filteredMessages = BURST_MESSAGES.filter((m) => m.channel === currentChannel);
-  const filteredRevealUpTo =
-    BURST_MESSAGES.slice(0, visibleEndIdx + 1).filter((m) => m.channel === currentChannel).length;
 
-  // KakaoFrame 에 넘길 revealUpTo 는 해당 채널 내 몇 번째까지 (float)
-  // 전체 revealUpTo 에서 해당 채널만 세기
   const perChannelReveal =
     BURST_MESSAGES.slice(0, Math.max(0, revealUpTo)).filter(
       (m) => m.channel === currentChannel,
     ).length;
 
-  // 채널 전환 fade
   const switchFade = interpolate(
     frame % MSG_INTERVAL,
     [0, 8],
@@ -283,7 +283,6 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   );
 
-  // 전체 scene fade-out (마지막 20프레임)
   const sceneOpacity = interpolate(
     frame,
     [220, 240],
@@ -291,7 +290,6 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   );
 
-  // 메시지 카운터 badge
   const totalVisible = Math.min(6, visibleEndIdx + 1);
 
   return (
@@ -321,24 +319,26 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
         />
       </div>
 
-      {/* 우상단 메시지 카운터 */}
+      {/* 우상단 메시지 카운터 카드
+          Round 9: padding 24×40 → 36×56 (숫자 112 × 0.32~0.50) */}
       <div
         style={{
           position: 'absolute',
           top: 60,
           right: 100,
           background: '#1A1A1A',
-          borderRadius: 20,
-          padding: '24px 40px',
+          borderRadius: 24,
+          padding: '36px 56px',
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
           color: '#FAF8F4',
           textAlign: 'center',
+          minWidth: 200,
         }}
       >
-        <div style={{ fontSize: 112, fontWeight: 900, color: '#C8623A' }}>
+        <div style={{ fontSize: 112, fontWeight: 900, color: '#C8623A', lineHeight: 1 }}>
           {totalVisible}
         </div>
-        <div style={{ fontSize: 44, fontWeight: 600, marginTop: 4, opacity: 0.8 }}>
+        <div style={{ fontSize: 44, fontWeight: 600, marginTop: 12, opacity: 0.8 }}>
           건 문의
         </div>
       </div>
@@ -381,7 +381,7 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
                   style={{
                     background: 'rgba(0,0,0,0.18)',
                     borderRadius: 12,
-                    padding: '2px 10px',
+                    padding: '4px 14px',
                     fontSize: 40,
                     fontWeight: 900,
                   }}
@@ -398,6 +398,10 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
 };
 
 // Scene 2: BubbleMap 형성 (240~480)
+// Round 9:
+//   - CLUSTERS r 확대로 cluster name 텍스트 클리핑 해소 (BubbleMap shared 내부 변경 없음)
+//   - 범례 dot: 18×18 → 24×24 (fontSize 44 × 0.55)
+//   - 범례 gap: 24→32, item gap: 10→14
 const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
   const localFrame = frame - 240;
 
@@ -459,14 +463,14 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
         />
       </div>
 
-      {/* 범례 */}
+      {/* 범례 — dot 크기·gap 비례 재구성 */}
       <div
         style={{
           position: 'absolute',
           bottom: 130,
           right: 60,
           display: 'flex',
-          gap: 24,
+          gap: 32,
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
           opacity: interpolate(animationProgress, [0.6, 1], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -481,12 +485,12 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
         ].map((item) => (
           <div
             key={item.label}
-            style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 14 }}
           >
             <div
               style={{
-                width: 18,
-                height: 18,
+                width: 24,
+                height: 24,
                 borderRadius: '50%',
                 background: item.color,
                 flexShrink: 0,
@@ -503,6 +507,10 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
 };
 
 // Scene 3: Cluster drilldown (480~720)
+// Round 9:
+//   - "가장 큰 cluster" 라벨: 40→38 (cluster name 88 × 0.43)
+//   - "2건 · strong signal" 부제: 48→44 (cluster name 88 × 0.50)
+//   - marginBottom 헤더→카드: 24→28 (cluster name × 0.32)
 const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
   const localFrame = frame - 480;
 
@@ -518,7 +526,6 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
     extrapolateRight: 'clamp',
   });
 
-  // BubbleMap 은 계속 표시 (progress=1 고정), highlightIndex=0
   return (
     <div
       style={{
@@ -568,18 +575,18 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           {/* Cluster 헤더 */}
           <div
             style={{
-              marginBottom: 24,
+              marginBottom: 28,
               fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
             }}
           >
             <div
               style={{
-                fontSize: 40,
+                fontSize: 38,
                 fontWeight: 800,
                 color: '#888888',
                 letterSpacing: 1,
                 textTransform: 'uppercase',
-                marginBottom: 6,
+                marginBottom: 8,
               }}
             >
               가장 큰 cluster
@@ -589,16 +596,17 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
                 fontSize: 88,
                 fontWeight: 900,
                 color: FOCUS_CLUSTER.color,
+                lineHeight: 1.1,
               }}
             >
               {FOCUS_CLUSTER.name}
             </div>
             <div
               style={{
-                fontSize: 48,
+                fontSize: 44,
                 fontWeight: 600,
                 color: '#555555',
-                marginTop: 4,
+                marginTop: 8,
               }}
             >
               2건 · strong signal
@@ -621,6 +629,10 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
 };
 
 // Scene 4: BacklogCard + PriorityChart (720~900)
+// Round 9:
+//   - 상단 타이틀 fontSize 48→46
+//   - PriorityChart 카드 padding 40→48 (PriorityChart 내부 fontSize 42 기준 × 1.14)
+//   - "총 문의" label fontSize 44→42
 const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
   const localFrame = frame - 720;
 
@@ -639,7 +651,6 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
     extrapolateRight: 'clamp',
   });
 
-  // 상단 타이틀 fade
   const titleFade = interpolate(localFrame, [0, 25], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -670,7 +681,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
       >
         <div
           style={{
-            fontSize: 48,
+            fontSize: 46,
             fontWeight: 800,
             color: '#888888',
             letterSpacing: 1,
@@ -681,7 +692,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
         </div>
       </div>
 
-      {/* 좌: BacklogCard (55%) */}
+      {/* 좌: BacklogCard (50%) */}
       <div
         style={{
           position: 'absolute',
@@ -706,7 +717,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
         </div>
       </div>
 
-      {/* 우: PriorityChart (45%) */}
+      {/* 우: PriorityChart (40%) */}
       <div
         style={{
           position: 'absolute',
@@ -724,7 +735,8 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
             width: '100%',
             background: '#FFFFFF',
             borderRadius: 20,
-            padding: '40px 40px',
+            // padding: PriorityChart 내부 fontSize 42 기준 × 1.14 = 48
+            padding: '48px 48px',
             boxShadow: '0 6px 24px rgba(0,0,0,0.10)',
             borderLeft: '6px solid #1A1A1A',
           }}
@@ -734,8 +746,8 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
           {/* 전체 건수 요약 */}
           <div
             style={{
-              marginTop: 24,
-              paddingTop: 16,
+              marginTop: 28,
+              paddingTop: 20,
               borderTop: '1px solid #F0EDE8',
               display: 'flex',
               justifyContent: 'space-between',
@@ -747,7 +759,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
               }),
             }}
           >
-            <span style={{ fontSize: 44, fontWeight: 600, color: '#888888' }}>
+            <span style={{ fontSize: 42, fontWeight: 600, color: '#888888' }}>
               총 문의
             </span>
             <span style={{ fontSize: 72, fontWeight: 900, color: '#1A1A1A' }}>
