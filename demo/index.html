@@ -17,6 +17,10 @@
   <!-- habix.ai 공유 GNB (site-system v1) — cross-origin import. radar 페이지에서는 도메인 스위처 hide. -->
   <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css">
   <link rel="stylesheet" href="assets/radar.css?v=20260518c">
+  <style>
+    /* drawer desktop stuck 강제 hide — HTML inline 이라 radar.css disk cache 와 무관 즉시 적용 (2026-05-18 회귀 fix) */
+    .hx-mobile-drawer:not(.is-open) { display: none !important; }
+  </style>
   <script type="module" src="https://habix.ai/_shared/site-system.v1.js"></script>
 </head>
 <body>
