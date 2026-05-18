@@ -1,732 +1,834 @@
-/**
- * DataToHplanDemo.tsx — V3: 데이터 → hplan 데모
- * minimal big-text redesign (R11)
- *
- * 5 scenes × 6s = 30s (900 frames @30fps)
- * 1920×1080, 배경 #0a0a14
- *
- * Scene 1 (0~240):   6 카톡 메시지 빠른 컷 (각 ~40f, 가운데 한 줄씩)
- * Scene 2 (240~480): "6 CS → 5 CLUSTER" + 단순 bubble circle 5개
- * Scene 3 (480~720): "가장 큰 cluster: 설치 실패 (2건)" 빨간색 강조
- * Scene 4 (720~900): "hplan 백로그 ↑ 개선 후보 자동 추가"
- */
-
 import React from 'react';
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
+import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
+import { KakaoFrame, KakaoMessage } from './shared/KakaoFrame';
+import { BubbleMap, BubbleCluster } from './shared/BubbleMap';
+import { BacklogCard } from './shared/BacklogCard';
 
-// ── 팔레트 ─────────────────────────────────────────────────────────────────
-const BG    = '#0a0a14';
-const RED   = '#a6492a';
-const GREEN = '#2D8A4F';
-const GOLD  = '#D6A238';
-const WHITE = '#F5F3EE';
-const MUTED = 'rgba(245,243,238,0.45)';
+// ─── 셀 1/4: Fixture 데이터 ─────────────────────────────────────────────────
 
-// ── 타이포그래피 ────────────────────────────────────────────────────────────
-const SERIF = '"DM Serif Display", "Noto Serif KR", Georgia, serif';
-const MONO  = '"JetBrains Mono", "Noto Sans KR", monospace';
-const SANS  = '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif';
-
-// ── 유틸 ──────────────────────────────────────────────────────────────────
-function fadeIn(frame: number, start: number, dur = 18) {
-  return interpolate(frame, [start, start + dur], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-}
-
-function fadeOut(frame: number, end: number, dur = 18) {
-  return interpolate(frame, [end - dur, end], [1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-}
-
-function sceneOp(frame: number, s: number, e: number) {
-  return Math.min(fadeIn(frame, s), fadeOut(frame, e));
-}
-
-// ── 자막 ──────────────────────────────────────────────────────────────────
-const Caption: React.FC<{ text: string; op: number }> = ({ text, op }) => (
-  <div
-    style={{
-      position: 'absolute',
-      bottom: 60,
-      left: 0,
-      right: 0,
-      display: 'flex',
-      justifyContent: 'center',
-      opacity: op,
-      pointerEvents: 'none',
-    }}
-  >
-    <div
-      style={{
-        background: 'rgba(10,10,20,0.78)',
-        border: '1px solid rgba(245,243,238,0.12)',
-        borderRadius: 8,
-        padding: '14px 44px',
-        fontFamily: SANS,
-        fontSize: 38,
-        fontWeight: 600,
-        color: WHITE,
-        letterSpacing: 0.3,
-        backdropFilter: 'blur(6px)',
-      }}
-    >
-      {text}
-    </div>
-  </div>
-);
-
-// ── Fixture ────────────────────────────────────────────────────────────────
-const MESSAGES = [
-  { text: 'zsh: command not found 떠서 막혀있어요',         channel: 'Kakao',       color: RED   },
-  { text: 'AGENTS.md 왜 중요한지 감은 오는데 막막해요',     channel: 'Kakao',       color: RED   },
-  { text: '사내 데이터 보안 정책 확인 필요합니다',           channel: 'Channel Talk', color: GREEN },
-  { text: '업무별 starter kit 가 있으면 재수강할 듯해요',   channel: 'Kakao',       color: GOLD  },
-  { text: 'npm install 에러가 났는데 제 문제인지...',        channel: 'Kakao',       color: RED   },
-  { text: '팀원 5명에게 들려주고 싶은데 템플릿이 있나요?',  channel: 'Channel Talk', color: RED   },
+const BURST_MESSAGES: (KakaoMessage & { channel: string; category: string })[] = [
+  {
+    author: '수강생 — 첫 설치',
+    text: 'zsh: command not found 떠서 막혀있어요',
+    time: '오후 2:14',
+    type: 'inbound',
+    channel: 'kakao',
+    category: 'setup',
+  },
+  {
+    author: '초보 PM',
+    text: 'AGENTS.md 왜 중요한지 감은 오는데 막막해요',
+    time: '오후 2:17',
+    type: 'inbound',
+    channel: 'kakao',
+    category: 'concept_confusion',
+  },
+  {
+    author: 'B2B 리드',
+    text: '사내 데이터 보안 정책 확인 필요합니다',
+    time: '오후 2:21',
+    type: 'inbound',
+    channel: 'channel_talk',
+    category: 'privacy',
+  },
+  {
+    author: '재수강 후보',
+    text: '업무별 starter kit 가 있으면 재수강할 듯해요',
+    time: '오후 2:24',
+    type: 'inbound',
+    channel: 'kakao',
+    category: 'retention',
+  },
+  {
+    author: '수강생 — npm 에러',
+    text: 'npm install 에러가 났는데 제 문제인지 강의 문제인지...',
+    time: '오후 2:28',
+    type: 'inbound',
+    channel: 'kakao',
+    category: 'setup',
+  },
+  {
+    author: '팀 리드',
+    text: '팀원 5명에게 들려주고 싶은데 결과물 템플릿이 있나요?',
+    time: '오후 2:31',
+    type: 'inbound',
+    channel: 'channel_talk',
+    category: 'output_quality',
+  },
 ];
 
-// 각 메시지 표시 구간: 40프레임 간격
-const MSG_INTERVAL = 40;
+const CATEGORY_COLOR: Record<string, string> = {
+  setup: '#C8623A',
+  concept_confusion: '#C8623A',
+  privacy: '#2D8A4F',
+  retention: '#D6A238',
+  output_quality: '#C8623A',
+};
 
-// ── Bubble 데이터 (Scene 2) ────────────────────────────────────────────────
-// 5 cluster — 색만으로 구분, 텍스트 없음 (minimal)
-// 위치: 1920×1080 기준 중심 좌표
-const BUBBLES = [
-  { cx: 480,  cy: 480, r: 160, color: RED,   label: '설치 실패',    count: 2, isMain: true  },
-  { cx: 820,  cy: 340, r: 110, color: RED,   label: 'PM 사고',      count: 1, isMain: false },
-  { cx: 1100, cy: 520, r: 90,  color: GREEN, label: '개인정보',     count: 1, isMain: false },
-  { cx: 1320, cy: 350, r: 90,  color: GOLD,  label: '재방문 의향',  count: 1, isMain: false },
-  { cx: 700,  cy: 660, r: 90,  color: RED,   label: '품질 판단',   count: 1, isMain: false },
+// Fix 3: BubbleMap 글자 overlap 해소
+// r 확대 + x/y 좌표 spread + viewBox "0 0 1300 580" 으로 확장
+// BubbleMap 내부 fontSize = max(40, r×1.04)
+//   r=100 → fontSize=104 (설치 실패 2글자, d=200, 내부 여유 충분)
+//   r=72  → fontSize≈75  (PM 사고 연결 5글자, d=144)
+//   r=60  → fontSize≈62  (3~4글자, d=120)
+// 클러스터 간 최소 거리 > r1+r2 검증:
+//   설치실패↔PM사고연결: dist≈301 > 172 ✓
+//   설치실패↔품질판단:   dist≈219 > 160 ✓
+//   기타 모두 여유 확보 ✓
+const CLUSTERS: BubbleCluster[] = [
+  { x: 270, y: 280, r: 100, color: '#C8623A', name: '설치 실패',   count: 2 },
+  { x: 560, y: 200, r: 72,  color: '#C8623A', name: 'PM 사고 연결', count: 1 },
+  { x: 800, y: 320, r: 60,  color: '#2D8A4F', name: '개인정보',     count: 1 },
+  { x: 960, y: 190, r: 60,  color: '#D6A238', name: '재방문 의향',  count: 1 },
+  { x: 420, y: 440, r: 60,  color: '#C8623A', name: '품질 판단',   count: 1 },
 ];
 
-// ══════════════════════════════════════════════════════════════════════════
-// Scene 1 (0~240): 6 카톡 메시지 빠른 컷
-// ══════════════════════════════════════════════════════════════════════════
-const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
-  const op = sceneOp(frame, 0, 240);
+const FOCUS_CLUSTER = {
+  name: '설치 실패',
+  decision: 'OS별 복구 체크포인트와 에러북을 먼저 만든다',
+  push: '첫 설치와 환경 차이에서 강의 시작 전 이탈이 발생',
+  anxiety: '내 컴퓨터만 다른 것 같고 시작도 못 한다는 불안',
+  priority: 5 as const,
+  color: '#C8623A',
+};
 
-  // 현재 활성 메시지 인덱스
-  const msgIdx = Math.min(MESSAGES.length - 1, Math.floor(frame / MSG_INTERVAL));
-  const msg = MESSAGES[msgIdx];
+const PRIORITY_DISTRIBUTION = [
+  { priority: 5, count: 2, label: 'Critical (5)' },
+  { priority: 4, count: 2, label: 'High (4)' },
+  { priority: 3, count: 2, label: 'Medium (3)' },
+];
 
-  // 메시지 내부 fade — 각 메시지 첫 10f fade-in
-  const localF  = frame % MSG_INTERVAL;
-  const msgOp   = interpolate(localF, [0, 10], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-  const msgY    = interpolate(localF, [0, 12], [16, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+// ─── 셀 2/4: PriorityChart (Scene 4 전용 inline 컴포넌트) ───────────────────
+// Round 9: bar height 24→44 (fontSize 42 × 1.05), gap 14→22
 
-  // 카운터
-  const countNum = msgIdx + 1;
+const PRIORITY_BAR_COLOR: Record<number, string> = {
+  5: '#C8623A',
+  4: '#E0A445',
+  3: '#2D8A4F',
+};
+
+const PriorityChart: React.FC<{
+  data: Array<{ priority: number; count: number; label: string }>;
+  revealAt: number;
+}> = ({ data, revealAt }) => {
+  const maxCount = Math.max(...data.map((d) => d.count));
 
   return (
-    <AbsoluteFill
+    <div
       style={{
-        opacity: op,
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 0,
+        // gap: fontSize 42 × 0.52 = 22
+        gap: 22,
+        fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
       }}
     >
-      {/* 카운터 */}
       <div
         style={{
-          fontFamily: MONO,
-          fontSize: 200,
-          fontWeight: 900,
-          color: `${msg.color}18`,
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          lineHeight: 1,
-          userSelect: 'none',
-          pointerEvents: 'none',
-          letterSpacing: -8,
-        }}
-      >
-        {countNum}
-      </div>
-
-      {/* 채널 라벨 */}
-      <div
-        style={{
-          fontFamily: MONO,
-          fontSize: 32,
-          fontWeight: 700,
-          color: msg.color,
-          letterSpacing: 2,
+          fontSize: 42,
+          fontWeight: 800,
+          color: '#888888',
+          letterSpacing: 1,
           textTransform: 'uppercase',
-          marginBottom: 24,
-          opacity: msgOp,
+          marginBottom: 12,
         }}
       >
-        {msg.channel}
+        Priority 분포
       </div>
+      {data.map((item, i) => {
+        const n = data.length;
+        const threshold = i / n;
+        const barProgress = interpolate(
+          revealAt,
+          [threshold, Math.min(1, threshold + 1 / n)],
+          [0, 1],
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+        );
+        const barWidth = interpolate(barProgress, [0, 1], [0, (item.count / maxCount) * 100]);
+        const rowOpacity = interpolate(barProgress, [0, 0.3], [0, 1], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        });
 
-      {/* 메시지 텍스트 */}
-      <div
-        style={{
-          opacity: msgOp,
-          transform: `translateY(${msgY}px)`,
-          fontFamily: SANS,
-          fontSize: 80,
-          fontWeight: 600,
-          color: WHITE,
-          textAlign: 'center',
-          lineHeight: 1.4,
-          letterSpacing: -0.5,
-          maxWidth: 1400,
-          padding: '0 80px',
-        }}
-      >
-        {msg.text}
-      </div>
-
-      {/* 진행 점 */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 14,
-          marginTop: 56,
-        }}
-      >
-        {MESSAGES.map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: i === msgIdx ? 32 : 10,
-              height: 10,
-              borderRadius: 5,
-              background: i === msgIdx ? MESSAGES[i].color : 'rgba(245,243,238,0.2)',
-              transition: 'width 0.1s',
-            }}
-          />
-        ))}
-      </div>
-
-      <Caption text="다양한 채널에서 CS 문의 도착 (6건 / 8초)" op={sceneOp(frame, 10, 230)} />
-    </AbsoluteFill>
+        return (
+          <div key={item.priority} style={{ opacity: rowOpacity }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 12,
+              }}
+            >
+              <span style={{ fontSize: 42, fontWeight: 700, color: '#1A1A1A' }}>
+                {item.label}
+              </span>
+              <span
+                style={{
+                  fontSize: 42,
+                  fontWeight: 800,
+                  color: PRIORITY_BAR_COLOR[item.priority],
+                }}
+              >
+                {item.count}건
+              </span>
+            </div>
+            <div
+              style={{
+                width: '100%',
+                // height: fontSize 42 × 1.05 = 44
+                height: 44,
+                background: '#F0EDE8',
+                borderRadius: 14,
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: `${barWidth}%`,
+                  height: '100%',
+                  background: PRIORITY_BAR_COLOR[item.priority],
+                  borderRadius: 14,
+                  transition: 'width 0.05s linear',
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 
-// ══════════════════════════════════════════════════════════════════════════
-// Scene 2 (240~480): "6 CS → 5 CLUSTER" + bubble 5개
-// bubble에 텍스트 없음 — 색과 크기만으로 클러스터 표현
-// ══════════════════════════════════════════════════════════════════════════
-const Scene2: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const op = sceneOp(frame, 240, 480);
-  const lf = frame - 240;
+// ─── 셀 3/4: 자막 컴포넌트 ──────────────────────────────────────────────────
 
-  const titleOp = fadeIn(lf, 10, 20);
-  const arrowOp = fadeIn(lf, 35, 20);
+const SUBTITLES: Array<{ startFrame: number; endFrame: number; text: string }> = [
+  { startFrame: 0, endFrame: 240, text: '다양한 채널에서 CS 문의 도착 (6건/8초)' },
+  { startFrame: 240, endFrame: 480, text: 'PMF Radar 가 카테고리별 cluster 자동 형성' },
+  { startFrame: 480, endFrame: 720, text: '가장 큰 cluster: 설치 실패 (2건, strong)' },
+  { startFrame: 720, endFrame: 900, text: 'hplan 백로그에 개선 후보 자동 추가 + priority 분포' },
+];
+
+const SubtitleBar: React.FC<{ frame: number }> = ({ frame }) => {
+  const current = SUBTITLES.find((s) => frame >= s.startFrame && frame < s.endFrame);
+  if (!current) return null;
+
+  const fadeIn = interpolate(
+    frame,
+    [current.startFrame, current.startFrame + 12],
+    [0, 1],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  );
+  const fadeOut = interpolate(
+    frame,
+    [current.endFrame - 12, current.endFrame],
+    [1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  );
 
   return (
-    <AbsoluteFill
+    <div
       style={{
-        opacity: op,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 0,
+        position: 'absolute',
+        bottom: 56,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        opacity: Math.min(fadeIn, fadeOut),
+        background: 'rgba(26, 26, 26, 0.82)',
+        borderRadius: 14,
+        padding: '20px 48px',
+        fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+        fontSize: 60,
+        fontWeight: 700,
+        color: '#FFFFFF',
+        letterSpacing: 0.3,
+        whiteSpace: 'nowrap',
+        backdropFilter: 'blur(4px)',
       }}
     >
-      {/* 상단 수식 */}
+      {current.text}
+    </div>
+  );
+};
+
+// ─── 셀 4/4: Scene 구현 + 메인 컴포넌트 ─────────────────────────────────────
+
+// Scene 1: KakaoFrame burst (0~240)
+// Round 9:
+//   - KakaoFrame wrapper: 960×780 유지 (버블 maxWidth=76% → 실 너비≈730px, 텍스트 수용 충분)
+//   - 카운터 카드: padding 24×40 → 36×56 (숫자 112 × 0.32~0.5)
+//   - 채널 태그: padding 16×32 유지 (fontSize 44 × 0.36~0.73, 적정)
+const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
+  const MSG_INTERVAL = 40;
+
+  const revealUpTo = frame / MSG_INTERVAL;
+  const visibleEndIdx = Math.min(5, Math.floor(frame / MSG_INTERVAL));
+
+  const focusIsChannelTalk =
+    visibleEndIdx >= 0 &&
+    BURST_MESSAGES[visibleEndIdx]?.channel === 'channel_talk';
+
+  const channelLabel = focusIsChannelTalk ? 'Channel Talk' : '카카오톡 오픈채팅';
+
+  const currentChannel = focusIsChannelTalk ? 'channel_talk' : 'kakao';
+  const filteredMessages = BURST_MESSAGES.filter((m) => m.channel === currentChannel);
+
+  const perChannelReveal =
+    BURST_MESSAGES.slice(0, Math.max(0, revealUpTo)).filter(
+      (m) => m.channel === currentChannel,
+    ).length;
+
+  const switchFade = interpolate(
+    frame % MSG_INTERVAL,
+    [0, 8],
+    [0.6, 1],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  );
+
+  const sceneOpacity = interpolate(
+    frame,
+    [220, 240],
+    [1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  );
+
+  const totalVisible = Math.min(6, visibleEndIdx + 1);
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: sceneOpacity,
+        position: 'relative',
+      }}
+    >
+      {/* 중앙 KakaoFrame */}
       <div
         style={{
+          width: 960,
+          height: 780,
+          opacity: switchFade,
+        }}
+      >
+        <KakaoFrame
+          channelLabel={channelLabel}
+          messages={filteredMessages as KakaoMessage[]}
+          revealUpTo={perChannelReveal}
+        />
+      </div>
+
+      {/* 우상단 메시지 카운터 카드
+          Fix 2: 채널 태그(fontSize 44)와 비례 맞춤 — 숫자 80, padding 24×40 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 60,
+          right: 100,
+          background: '#1A1A1A',
+          borderRadius: 20,
+          padding: '24px 40px',
+          fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+          color: '#FAF8F4',
+          textAlign: 'center',
+          minWidth: 160,
+        }}
+      >
+        <div style={{ fontSize: 80, fontWeight: 900, color: '#C8623A', lineHeight: 1 }}>
+          {totalVisible}
+        </div>
+        <div style={{ fontSize: 40, fontWeight: 600, marginTop: 8, opacity: 0.8 }}>
+          건 문의
+        </div>
+      </div>
+
+      {/* 채널 태그 목록 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 60,
+          left: 100,
           display: 'flex',
-          alignItems: 'center',
+          flexDirection: 'column',
+          gap: 20,
+          fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+        }}
+      >
+        {['kakao', 'channel_talk'].map((ch) => {
+          const cnt = BURST_MESSAGES.slice(0, visibleEndIdx + 1).filter(
+            (m) => m.channel === ch,
+          ).length;
+          return (
+            <div
+              key={ch}
+              style={{
+                background: ch === 'kakao' ? '#FEE500' : '#1A9AD5',
+                borderRadius: 16,
+                padding: '16px 32px',
+                fontSize: 44,
+                fontWeight: 800,
+                color: ch === 'kakao' ? '#1A1A1A' : '#FFFFFF',
+                opacity: cnt > 0 ? 1 : 0.3,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 16,
+              }}
+            >
+              <span>{ch === 'kakao' ? '카카오톡' : 'Channel Talk'}</span>
+              {cnt > 0 && (
+                <span
+                  style={{
+                    background: 'rgba(0,0,0,0.18)',
+                    borderRadius: 12,
+                    padding: '4px 14px',
+                    fontSize: 40,
+                    fontWeight: 900,
+                  }}
+                >
+                  {cnt}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// Scene 2: BubbleMap 형성 (240~480)
+// Round 9:
+//   - CLUSTERS r 확대로 cluster name 텍스트 클리핑 해소 (BubbleMap shared 내부 변경 없음)
+//   - 범례 dot: 18×18 → 24×24 (fontSize 44 × 0.55)
+//   - 범례 gap: 24→32, item gap: 10→14
+const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
+  const localFrame = frame - 240;
+
+  const animationProgress = interpolate(localFrame, [0, 180], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  const sceneOpacity = interpolate(
+    localFrame,
+    [0, 15, 220, 240],
+    [0, 1, 1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  );
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        opacity: sceneOpacity,
+        position: 'relative',
+      }}
+    >
+      {/* 상단 타이틀 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 40,
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+          fontSize: 80,
+          fontWeight: 900,
+          color: '#1A1A1A',
+          letterSpacing: 0.3,
+        }}
+      >
+        PMF Radar — Cluster 자동 형성
+      </div>
+
+      {/* BubbleMap 전체 영역 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 160,
+          left: 40,
+          right: 40,
+          bottom: 120,
+        }}
+      >
+        <BubbleMap
+          clusters={CLUSTERS}
+          animationProgress={animationProgress}
+          viewBox="0 0 1300 580"
+        />
+      </div>
+
+      {/* 범례 — dot 크기·gap 비례 재구성 */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 130,
+          right: 60,
+          display: 'flex',
           gap: 32,
-          opacity: titleOp,
-          marginBottom: 60,
-        }}
-      >
-        <div style={{ fontFamily: SERIF, fontSize: 128, fontWeight: 400, color: WHITE, letterSpacing: -2, lineHeight: 1 }}>
-          6 CS
-        </div>
-        <div style={{ fontFamily: SANS, fontSize: 80, fontWeight: 400, color: MUTED, lineHeight: 1 }}>
-          →
-        </div>
-        <div style={{ fontFamily: SERIF, fontSize: 128, fontWeight: 400, color: RED, letterSpacing: -2, lineHeight: 1 }}>
-          5 CLUSTER
-        </div>
-      </div>
-
-      {/* Bubble 시각화 — SVG, 텍스트 없음 */}
-      <div
-        style={{
-          opacity: arrowOp,
-          width: 1100,
-          height: 380,
-          position: 'relative',
-        }}
-      >
-        <svg
-          width="1100"
-          height="380"
-          viewBox="0 0 1100 380"
-          style={{ overflow: 'visible' }}
-        >
-          {BUBBLES.map((b, i) => {
-            const bScale = spring({
-              frame: lf - (35 + i * 12),
-              fps,
-              config: { damping: 20, stiffness: 150 },
-            });
-            // SVG 좌표 재매핑 (1920→1100, 1080→380 — y 중심 기준)
-            const sx = (b.cx / 1920) * 1100;
-            const sy = ((b.cy - 340) / 400) * 380 + 190;
-            const sr = (b.r / 1920) * 1100;
-
-            return (
-              <g key={i}>
-                <circle
-                  cx={sx}
-                  cy={sy}
-                  r={sr * bScale}
-                  fill={b.color}
-                  opacity={b.isMain ? 0.9 : 0.55}
-                />
-                {/* 주요 클러스터에 작은 카운트 뱃지 */}
-                {b.isMain && (
-                  <text
-                    x={sx}
-                    y={sy + 8}
-                    textAnchor="middle"
-                    fontSize={sr * 0.6}
-                    fontWeight="900"
-                    fill="white"
-                    fontFamily="JetBrains Mono, monospace"
-                    opacity={bScale}
-                  >
-                    {b.count}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-      </div>
-
-      {/* 범례 */}
-      <div
-        style={{
-          opacity: fadeIn(lf, 110, 25),
-          display: 'flex',
-          gap: 36,
-          marginTop: 24,
+          fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+          opacity: interpolate(animationProgress, [0.6, 1], [0, 1], {
+            extrapolateLeft: 'clamp',
+            extrapolateRight: 'clamp',
+          }),
         }}
       >
         {[
-          { color: RED,   label: 'Build 필요' },
-          { color: GREEN, label: 'Guardrail'  },
-          { color: GOLD,  label: 'Interview'  },
-        ].map(({ color, label }) => (
+          { color: '#C8623A', label: '개선 필요 (Build)' },
+          { color: '#2D8A4F', label: '가드레일 (Guardrail)' },
+          { color: '#D6A238', label: '인터뷰 대상 (Interview)' },
+        ].map((item) => (
           <div
-            key={label}
-            style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+            key={item.label}
+            style={{ display: 'flex', alignItems: 'center', gap: 14 }}
           >
             <div
               style={{
-                width: 18,
-                height: 18,
+                width: 24,
+                height: 24,
                 borderRadius: '50%',
-                background: color,
+                background: item.color,
                 flexShrink: 0,
               }}
             />
-            <span
-              style={{
-                fontFamily: SANS,
-                fontSize: 36,
-                fontWeight: 600,
-                color: MUTED,
-              }}
-            >
-              {label}
+            <span style={{ fontSize: 44, fontWeight: 600, color: '#555555' }}>
+              {item.label}
             </span>
           </div>
         ))}
       </div>
-
-      <Caption text="PMF Radar 가 카테고리별 cluster 자동 형성" op={sceneOp(frame, 255, 465)} />
-    </AbsoluteFill>
+    </div>
   );
 };
 
-// ══════════════════════════════════════════════════════════════════════════
-// Scene 3 (480~720): 가장 큰 cluster — 설치 실패 (2건)
-// ══════════════════════════════════════════════════════════════════════════
-const Scene3: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const op = sceneOp(frame, 480, 720);
-  const lf = frame - 480;
+// Scene 3: Cluster drilldown (480~720)
+// Round 9:
+//   - "가장 큰 cluster" 라벨: 40→38 (cluster name 88 × 0.43)
+//   - "2건 · strong signal" 부제: 48→44 (cluster name 88 × 0.50)
+//   - marginBottom 헤더→카드: 24→28 (cluster name × 0.32)
+const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
+  const localFrame = frame - 480;
 
-  const labelOp = fadeIn(lf, 10, 18);
+  const sceneOpacity = interpolate(
+    localFrame,
+    [0, 15, 220, 240],
+    [0, 1, 1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  );
 
-  const bigScale = spring({
-    frame: lf - 20,
-    fps,
-    config: { damping: 22, stiffness: 150 },
+  const drilldownFade = interpolate(localFrame, [40, 90], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
   });
-  const bigOp  = fadeIn(lf, 20, 22);
-  const sub1Op = fadeIn(lf, 55, 22);
-  const sub2Op = fadeIn(lf, 80, 22);
-  const dotOp  = fadeIn(lf, 100, 25);
 
   return (
-    <AbsoluteFill
+    <div
       style={{
-        opacity: op,
+        width: '100%',
+        height: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 0,
+        opacity: sceneOpacity,
+        position: 'relative',
       }}
     >
-      {/* 라벨 */}
+      {/* 좌측 BubbleMap (60%) */}
       <div
         style={{
-          opacity: labelOp,
-          fontFamily: MONO,
-          fontSize: 36,
-          fontWeight: 700,
-          color: MUTED,
-          letterSpacing: 2,
-          textTransform: 'uppercase',
-          marginBottom: 24,
-        }}
-      >
-        가장 큰 cluster
-      </div>
-
-      {/* 메인 클러스터명 */}
-      <div
-        style={{
-          opacity: bigOp,
-          transform: `scale(${bigScale})`,
-          fontFamily: SERIF,
-          fontSize: 160,
-          fontWeight: 400,
-          color: RED,
-          lineHeight: 1,
-          letterSpacing: -3,
-          textAlign: 'center',
-        }}
-      >
-        설치 실패
-      </div>
-
-      {/* 카운트 */}
-      <div
-        style={{
-          opacity: sub1Op,
+          width: '60%',
+          height: '100%',
           display: 'flex',
           alignItems: 'center',
-          gap: 24,
-          marginTop: 32,
+          paddingLeft: 40,
+          paddingTop: 60,
+          paddingBottom: 60,
+          boxSizing: 'border-box',
         }}
       >
-        <div
-          style={{
-            fontFamily: MONO,
-            fontSize: 100,
-            fontWeight: 900,
-            color: RED,
-            lineHeight: 1,
-          }}
-        >
-          2건
-        </div>
-        <div
-          style={{
-            fontFamily: SANS,
-            fontSize: 56,
-            fontWeight: 500,
-            color: MUTED,
-          }}
-        >
-          · strong signal
-        </div>
+        <BubbleMap
+          clusters={CLUSTERS}
+          highlightIndex={0}
+          animationProgress={1}
+          viewBox="0 0 1300 580"
+        />
       </div>
 
-      <div style={{ height: 48 }} />
-
-      {/* 왜 중요한지 — 한 줄 */}
+      {/* 우측 drilldown 카드 (40%) */}
       <div
         style={{
-          opacity: sub2Op,
-          fontFamily: SANS,
-          fontSize: 48,
-          fontWeight: 400,
-          color: MUTED,
-          textAlign: 'center',
-          lineHeight: 1.6,
-          maxWidth: 960,
+          width: '40%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          paddingRight: 40,
+          paddingTop: 60,
+          paddingBottom: 60,
+          boxSizing: 'border-box',
+          opacity: drilldownFade,
         }}
       >
-        첫 설치 환경 차이 → 강의 시작 전 이탈 발생
-      </div>
+        <div style={{ width: '100%' }}>
+          {/* Cluster 헤더 */}
+          <div
+            style={{
+              marginBottom: 28,
+              fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+            }}
+          >
+            <div
+              style={{
+                fontSize: 38,
+                fontWeight: 800,
+                color: '#888888',
+                letterSpacing: 1,
+                textTransform: 'uppercase',
+                marginBottom: 8,
+              }}
+            >
+              가장 큰 cluster
+            </div>
+            <div
+              style={{
+                fontSize: 88,
+                fontWeight: 900,
+                color: FOCUS_CLUSTER.color,
+                lineHeight: 1.1,
+              }}
+            >
+              {FOCUS_CLUSTER.name}
+            </div>
+            <div
+              style={{
+                fontSize: 44,
+                fontWeight: 600,
+                color: '#555555',
+                marginTop: 8,
+              }}
+            >
+              2건 · strong signal
+            </div>
+          </div>
 
-      {/* 결정 */}
-      <div
-        style={{
-          opacity: dotOp,
-          marginTop: 40,
-          background: `${RED}18`,
-          border: `1px solid ${RED}44`,
-          borderRadius: 12,
-          padding: '20px 48px',
-          fontFamily: MONO,
-          fontSize: 40,
-          fontWeight: 700,
-          color: RED,
-          letterSpacing: 0.5,
-          textAlign: 'center',
-        }}
-      >
-        → OS별 복구 체크포인트 + 에러북 선행 제작
+          <BacklogCard
+            clusterName={FOCUS_CLUSTER.name}
+            decision={FOCUS_CLUSTER.decision}
+            push={FOCUS_CLUSTER.push}
+            anxiety={FOCUS_CLUSTER.anxiety}
+            priority={FOCUS_CLUSTER.priority}
+            color={FOCUS_CLUSTER.color}
+            fadeIn={1}
+          />
+        </div>
       </div>
-
-      <Caption text="가장 큰 cluster: 설치 실패 (2건, strong)" op={sceneOp(frame, 495, 705)} />
-    </AbsoluteFill>
+    </div>
   );
 };
 
-// ══════════════════════════════════════════════════════════════════════════
-// Scene 4 (720~900): hplan 백로그 ↑ 개선 후보 자동 추가
-// ══════════════════════════════════════════════════════════════════════════
-const Scene4: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const op = sceneOp(frame, 720, 900);
-  const lf = frame - 720;
+// Scene 4: BacklogCard + PriorityChart (720~900)
+// Round 9:
+//   - 상단 타이틀 fontSize 48→46
+//   - PriorityChart 카드 padding 40→48 (PriorityChart 내부 fontSize 42 기준 × 1.14)
+//   - "총 문의" label fontSize 44→42
+const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
+  const localFrame = frame - 720;
 
-  const lineScale = spring({
-    frame: lf - 8,
-    fps,
-    config: { damping: 28, stiffness: 110 },
-  });
-  const topOp = fadeIn(lf, 20, 25);
-  const topY  = interpolate(lf, [20, 45], [28, 0], {
+  const sceneOpacity = interpolate(localFrame, [0, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const botOp = fadeIn(lf, 55, 25);
-  const botY  = interpolate(lf, [55, 80], [20, 0], {
+
+  const cardFade = interpolate(localFrame, [10, 50], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const cardOp  = fadeIn(lf, 85, 25);
-  const tagOp   = fadeIn(lf, 120, 25);
+
+  const chartRevealAt = interpolate(localFrame, [50, 150], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  const titleFade = interpolate(localFrame, [0, 25], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
 
   return (
-    <AbsoluteFill
+    <div
       style={{
-        opacity: op,
+        width: '100%',
+        height: '100%',
+        opacity: sceneOpacity,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 0,
+        position: 'relative',
       }}
     >
-      {/* 구분선 */}
+      {/* 상단 타이틀 */}
       <div
         style={{
-          width: `${lineScale * 200}px`,
-          height: 3,
-          background: GOLD,
-          borderRadius: 2,
-          marginBottom: 56,
-        }}
-      />
-
-      <div
-        style={{
-          opacity: topOp,
-          transform: `translateY(${topY}px)`,
-          fontFamily: SERIF,
-          fontSize: 120,
-          fontWeight: 400,
-          color: WHITE,
-          lineHeight: 1.1,
-          letterSpacing: -2,
+          position: 'absolute',
+          top: 40,
+          left: 0,
+          right: 0,
           textAlign: 'center',
+          opacity: titleFade,
+          fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
         }}
       >
-        hplan 백로그 ↑
+        <div
+          style={{
+            fontSize: 46,
+            fontWeight: 800,
+            color: '#888888',
+            letterSpacing: 1,
+            textTransform: 'uppercase',
+          }}
+        >
+          hplan backlog 자동 추가
+        </div>
       </div>
 
+      {/* 좌: BacklogCard (50%) */}
       <div
         style={{
-          opacity: botOp,
-          transform: `translateY(${botY}px)`,
-          fontFamily: SERIF,
-          fontSize: 120,
-          fontWeight: 400,
-          color: GOLD,
-          lineHeight: 1.1,
-          letterSpacing: -2,
-          textAlign: 'center',
-        }}
-      >
-        개선 후보 자동 추가
-      </div>
-
-      <div style={{ height: 56 }} />
-
-      {/* 백로그 카드 미니 */}
-      <div
-        style={{
-          opacity: cardOp,
-          background: '#111118',
-          border: `1px solid ${GOLD}40`,
-          borderRadius: 18,
-          padding: '32px 56px',
-          maxWidth: 960,
-          width: '100%',
+          position: 'absolute',
+          top: 140,
+          left: 60,
+          width: '50%',
+          bottom: 120,
           display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
+          alignItems: 'center',
+        }}
+      >
+        <div style={{ width: '100%' }}>
+          <BacklogCard
+            clusterName={FOCUS_CLUSTER.name}
+            decision={FOCUS_CLUSTER.decision}
+            push={FOCUS_CLUSTER.push}
+            anxiety={FOCUS_CLUSTER.anxiety}
+            priority={FOCUS_CLUSTER.priority}
+            color={FOCUS_CLUSTER.color}
+            fadeIn={cardFade}
+          />
+        </div>
+      </div>
+
+      {/* 우: PriorityChart (40%) */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 140,
+          right: 60,
+          width: '40%',
+          bottom: 120,
+          display: 'flex',
+          alignItems: 'center',
+          opacity: chartRevealAt > 0 ? 1 : 0,
         }}
       >
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            width: '100%',
+            background: '#FFFFFF',
+            borderRadius: 20,
+            // padding: PriorityChart 내부 fontSize 42 기준 × 1.14 = 48
+            padding: '48px 48px',
+            boxShadow: '0 6px 24px rgba(0,0,0,0.10)',
+            borderLeft: '6px solid #1A1A1A',
           }}
         >
-          <span
+          <PriorityChart data={PRIORITY_DISTRIBUTION} revealAt={chartRevealAt} />
+
+          {/* 전체 건수 요약 */}
+          <div
             style={{
-              fontFamily: SANS,
-              fontSize: 44,
-              fontWeight: 700,
-              color: WHITE,
+              marginTop: 28,
+              paddingTop: 20,
+              borderTop: '1px solid #F0EDE8',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+              opacity: interpolate(chartRevealAt, [0.8, 1], [0, 1], {
+                extrapolateLeft: 'clamp',
+                extrapolateRight: 'clamp',
+              }),
             }}
           >
-            설치 실패
-          </span>
-          <span
-            style={{
-              background: RED,
-              borderRadius: 8,
-              padding: '6px 20px',
-              fontFamily: MONO,
-              fontSize: 36,
-              fontWeight: 900,
-              color: WHITE,
-            }}
-          >
-            P5 Critical
-          </span>
-        </div>
-        <div
-          style={{
-            fontFamily: SANS,
-            fontSize: 38,
-            color: MUTED,
-            lineHeight: 1.5,
-          }}
-        >
-          OS별 복구 체크포인트와 에러북을 먼저 만든다
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            gap: 14,
-            marginTop: 4,
-          }}
-        >
-          {['setup', 'strong', 'build', '2건'].map((tag) => (
-            <span
-              key={tag}
-              style={{
-                background: 'rgba(245,243,238,0.08)',
-                borderRadius: 6,
-                padding: '4px 16px',
-                fontFamily: MONO,
-                fontSize: 30,
-                fontWeight: 700,
-                color: MUTED,
-                letterSpacing: 0.5,
-              }}
-            >
-              {tag}
+            <span style={{ fontSize: 42, fontWeight: 600, color: '#888888' }}>
+              총 문의
             </span>
-          ))}
+            <span style={{ fontSize: 72, fontWeight: 900, color: '#1A1A1A' }}>
+              6건
+            </span>
+          </div>
         </div>
       </div>
 
-      <div style={{ height: 40 }} />
-
+      {/* 우하단 hplan 로고 워터마크 */}
       <div
         style={{
-          opacity: tagOp,
-          fontFamily: MONO,
-          fontSize: 36,
+          position: 'absolute',
+          bottom: 52,
+          right: 80,
+          fontFamily: 'monospace',
+          fontSize: 40,
           fontWeight: 700,
-          color: MUTED,
+          color: '#CCCCCC',
           letterSpacing: 2,
-          textTransform: 'uppercase',
+          opacity: interpolate(localFrame, [60, 90], [0, 1], {
+            extrapolateLeft: 'clamp',
+            extrapolateRight: 'clamp',
+          }),
         }}
       >
         hplan · PMF Signal Radar
       </div>
-
-      <Caption text="hplan 백로그에 개선 후보 자동 추가 + priority 분포" op={sceneOp(frame, 735, 885)} />
-    </AbsoluteFill>
+    </div>
   );
 };
 
-// ══════════════════════════════════════════════════════════════════════════
-// DataToHplanDemo — 메인
-// ══════════════════════════════════════════════════════════════════════════
+// ─── 메인 컴포넌트 ────────────────────────────────────────────────────────────
+
 export const DataToHplanDemo: React.FC = () => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+
+  const inScene1 = frame < 240;
+  const inScene2 = frame >= 240 && frame < 480;
+  const inScene3 = frame >= 480 && frame < 720;
+  const inScene4 = frame >= 720;
 
   return (
     <AbsoluteFill
       style={{
-        background: BG,
-        fontFamily: SANS,
+        background: '#FAF8F4',
+        fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
+        color: '#1A1A1A',
         overflow: 'hidden',
+        position: 'relative',
       }}
     >
-      {/* grain overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage:
-            'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.04\'/%3E%3C/svg%3E")',
-          backgroundSize: '200px 200px',
-          pointerEvents: 'none',
-          opacity: 0.5,
-        }}
-      />
+      {/* Scene 1: KakaoFrame burst */}
+      {(inScene1 || frame < 260) && <Scene1 frame={frame} />}
 
-      {frame < 255 && <Scene1 frame={frame} />}
-      {frame >= 225 && frame < 495 && <Scene2 frame={frame} fps={fps} />}
-      {frame >= 465 && frame < 735 && <Scene3 frame={frame} fps={fps} />}
-      {frame >= 705 && <Scene4 frame={frame} fps={fps} />}
+      {/* Scene 2: BubbleMap 형성 */}
+      {(inScene2 || (frame >= 230 && frame < 500)) && <Scene2 frame={frame} />}
+
+      {/* Scene 3: Cluster drilldown */}
+      {(inScene3 || (frame >= 470 && frame < 740)) && <Scene3 frame={frame} />}
+
+      {/* Scene 4: BacklogCard + PriorityChart */}
+      {(inScene4 || frame >= 710) && <Scene4 frame={frame} />}
+
+      {/* 자막 (전체 씬 위에 고정 overlay) */}
+      <SubtitleBar frame={frame} />
     </AbsoluteFill>
   );
 };
