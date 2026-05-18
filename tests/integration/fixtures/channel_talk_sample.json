@@ -1,0 +1,17 @@
+{
+  "event": "userMessage",
+  "channelId": "ch-abc-123",
+  "conversation": {
+    "id": "conv-001",
+    "createdAt": 1747562400000
+  },
+  "message": {
+    "id": "msg-ct-001",
+    "plainText": "pmf radar 도입 문의드립니다. 기능 설명 부탁드립니다.",
+    "createdAt": 1747562400000
+  },
+  "user": {
+    "id": "user-ct-001",
+    "name": "테스트 고객"
+  }
+}

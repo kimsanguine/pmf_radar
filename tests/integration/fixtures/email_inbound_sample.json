@@ -1,0 +1,18 @@
+{
+  "notificationType": "Received",
+  "mail": {
+    "messageId": "ses-test-001",
+    "timestamp": "2026-05-18T09:00:00.000Z",
+    "source": "customer@example.com",
+    "destination": ["cs@habix.ai"],
+    "commonHeaders": {
+      "from": ["고객 <customer@example.com>"],
+      "to": ["cs@habix.ai"],
+      "subject": "강의 관련 문의드립니다",
+      "date": "Mon, 18 May 2026 09:00:00 +0000"
+    },
+    "headers": []
+  },
+  "content": "강의 수강 관련하여 문의드립니다. 결제가 완료되었는데 접근이 안 됩니다.",
+  "receipt": {}
+}
