@@ -119,13 +119,16 @@ pytest tests/ -v                                       # 17 test
 python3 scripts/validate_schemas.py --report           # 27 check
 
 # TypeScript Workers
-cd workers/email-inbound && npm test                   # vitest
-cd workers/channel-talk  && npm test
-cd workers/auto-reply    && npm test
-cd workers/data-ingest   && npm test                   # 15 test (parsers + normalize)
+cd workers/email-inbound && npm test                   # vitest 21
+cd workers/channel-talk  && npm test                   # vitest 7
+cd workers/auto-reply    && npm test                   # vitest 33 (atomic claim/finalize + race 3종 + stale recovery)
+cd workers/data-ingest   && npm test                   # vitest 24 (parsers + normalize + inbox-mapper schema 정합)
+
+# Integration (schema-contract)
+cd tests/integration     && npm install && npx vitest run   # 23 test (migration ground truth 자동 검증)
 ```
 
-전수 통과 기준: **107 test PASS** (Python 40 + TS 64 + retention 3).
+전수 통과 기준: **151 test PASS** (Python 40 + TS 108 + retention 3).
 
 ## 디렉토리 구조
 

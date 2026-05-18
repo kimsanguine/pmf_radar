@@ -106,10 +106,11 @@ remotion/             ← 데모 영상 컴포넌트
 
 ### 5.2 수치
 
-- **107 test PASS**: Python 40 + TS 64 + retention 3 (data-ingest +15)
+- **151 test PASS**: Python 40 + TS 108 + retention 3 (data-ingest 24 + email-inbound 21 + channel-talk 7 + auto-reply 33 + integration 23)
 - **27 validate_schemas check PASS / 5 SKIP / 0 FAIL**
 - **3 DB migration** scripts (`20260518000001~3`)
-- **5 Cloudflare Workers** = 약 2,100 LOC TypeScript (email-inbound, channel-talk, auto-reply, data-ingest, _shared)
+- **5 Cloudflare Workers** = 약 2,500 LOC TypeScript (email-inbound, channel-talk, auto-reply, data-ingest, _shared/inbox-mapper)
+- **Integration test framework**: tests/integration/ (schema-contract 23 test, 783 LOC) — migration schema 를 ground truth 로 두는 자동 검증, 새 worker 추가 시 동일 함정 재발 차단
 - **1,500+ LOC Python** (server + scripts + tests)
 - **6 weeks** from kickoff to production-ready (P1 강의 + P2 라이브)
 

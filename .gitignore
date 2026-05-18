@@ -92,3 +92,6 @@ workers/channel-talk/tests/integration_sandbox_dump.md
 # --- Stub placeholders (460B 빈 파일) ---
 demo/landing-v1-editorial.html
 demo/landing-v2-kakao-ops.html
+
+# Claude harness (agent worktrees, transcripts, metadata)
+.claude/
