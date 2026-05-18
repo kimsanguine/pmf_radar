@@ -1,0 +1,18 @@
+{
+  "name": "pmf-radar-integration-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "webhook_inbox schema-contract 자동 검증 integration test",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.4",
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
