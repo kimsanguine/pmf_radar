@@ -140,7 +140,28 @@ export default {
       `msg_len=${normalized.message.length}`
     );
 
-    // TODO Round 3: supabaseInsert(env, "webhook_inbox", normalized)
+    // TODO Round 3: webhook_inbox schema 정합 INSERT
+    // webhook_inbox 컬럼 (20260518000001_p2_inbox_schema.sql):
+    //   source, message_id, channel, segment, masked_message,
+    //   classified_json, hitl_required, product_scope
+    //   (id·created_at 제외 — DB default)
+    //
+    // await supabaseInsert(env, "webhook_inbox", {
+    //   source: normalized.source,
+    //   message_id: normalized.id,         // Channel Talk 메시지 id
+    //   channel: normalized.channel,
+    //   segment: normalized.segment,
+    //   masked_message: normalized.message, // 컬럼명 주의: masked_message
+    //   hitl_required: false,
+    //   product_scope: normalized.product_scope,
+    // });
+    //
+    // raw_payload_retention 분리 INSERT (PIPA 30일 보존):
+    // await supabaseInsert(env, "raw_payload_retention", {
+    //   source: normalized.source,
+    //   message_id: normalized.id,
+    //   raw_payload: { raw_ct_body: rawBody },
+    // });
 
     return ok({ accepted: true, id: normalized.id });
   },

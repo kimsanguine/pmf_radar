@@ -155,16 +155,26 @@ async function processNotification(snsMsg: SnsMessage, env: Env): Promise<void> 
       // TODO Round 2: Supabase INSERT
       // β 스키마(webhook_inbox, webhook_idempotency) 완성 후 아래 주석 해제
       //
+      // webhook_inbox schema (20260518000001_p2_inbox_schema.sql):
+      //   source, message_id, channel, segment, masked_message,
+      //   classified_json, hitl_required, product_scope
+      //   (id·created_at 은 DB default — INSERT payload 에 포함 금지)
+      //
       // await supabaseInsert(env, "webhook_inbox", {
-      //   id: record.id,
       //   source: record.source,
+      //   message_id: record.id,       // SES messageId (mail.messageId)
       //   channel: record.channel,
       //   segment: record.segment,
-      //   message: record.message,
-      //   received_at: record.received_at,
-      //   sender_id_hash: record.sender_id_hash,
+      //   masked_message: record.message,   // 컬럼명 주의: masked_message (message 아님)
+      //   hitl_required: false,
       //   product_scope: record.product_scope,
-      //   signature_verified: record.signature_verified,
+      // });
+      //
+      // raw_payload_retention 분리 INSERT (PIPA 30일 보존):
+      // await supabaseInsert(env, "raw_payload_retention", {
+      //   source: record.source,
+      //   message_id: record.id,
+      //   raw_payload: { raw_ses_json: rawSesJson },
       // });
 
       // Round 1: console.log 만 (PII 는 이미 mask_pii 적용됨)
