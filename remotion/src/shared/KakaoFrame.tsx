@@ -41,24 +41,24 @@ const Bubble: React.FC<{
         display: 'flex',
         flexDirection: isOut ? 'row-reverse' : 'row',
         alignItems: 'flex-end',
-        gap: 8,
+        gap: 12,
         opacity,
-        marginBottom: 12,
+        marginBottom: 18,
       }}
     >
       {/* 인바운드 프로필 영역 */}
       {!isOut && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
           <div
             style={{
-              width: 38,
-              height: 38,
+              width: 52,
+              height: 52,
               borderRadius: '50%',
               background: '#CFD8DC',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 14,
+              fontSize: 22,
               color: TEXT_MUTED,
               fontWeight: 700,
               flexShrink: 0,
@@ -66,7 +66,7 @@ const Bubble: React.FC<{
           >
             {msg.author.charAt(0)}
           </div>
-          <span style={{ fontSize: 10, color: TEXT_MUTED, whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 16, color: TEXT_MUTED, whiteSpace: 'nowrap' }}>
             {msg.author.split('—')[0].trim()}
           </span>
         </div>
@@ -78,27 +78,27 @@ const Bubble: React.FC<{
           display: 'flex',
           flexDirection: isOut ? 'row-reverse' : 'row',
           alignItems: 'flex-end',
-          gap: 6,
-          maxWidth: '72%',
+          gap: 8,
+          maxWidth: '76%',
         }}
       >
         <div
           style={{
-            padding: '10px 14px',
+            padding: '16px 22px',
             borderRadius: isOut
-              ? '18px 18px 4px 18px'
-              : '18px 18px 18px 4px',
+              ? '22px 22px 4px 22px'
+              : '22px 22px 22px 4px',
             background: isOut ? OUTBOUND_BG : INBOUND_BG,
             color: TEXT_DARK,
-            fontSize: 15,
+            fontSize: 24,
             fontWeight: 600,
-            lineHeight: 1.45,
+            lineHeight: 1.5,
             boxShadow: '0 1px 3px rgba(0,0,0,0.10)',
           }}
         >
           {msg.text}
         </div>
-        <span style={{ fontSize: 11, color: TIME_COLOR, flexShrink: 0 }}>
+        <span style={{ fontSize: 16, color: TIME_COLOR, flexShrink: 0 }}>
           {msg.time}
         </span>
       </div>
@@ -141,22 +141,22 @@ export const KakaoFrame: React.FC<KakaoFrameProps> = ({
       <div
         style={{
           background: HEADER_BG,
-          padding: '14px 18px',
+          padding: '18px 24px',
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 14,
         }}
       >
         <div
           style={{
-            width: 32,
-            height: 32,
-            borderRadius: 8,
+            width: 42,
+            height: 42,
+            borderRadius: 10,
             background: KAKAO_YELLOW,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 18,
+            fontSize: 24,
           }}
         >
           💬
@@ -165,7 +165,7 @@ export const KakaoFrame: React.FC<KakaoFrameProps> = ({
           style={{
             color: '#FFFFFF',
             fontWeight: 700,
-            fontSize: 15,
+            fontSize: 22,
             letterSpacing: 0.3,
           }}
         >
@@ -178,7 +178,7 @@ export const KakaoFrame: React.FC<KakaoFrameProps> = ({
         style={{
           flex: 1,
           background: WINDOW_BG,
-          padding: '16px 14px',
+          padding: '24px 20px',
           overflowY: 'auto',
           display: 'flex',
           flexDirection: 'column',
@@ -194,32 +194,32 @@ export const KakaoFrame: React.FC<KakaoFrameProps> = ({
       <div
         style={{
           background: '#FFFFFF',
-          padding: '10px 14px',
+          padding: '14px 20px',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          gap: 10,
           borderTop: '1px solid #E0E0E0',
         }}
       >
         <div
           style={{
             flex: 1,
-            height: 36,
-            borderRadius: 18,
+            height: 44,
+            borderRadius: 22,
             background: '#F5F5F5',
             border: '1px solid #E0E0E0',
           }}
         />
         <div
           style={{
-            width: 36,
-            height: 36,
+            width: 44,
+            height: 44,
             borderRadius: '50%',
             background: KAKAO_YELLOW,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 16,
+            fontSize: 20,
           }}
         >
           ▶

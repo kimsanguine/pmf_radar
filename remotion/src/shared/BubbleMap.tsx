@@ -100,10 +100,10 @@ export const BubbleMap: React.FC<BubbleMapProps> = ({
             {/* cluster 이름 */}
             <text
               x={0}
-              y={-6}
+              y={-8}
               textAnchor="middle"
               fill="#FFFFFF"
-              fontSize={Math.max(10, baseR * 0.38)}
+              fontSize={Math.max(20, baseR * 0.52)}
               fontWeight="800"
               fontFamily="Apple SD Gothic Neo, Noto Sans KR, sans-serif"
             >
@@ -113,10 +113,10 @@ export const BubbleMap: React.FC<BubbleMapProps> = ({
             {/* 건수 */}
             <text
               x={0}
-              y={12}
+              y={18}
               textAnchor="middle"
               fill="rgba(255,255,255,0.85)"
-              fontSize={Math.max(9, baseR * 0.3)}
+              fontSize={Math.max(16, baseR * 0.42)}
               fontWeight="700"
               fontFamily="monospace"
             >

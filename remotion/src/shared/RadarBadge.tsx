@@ -67,19 +67,19 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
       <div
         style={{
           background: color,
-          padding: '12px 16px',
+          padding: '18px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 20 }}>{DECISION_ICON[decisionType]}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <span style={{ fontSize: 36 }}>{DECISION_ICON[decisionType]}</span>
           <div>
-            <div style={{ color: '#FFFFFF', fontSize: 11, fontWeight: 700, opacity: 0.85, letterSpacing: 1 }}>
+            <div style={{ color: '#FFFFFF', fontSize: 18, fontWeight: 700, opacity: 0.85, letterSpacing: 1 }}>
               PMF RADAR
             </div>
-            <div style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 900, lineHeight: 1.2 }}>
+            <div style={{ color: '#FFFFFF', fontSize: 36, fontWeight: 900, lineHeight: 1.2 }}>
               {categoryLabel}
             </div>
           </div>
@@ -87,10 +87,10 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
         <div
           style={{
             background: 'rgba(255,255,255,0.25)',
-            borderRadius: 20,
-            padding: '4px 10px',
+            borderRadius: 24,
+            padding: '8px 18px',
             color: '#FFFFFF',
-            fontSize: 11,
+            fontSize: 20,
             fontWeight: 700,
             letterSpacing: 0.5,
           }}
@@ -100,14 +100,14 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
       </div>
 
       {/* 하단 메타 영역 */}
-      <div style={{ padding: '12px 16px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div style={{ padding: '18px 24px', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         {/* 카테고리 코드 */}
         <div
           style={{
-            border: `1px solid ${color}`,
-            borderRadius: 6,
-            padding: '3px 8px',
-            fontSize: 11,
+            border: `2px solid ${color}`,
+            borderRadius: 8,
+            padding: '6px 14px',
+            fontSize: 20,
             fontWeight: 800,
             color: color,
             fontFamily: 'monospace',
@@ -120,9 +120,9 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
         <div
           style={{
             background: '#F5F5F5',
-            borderRadius: 6,
-            padding: '3px 8px',
-            fontSize: 11,
+            borderRadius: 8,
+            padding: '6px 14px',
+            fontSize: 20,
             fontWeight: 700,
             color: '#555555',
           }}
@@ -135,9 +135,9 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
           style={{
             background: color + '18',
             border: `1px solid ${color}40`,
-            borderRadius: 6,
-            padding: '3px 8px',
-            fontSize: 11,
+            borderRadius: 8,
+            padding: '6px 14px',
+            fontSize: 20,
             fontWeight: 700,
             color: color,
           }}

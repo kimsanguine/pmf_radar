@@ -130,18 +130,18 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
       <div
         style={{
           background: STOP_RED,
-          padding: '12px 18px',
+          padding: '18px 24px',
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 14,
         }}
       >
-        <span style={{ fontSize: 20 }}>🚫</span>
+        <span style={{ fontSize: 32 }}>🚫</span>
         <div>
           <div
             style={{
               color: '#FFFFFF',
-              fontSize: 11,
+              fontSize: 18,
               fontWeight: 700,
               opacity: 0.85,
               letterSpacing: 1,
@@ -149,7 +149,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
           >
             AUTO-REPLY GATE
           </div>
-          <div style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 900 }}>
+          <div style={{ color: '#FFFFFF', fontSize: 30, fontWeight: 900 }}>
             5조건 검사
           </div>
         </div>
@@ -158,10 +158,10 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
           style={{
             marginLeft: 'auto',
             background: 'rgba(255,255,255,0.22)',
-            borderRadius: 20,
-            padding: '4px 12px',
+            borderRadius: 24,
+            padding: '8px 18px',
             color: '#FFFFFF',
-            fontSize: 12,
+            fontSize: 20,
             fontWeight: 800,
             letterSpacing: 0.5,
           }}
@@ -171,7 +171,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
       </div>
 
       {/* 조건 목록 */}
-      <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ padding: '18px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {CHECK_ITEMS.map((item, idx) => {
           const itemOpacity = interpolate(
             revealAt,
@@ -186,18 +186,18 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
                 opacity: itemOpacity,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 10,
-                padding: '7px 10px',
-                borderRadius: 8,
+                gap: 14,
+                padding: '12px 16px',
+                borderRadius: 10,
                 background: item.pass ? '#EBF7EF' : '#FDECEA',
                 border: `1px solid ${item.pass ? '#A8D9B8' : '#F0B0A0'}`,
               }}
             >
-              <span style={{ fontSize: 16, flexShrink: 0 }}>{item.pass ? '✅' : '❌'}</span>
+              <span style={{ fontSize: 24, flexShrink: 0 }}>{item.pass ? '✅' : '❌'}</span>
               <span
                 style={{
                   fontFamily: 'monospace',
-                  fontSize: 13,
+                  fontSize: 22,
                   fontWeight: 700,
                   color: item.pass ? '#1A6634' : STOP_RED,
                   flex: 1,
@@ -207,7 +207,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
               </span>
               <span
                 style={{
-                  fontSize: 11,
+                  fontSize: 20,
                   fontWeight: 800,
                   color: item.pass ? '#2D8A4F' : STOP_RED,
                   letterSpacing: 0.5,
@@ -225,29 +225,29 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
         style={{
           opacity: stopOpacity,
           transform: `scale(${stopScale})`,
-          margin: '0 18px 18px',
-          padding: '14px',
-          borderRadius: 10,
+          margin: '0 24px 24px',
+          padding: '20px',
+          borderRadius: 12,
           background: STOP_RED,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 12,
+          gap: 16,
         }}
       >
-        <span style={{ fontSize: 28 }}>🛑</span>
+        <span style={{ fontSize: 40 }}>🛑</span>
         <div>
           <div
             style={{
               color: '#FFFFFF',
-              fontSize: 18,
+              fontSize: 28,
               fontWeight: 900,
               letterSpacing: 1,
             }}
           >
             AUTO-REPLY 차단
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 12, marginTop: 2 }}>
+          <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 20, marginTop: 4 }}>
             guardrail 감지 → 운영자 HITL 검토 필요
           </div>
         </div>
@@ -295,14 +295,14 @@ const OutroOverlay: React.FC<{ opacity: number }> = ({ opacity }) => (
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'column',
-      gap: 16,
+      gap: 24,
       pointerEvents: 'none',
     }}
   >
     <div
       style={{
         color: '#FFFFFF',
-        fontSize: 38,
+        fontSize: 72,
         fontWeight: 900,
         letterSpacing: 0.5,
         fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
@@ -314,7 +314,7 @@ const OutroOverlay: React.FC<{ opacity: number }> = ({ opacity }) => (
     <div
       style={{
         color: 'rgba(255,255,255,0.65)',
-        fontSize: 20,
+        fontSize: 36,
         fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
         textAlign: 'center',
       }}
@@ -411,7 +411,7 @@ export const HitlDemo: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '60px 200px',
+          padding: '100px 120px 160px',
         }}
       >
         {/* 배경 라벨 */}
@@ -431,8 +431,8 @@ export const HitlDemo: React.FC = () => {
               background: '#2D8A4F18',
               border: '1px solid #2D8A4F40',
               borderRadius: 8,
-              padding: '6px 14px',
-              fontSize: 16,
+              padding: '10px 20px',
+              fontSize: 24,
               fontWeight: 700,
               color: GREEN_ACCENT,
             }}
@@ -443,8 +443,8 @@ export const HitlDemo: React.FC = () => {
             style={{
               background: '#F5F5F5',
               borderRadius: 8,
-              padding: '6px 14px',
-              fontSize: 14,
+              padding: '10px 20px',
+              fontSize: 22,
               color: TEXT_MUTED,
               fontWeight: 600,
             }}
@@ -453,7 +453,7 @@ export const HitlDemo: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ width: 900, height: 480 }}>
+        <div style={{ width: 1200, height: 580 }}>
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
             messages={[INBOUND_MESSAGE]}
@@ -475,14 +475,14 @@ export const HitlDemo: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          gap: 32,
-          padding: '80px 300px',
+          gap: 40,
+          padding: '80px 200px',
         }}
       >
         {/* 상단 분류 타이틀 */}
         <div
           style={{
-            fontSize: 22,
+            fontSize: 32,
             fontWeight: 700,
             color: TEXT_MUTED,
             letterSpacing: 0.3,
@@ -491,7 +491,7 @@ export const HitlDemo: React.FC = () => {
           PMF Radar 자동 분류 결과
         </div>
 
-        <div style={{ width: 620 }}>
+        <div style={{ width: 900 }}>
           <RadarBadge
             category={CLASSIFICATION.category}
             categoryLabel={CLASSIFICATION.categoryLabel}
@@ -530,10 +530,10 @@ export const HitlDemo: React.FC = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
               }}
             >
-              <div style={{ fontSize: 12, color: TEXT_MUTED, fontWeight: 600, marginBottom: 4 }}>
+              <div style={{ fontSize: 20, color: TEXT_MUTED, fontWeight: 600, marginBottom: 6 }}>
                 {label}
               </div>
-              <div style={{ fontSize: 18, fontWeight: 900, color, fontFamily: 'monospace' }}>
+              <div style={{ fontSize: 26, fontWeight: 900, color, fontFamily: 'monospace' }}>
                 {value}
               </div>
             </div>
@@ -604,10 +604,10 @@ export const HitlDemo: React.FC = () => {
           <div style={{ marginBottom: 16, opacity: s4BadgeFade }}>
             <div
               style={{
-                fontSize: 13,
+                fontSize: 22,
                 color: TEXT_MUTED,
                 fontWeight: 600,
-                marginBottom: 8,
+                marginBottom: 12,
                 letterSpacing: 0.3,
               }}
             >
@@ -645,8 +645,8 @@ export const HitlDemo: React.FC = () => {
                 background: STOP_RED + '18',
                 border: `1px solid ${STOP_RED}40`,
                 borderRadius: 8,
-                padding: '8px 16px',
-                fontSize: 13,
+                padding: '10px 18px',
+                fontSize: 20,
                 fontWeight: 700,
                 color: STOP_RED,
                 textAlign: 'center',
@@ -688,7 +688,7 @@ export const HitlDemo: React.FC = () => {
           justifyContent: 'center',
           flexDirection: 'column',
           gap: 24,
-          padding: '80px 200px',
+          padding: '80px 80px',
         }}
       >
         {/* 상단 운영자 라벨 */}
@@ -708,8 +708,8 @@ export const HitlDemo: React.FC = () => {
               background: '#2D8A4F18',
               border: '1px solid #2D8A4F40',
               borderRadius: 8,
-              padding: '6px 14px',
-              fontSize: 16,
+              padding: '10px 20px',
+              fontSize: 24,
               fontWeight: 700,
               color: GREEN_ACCENT,
             }}
@@ -720,8 +720,8 @@ export const HitlDemo: React.FC = () => {
             style={{
               background: '#F5F5F5',
               borderRadius: 8,
-              padding: '6px 14px',
-              fontSize: 14,
+              padding: '10px 20px',
+              fontSize: 22,
               color: TEXT_MUTED,
               fontWeight: 600,
             }}
@@ -730,7 +730,7 @@ export const HitlDemo: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ width: 900, height: 480 }}>
+        <div style={{ width: 1200, height: 580 }}>
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
             messages={[INBOUND_MESSAGE, OUTBOUND_REPLY]}

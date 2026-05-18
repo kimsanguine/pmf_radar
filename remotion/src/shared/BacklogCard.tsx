@@ -58,29 +58,29 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
       <div
         style={{
           background: color + '12',
-          padding: '14px 18px',
+          padding: '20px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           borderBottom: `1px solid ${color}20`,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {/* 우선순위 배지 */}
           <div
             style={{
               background: PRIORITY_BG[priority],
-              borderRadius: 6,
-              padding: '3px 8px',
+              borderRadius: 8,
+              padding: '6px 14px',
               color: '#FFFFFF',
-              fontSize: 11,
+              fontSize: 22,
               fontWeight: 800,
               letterSpacing: 0.3,
             }}
           >
             {PRIORITY_LABEL[priority]}
           </div>
-          <span style={{ color: color, fontSize: 16, fontWeight: 900 }}>
+          <span style={{ color: color, fontSize: 32, fontWeight: 900 }}>
             {clusterName}
           </span>
         </div>
@@ -88,7 +88,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
         <span
           style={{
             fontFamily: 'monospace',
-            fontSize: 11,
+            fontSize: 18,
             fontWeight: 700,
             color: '#888888',
             letterSpacing: 1,
@@ -99,48 +99,48 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
       </div>
 
       {/* 내용 */}
-      <div style={{ padding: '14px 18px', display: 'grid', gap: 12 }}>
+      <div style={{ padding: '20px 24px', display: 'grid', gap: 16 }}>
         {/* Decision */}
         <div>
           <div
             style={{
-              fontSize: 11,
+              fontSize: 18,
               fontWeight: 800,
               color: color,
               letterSpacing: 0.8,
               textTransform: 'uppercase',
-              marginBottom: 4,
+              marginBottom: 6,
             }}
           >
             Decision
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A', lineHeight: 1.4 }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A', lineHeight: 1.45 }}>
             {decision}
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
           {/* Push */}
           <div
             style={{
               background: '#F0FFF4',
-              borderRadius: 8,
-              padding: '10px 12px',
-              borderLeft: '3px solid #2D8A4F',
+              borderRadius: 10,
+              padding: '14px 16px',
+              borderLeft: '4px solid #2D8A4F',
             }}
           >
             <div
               style={{
-                fontSize: 10,
+                fontSize: 18,
                 fontWeight: 800,
                 color: '#2D8A4F',
                 letterSpacing: 0.8,
-                marginBottom: 4,
+                marginBottom: 6,
               }}
             >
               PUSH
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A4A2A', lineHeight: 1.35 }}>
+            <div style={{ fontSize: 20, fontWeight: 600, color: '#1A4A2A', lineHeight: 1.4 }}>
               {push}
             </div>
           </div>
@@ -149,23 +149,23 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
           <div
             style={{
               background: '#FFF5F0',
-              borderRadius: 8,
-              padding: '10px 12px',
-              borderLeft: '3px solid #C8623A',
+              borderRadius: 10,
+              padding: '14px 16px',
+              borderLeft: '4px solid #C8623A',
             }}
           >
             <div
               style={{
-                fontSize: 10,
+                fontSize: 18,
                 fontWeight: 800,
                 color: '#C8623A',
                 letterSpacing: 0.8,
-                marginBottom: 4,
+                marginBottom: 6,
               }}
             >
               ANXIETY
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#4A1A0A', lineHeight: 1.35 }}>
+            <div style={{ fontSize: 20, fontWeight: 600, color: '#4A1A0A', lineHeight: 1.4 }}>
               {anxiety}
             </div>
           </div>

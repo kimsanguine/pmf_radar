@@ -114,12 +114,12 @@ const PriorityChart: React.FC<{
     >
       <div
         style={{
-          fontSize: 14,
+          fontSize: 22,
           fontWeight: 800,
           color: '#888888',
           letterSpacing: 1,
           textTransform: 'uppercase',
-          marginBottom: 4,
+          marginBottom: 8,
         }}
       >
         Priority 분포
@@ -147,15 +147,15 @@ const PriorityChart: React.FC<{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: 5,
+                marginBottom: 8,
               }}
             >
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>
+              <span style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A' }}>
                 {item.label}
               </span>
               <span
                 style={{
-                  fontSize: 13,
+                  fontSize: 22,
                   fontWeight: 800,
                   color: PRIORITY_BAR_COLOR[item.priority],
                 }}
@@ -166,9 +166,9 @@ const PriorityChart: React.FC<{
             <div
               style={{
                 width: '100%',
-                height: 18,
+                height: 24,
                 background: '#F0EDE8',
-                borderRadius: 9,
+                borderRadius: 12,
                 overflow: 'hidden',
               }}
             >
@@ -177,7 +177,7 @@ const PriorityChart: React.FC<{
                   width: `${barWidth}%`,
                   height: '100%',
                   background: PRIORITY_BAR_COLOR[item.priority],
-                  borderRadius: 9,
+                  borderRadius: 12,
                   transition: 'width 0.05s linear',
                 }}
               />
@@ -224,10 +224,10 @@ const SubtitleBar: React.FC<{ frame: number }> = ({ frame }) => {
         transform: 'translateX(-50%)',
         opacity: Math.min(fadeIn, fadeOut),
         background: 'rgba(26, 26, 26, 0.82)',
-        borderRadius: 10,
-        padding: '10px 28px',
+        borderRadius: 12,
+        padding: '16px 36px',
         fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
-        fontSize: 22,
+        fontSize: 30,
         fontWeight: 700,
         color: '#FFFFFF',
         letterSpacing: 0.3,
@@ -309,8 +309,8 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
       {/* 중앙 KakaoFrame */}
       <div
         style={{
-          width: 560,
-          height: 520,
+          width: 760,
+          height: 620,
           opacity: switchFade,
         }}
       >
@@ -328,17 +328,17 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
           top: 80,
           right: 160,
           background: '#1A1A1A',
-          borderRadius: 12,
-          padding: '12px 20px',
+          borderRadius: 14,
+          padding: '16px 28px',
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
           color: '#FAF8F4',
           textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: 36, fontWeight: 900, color: '#C8623A' }}>
+        <div style={{ fontSize: 56, fontWeight: 900, color: '#C8623A' }}>
           {totalVisible}
         </div>
-        <div style={{ fontSize: 14, fontWeight: 600, marginTop: 2, opacity: 0.8 }}>
+        <div style={{ fontSize: 22, fontWeight: 600, marginTop: 4, opacity: 0.8 }}>
           건 문의
         </div>
       </div>
@@ -351,7 +351,7 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
           left: 160,
           display: 'flex',
           flexDirection: 'column',
-          gap: 8,
+          gap: 12,
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
         }}
       >
@@ -364,15 +364,15 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
               key={ch}
               style={{
                 background: ch === 'kakao' ? '#FEE500' : '#1A9AD5',
-                borderRadius: 8,
-                padding: '6px 14px',
-                fontSize: 13,
+                borderRadius: 10,
+                padding: '10px 20px',
+                fontSize: 22,
                 fontWeight: 800,
                 color: ch === 'kakao' ? '#1A1A1A' : '#FFFFFF',
                 opacity: cnt > 0 ? 1 : 0.3,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
+                gap: 10,
               }}
             >
               <span>{ch === 'kakao' ? '카카오톡' : 'Channel Talk'}</span>
@@ -380,9 +380,9 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
                 <span
                   style={{
                     background: 'rgba(0,0,0,0.18)',
-                    borderRadius: 10,
-                    padding: '1px 7px',
-                    fontSize: 11,
+                    borderRadius: 12,
+                    padding: '2px 10px',
+                    fontSize: 20,
                     fontWeight: 900,
                   }}
                 >
@@ -433,7 +433,7 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
           right: 0,
           textAlign: 'center',
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
-          fontSize: 26,
+          fontSize: 40,
           fontWeight: 900,
           color: '#1A1A1A',
           letterSpacing: 0.3,
@@ -481,17 +481,18 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
         ].map((item) => (
           <div
             key={item.label}
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            style={{ display: 'flex', alignItems: 'center', gap: 10 }}
           >
             <div
               style={{
-                width: 12,
-                height: 12,
+                width: 18,
+                height: 18,
                 borderRadius: '50%',
                 background: item.color,
+                flexShrink: 0,
               }}
             />
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#555555' }}>
+            <span style={{ fontSize: 22, fontWeight: 600, color: '#555555' }}>
               {item.label}
             </span>
           </div>
@@ -573,19 +574,19 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           >
             <div
               style={{
-                fontSize: 12,
+                fontSize: 20,
                 fontWeight: 800,
                 color: '#888888',
                 letterSpacing: 1,
                 textTransform: 'uppercase',
-                marginBottom: 4,
+                marginBottom: 6,
               }}
             >
               가장 큰 cluster
             </div>
             <div
               style={{
-                fontSize: 28,
+                fontSize: 44,
                 fontWeight: 900,
                 color: FOCUS_CLUSTER.color,
               }}
@@ -594,10 +595,10 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
             </div>
             <div
               style={{
-                fontSize: 14,
+                fontSize: 24,
                 fontWeight: 600,
                 color: '#555555',
-                marginTop: 2,
+                marginTop: 4,
               }}
             >
               2건 · strong signal
@@ -669,7 +670,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
       >
         <div
           style={{
-            fontSize: 14,
+            fontSize: 24,
             fontWeight: 800,
             color: '#888888',
             letterSpacing: 1,
@@ -746,10 +747,10 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
               }),
             }}
           >
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#888888' }}>
+            <span style={{ fontSize: 22, fontWeight: 600, color: '#888888' }}>
               총 문의
             </span>
-            <span style={{ fontSize: 22, fontWeight: 900, color: '#1A1A1A' }}>
+            <span style={{ fontSize: 36, fontWeight: 900, color: '#1A1A1A' }}>
               6건
             </span>
           </div>
@@ -763,7 +764,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
           bottom: 52,
           right: 80,
           fontFamily: 'monospace',
-          fontSize: 13,
+          fontSize: 20,
           fontWeight: 700,
           color: '#CCCCCC',
           letterSpacing: 2,

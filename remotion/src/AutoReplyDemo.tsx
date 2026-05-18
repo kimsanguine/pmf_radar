@@ -104,16 +104,16 @@ const GateChecklist: React.FC<{
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: 14,
+        gap: 18,
       }}
     >
       <div
         style={{
-          fontSize: 15,
+          fontSize: 24,
           fontWeight: 800,
           color: NAVY,
           letterSpacing: 1.2,
-          marginBottom: 6,
+          marginBottom: 8,
           fontFamily: FONT,
           textTransform: 'uppercase',
         }}
@@ -137,18 +137,18 @@ const GateChecklist: React.FC<{
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 14,
+              gap: 18,
               opacity,
               transform: `translateX(${translateX}px)`,
               background: cond.pass ? '#E8F5E9' : '#FFEBEE',
-              border: `1.5px solid ${cond.pass ? '#66BB6A' : '#EF5350'}`,
-              borderRadius: 10,
-              padding: '12px 16px',
+              border: `2px solid ${cond.pass ? '#66BB6A' : '#EF5350'}`,
+              borderRadius: 12,
+              padding: '16px 22px',
             }}
           >
             <span
               style={{
-                fontSize: 22,
+                fontSize: 32,
                 lineHeight: 1,
                 flexShrink: 0,
                 color: cond.pass ? '#388E3C' : '#C62828',
@@ -158,7 +158,7 @@ const GateChecklist: React.FC<{
             </span>
             <span
               style={{
-                fontSize: 17,
+                fontSize: 22,
                 fontWeight: 600,
                 color: DARK,
                 fontFamily: FONT,
@@ -221,11 +221,11 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
       >
         <div
           style={{
-            fontSize: 42,
+            fontSize: 80,
             fontWeight: 900,
             color: TEAL,
             fontFamily: FONT,
-            lineHeight: 1.25,
+            lineHeight: 1.2,
             letterSpacing: -0.5,
           }}
         >
@@ -233,11 +233,11 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
         </div>
         <div
           style={{
-            fontSize: 42,
+            fontSize: 80,
             fontWeight: 900,
             color: DARK,
             fontFamily: FONT,
-            lineHeight: 1.25,
+            lineHeight: 1.2,
           }}
         >
           운영자 시간 절약
@@ -248,12 +248,12 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
       <div
         style={{
           opacity: subOpacity,
-          fontSize: 20,
+          fontSize: 32,
           color: '#555555',
           fontFamily: FONT,
           textAlign: 'center',
           lineHeight: 1.6,
-          maxWidth: 560,
+          maxWidth: 860,
         }}
       >
         반복 문의를 5조건 Auto-Reply Gate 로 필터링,
@@ -267,18 +267,18 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
           opacity: badgeOpacity,
           transform: `scale(${badgeScale})`,
           background: NAVY,
-          borderRadius: 14,
-          padding: '14px 28px',
+          borderRadius: 18,
+          padding: '20px 40px',
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
+          gap: 16,
         }}
       >
-        <span style={{ fontSize: 24 }}>⚡</span>
+        <span style={{ fontSize: 36 }}>⚡</span>
         <span
           style={{
             color: '#FFFFFF',
-            fontSize: 18,
+            fontSize: 30,
             fontWeight: 800,
             fontFamily: FONT,
             letterSpacing: 0.5,
@@ -320,11 +320,11 @@ const SectionLabel: React.FC<{ text: string; color?: string }> = ({
 }) => (
   <div
     style={{
-      fontSize: 13,
+      fontSize: 22,
       fontWeight: 800,
       color,
       letterSpacing: 2,
-      marginBottom: 20,
+      marginBottom: 24,
       fontFamily: FONT,
       textTransform: 'uppercase',
       alignSelf: 'flex-start',
@@ -376,7 +376,7 @@ export const AutoReplyDemo: React.FC = () => {
           left: 0,
           width: 960,
           height: 960,
-          padding: '60px 40px 60px 60px',
+          padding: '50px 32px 150px 50px',
           opacity: kakaoOpacity,
         }}
       >
@@ -442,19 +442,19 @@ export const AutoReplyDemo: React.FC = () => {
               >
                 <div
                   style={{
-                    fontSize: 48,
+                    fontSize: 64,
                     fontWeight: 900,
                     color: NAVY,
                     fontFamily: FONT,
                     lineHeight: 1.2,
-                    marginBottom: 16,
+                    marginBottom: 20,
                   }}
                 >
                   카카오 오픈채팅
                 </div>
                 <div
                   style={{
-                    fontSize: 24,
+                    fontSize: 36,
                     color: '#666666',
                     fontFamily: FONT,
                     fontWeight: 500,
@@ -573,7 +573,7 @@ export const AutoReplyDemo: React.FC = () => {
                 </div>
                 <div
                   style={{
-                    fontSize: 34,
+                    fontSize: 48,
                     fontWeight: 900,
                     color: TEAL,
                     fontFamily: FONT,
@@ -583,7 +583,7 @@ export const AutoReplyDemo: React.FC = () => {
                 </div>
                 <div
                   style={{
-                    fontSize: 18,
+                    fontSize: 28,
                     color: '#555555',
                     fontFamily: FONT,
                     lineHeight: 1.6,

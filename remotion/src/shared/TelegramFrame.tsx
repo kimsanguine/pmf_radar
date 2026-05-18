@@ -82,34 +82,34 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
       <div
         style={{
           background: TG_HEADER,
-          padding: '14px 18px',
+          padding: '18px 24px',
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
+          gap: 16,
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}
       >
         {/* 봇 아바타 */}
         <div
           style={{
-            width: 40,
-            height: 40,
+            width: 52,
+            height: 52,
             borderRadius: '50%',
             background: TG_ACCENT,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 20,
+            fontSize: 28,
             flexShrink: 0,
           }}
         >
           🤖
         </div>
         <div>
-          <div style={{ color: TG_TEXT, fontWeight: 700, fontSize: 15 }}>
+          <div style={{ color: TG_TEXT, fontWeight: 700, fontSize: 24 }}>
             {botName}
           </div>
-          <div style={{ color: TG_MUTED, fontSize: 12, marginTop: 1 }}>
+          <div style={{ color: TG_MUTED, fontSize: 18, marginTop: 2 }}>
             봇 · {chatLabel}
           </div>
         </div>
@@ -117,8 +117,8 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
         <div
           style={{
             marginLeft: 'auto',
-            width: 10,
-            height: 10,
+            width: 14,
+            height: 14,
             borderRadius: '50%',
             background: '#4CAF50',
           }}
@@ -144,7 +144,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
           }}
         >
           {/* 봇 라벨 */}
-          <div style={{ color: TG_ACCENT, fontSize: 12, fontWeight: 700, marginBottom: 4, paddingLeft: 4 }}>
+          <div style={{ color: TG_ACCENT, fontSize: 20, fontWeight: 700, marginBottom: 6, paddingLeft: 6 }}>
             {botName}
           </div>
 
@@ -152,19 +152,19 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
           <div
             style={{
               background: TG_BUBBLE,
-              borderRadius: '4px 16px 16px 16px',
-              padding: '14px 16px',
-              maxWidth: '85%',
+              borderRadius: '4px 20px 20px 20px',
+              padding: '20px 24px',
+              maxWidth: '90%',
             }}
           >
             {/* 헤더 라인 */}
             <div
               style={{
                 color: TG_ACCENT,
-                fontSize: 12,
+                fontSize: 20,
                 fontWeight: 800,
                 letterSpacing: 1,
-                marginBottom: 10,
+                marginBottom: 14,
                 textTransform: 'uppercase',
               }}
             >
@@ -172,26 +172,26 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
             </div>
 
             {/* 신호 정보 그리드 */}
-            <div style={{ display: 'grid', gap: 6 }}>
+            <div style={{ display: 'grid', gap: 10 }}>
               {[
                 ['카테고리', `${signal.categoryLabel} (${signal.category})`],
                 ['신호 강도', strengthLabel],
                 ['채널',     sourceLabel],
                 ['수신 시각', signal.timestamp],
               ].map(([label, value]) => (
-                <div key={label} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                <div key={label} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                   <span
                     style={{
                       color: TG_MUTED,
-                      fontSize: 12,
+                      fontSize: 20,
                       fontWeight: 600,
-                      width: 70,
+                      width: 90,
                       flexShrink: 0,
                     }}
                   >
                     {label}
                   </span>
-                  <span style={{ color: TG_TEXT, fontSize: 13, fontWeight: 700, lineHeight: 1.35 }}>
+                  <span style={{ color: TG_TEXT, fontSize: 22, fontWeight: 700, lineHeight: 1.4 }}>
                     {value}
                   </span>
                 </div>
@@ -199,17 +199,17 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
             </div>
 
             {/* 액션 버튼 (장식용) */}
-            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               {['직접 답변', '위임', '무시'].map((label) => (
                 <div
                   key={label}
                   style={{
                     flex: 1,
-                    padding: '6px 0',
+                    padding: '10px 0',
                     background: 'rgba(255,255,255,0.10)',
-                    borderRadius: 8,
+                    borderRadius: 10,
                     color: TG_TEXT,
-                    fontSize: 12,
+                    fontSize: 20,
                     fontWeight: 700,
                     textAlign: 'center',
                   }}
@@ -224,9 +224,9 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
           <div
             style={{
               color: TG_MUTED,
-              fontSize: 11,
-              marginTop: 4,
-              paddingLeft: 4,
+              fontSize: 18,
+              marginTop: 6,
+              paddingLeft: 6,
             }}
           >
             {signal.timestamp}
@@ -238,32 +238,32 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
       <div
         style={{
           background: TG_HEADER,
-          padding: '10px 14px',
+          padding: '14px 20px',
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 12,
           borderTop: '1px solid rgba(255,255,255,0.06)',
         }}
       >
         <div
           style={{
             flex: 1,
-            height: 36,
-            borderRadius: 18,
+            height: 44,
+            borderRadius: 22,
             background: TG_BG,
             border: '1px solid rgba(255,255,255,0.08)',
           }}
         />
         <div
           style={{
-            width: 36,
-            height: 36,
+            width: 44,
+            height: 44,
             borderRadius: '50%',
             background: TG_ACCENT,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 16,
+            fontSize: 20,
             color: '#FFFFFF',
           }}
         >
