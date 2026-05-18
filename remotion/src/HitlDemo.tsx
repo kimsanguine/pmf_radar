@@ -1,784 +1,703 @@
+/**
+ * HitlDemo.tsx — V2: HITL 검토 데모
+ * minimal big-text redesign (R11)
+ *
+ * 5 scenes × 6s = 30s (900 frames @30fps)
+ * 1920×1080, 배경 #0a0a14
+ *
+ * Scene 1 (0~180):   Channel Talk 메시지 — inq-029 privacy
+ * Scene 2 (180~360): PRIVACY / STRONG / GUARDRAIL 분류
+ * Scene 3 (360~540): 🛑 AUTO-REPLY 차단 + guardrail → HITL required
+ * Scene 4 (540~720): 📱 Telegram 알림 → 운영자
+ * Scene 5 (720~900): 운영자 직접 답변 + outro
+ */
+
 import React from 'react';
-import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
-import { KakaoFrame, KakaoMessage } from './shared/KakaoFrame';
-import { RadarBadge } from './shared/RadarBadge';
-import { TelegramFrame, TelegramSignal } from './shared/TelegramFrame';
+import {
+  AbsoluteFill,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from 'remotion';
 
-// ─── fixture: inq-029 (privacy / B2B) ─────────────────────────────────────
+// ── 팔레트 ─────────────────────────────────────────────────────────────────
+const BG      = '#0a0a14';
+const RED     = '#a6492a';
+const GREEN   = '#2D8A4F';
+const GOLD    = '#D6A238';
+const WHITE   = '#F5F3EE';
+const MUTED   = 'rgba(245,243,238,0.45)';
+const TG_BLUE = '#2AABEE';
+const CT_BLUE = '#1A9AD5';
 
-const INBOUND_MESSAGE: KakaoMessage = {
-  author: 'B2B 리드 — 사내 데이터 보안 검토',
-  text: '사내 CS 데이터를 넣어도 되는지 법무팀이 물어볼 것 같습니다. 데이터 삭제와 보관 정책이 있나요?',
-  time: '오후 3:42',
-  type: 'inbound',
-};
+// ── 타이포그래피 ────────────────────────────────────────────────────────────
+const SERIF = '"DM Serif Display", "Noto Serif KR", Georgia, serif';
+const MONO  = '"JetBrains Mono", "Noto Sans KR", monospace';
+const SANS  = '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif';
 
-const OUTBOUND_REPLY: KakaoMessage = {
-  author: '운영자 — kimsanguine (수동 검토)',
-  text: '실데이터 사용 전에는 익명화 샘플과 보관/삭제 기준부터 확인하겠습니다. 별도 보안 검토 자료를 메일로 전달드릴게요.',
-  time: '오후 3:48',
-  type: 'outbound',
-};
-
-const CHANNEL_LABEL = 'Channel Talk';
-
-const CLASSIFICATION = {
-  category: 'privacy',
-  categoryLabel: '개인정보',
-  strength: 'strong' as const,
-  color: '#2D8A4F',
-  decisionType: 'guardrail' as const,
-  source: 'mock_channel_talk',
-};
-
-const TELEGRAM_SIGNAL: TelegramSignal = {
-  category: 'privacy',
-  categoryLabel: '개인정보 / B2B 리드',
-  strength: 'strong',
-  channel: 'mock_channel_talk',
-  timestamp: '2026-05-18 오후 3:42',
-};
-
-// ─── 장면 프레임 구간 ────────────────────────────────────────────────────────
-// Scene 1: 0~180   (0~6s)   KakaoFrame intro
-// Scene 2: 180~330 (6~11s)  RadarBadge 분류
-// Scene 3: 330~480 (11~16s) Gate Block 차단
-// Scene 4: 480~660 (16~22s) TelegramFrame 알림
-// Scene 5: 660~900 (22~30s) KakaoFrame 수동 답변 + outro
-
-// ─── 색상 상수 ─────────────────────────────────────────────────────────────
-
-const BG_PAGE      = '#FAF8F4';
-const STOP_RED     = '#C8623A';
-const GREEN_ACCENT = '#2D8A4F';
-const TEXT_DARK    = '#1A1A1A';
-const TEXT_MUTED   = '#666666';
-const SUBTITLE_BG  = 'rgba(26,26,26,0.72)';
-
-// ─── 유틸: 장면 opacity 계산 (진입 12f fade-in, 퇴장 12f fade-out) ─────────
-
-function sceneOpacity(
-  frame: number,
-  startFrame: number,
-  endFrame: number,
-  fadeIn = 12,
-  fadeOut = 12,
-): number {
-  const inVal = fadeIn > 0
-    ? interpolate(frame, [startFrame, startFrame + fadeIn], [0, 1], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-      })
-    : (frame >= startFrame ? 1 : 0);
-  const outVal = fadeOut > 0
-    ? interpolate(frame, [endFrame - fadeOut, endFrame], [1, 0], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-      })
-    : (frame < endFrame ? 1 : 0);
-  return Math.min(inVal, outVal);
+// ── 유틸 ──────────────────────────────────────────────────────────────────
+function fadeIn(frame: number, start: number, dur = 18) {
+  return interpolate(frame, [start, start + dur], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
 }
 
-// ─── GateBlock (V2 전용 inline 컴포넌트) ──────────────────────────────────
-// Round 9: fontSize 와 element sizing 비례 정합 재구성
-//   - item row gap: 20→28 (fontSize 44 × 0.64)
-//   - item row padding: 20×28 → 22×32 (fontSize 44 × 0.5~0.73)
-//   - header emoji: 96 유지, 헤더 padding: 32×48 → 36×56 (emoji 비례)
-//   - STOP section padding: 32→40, gap: 24→32
-
-const CHECK_ITEMS: Array<{ label: string; pass: boolean }> = [
-  { label: 'strength ≥ medium',       pass: true  },
-  { label: 'category != unknown',      pass: true  },
-  { label: 'source is trusted',        pass: true  },
-  { label: 'reply template exists',    pass: true  },
-  { label: 'decisionType ≠ guardrail', pass: false },
-];
-
-const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
-  const panelOpacity = interpolate(revealAt, [0, 0.25], [0, 1], {
+function fadeOut(frame: number, end: number, dur = 18) {
+  return interpolate(frame, [end - dur, end], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const panelTranslateY = interpolate(revealAt, [0, 0.25], [30, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+}
 
-  const stopOpacity = interpolate(revealAt, [0.75, 1.0], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-  const stopScale = interpolate(revealAt, [0.75, 1.0], [0.6, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+function sceneOp(frame: number, s: number, e: number) {
+  return Math.min(fadeIn(frame, s), fadeOut(frame, e));
+}
 
-  return (
-    <div
-      style={{
-        opacity: panelOpacity,
-        transform: `translateY(${panelTranslateY}px)`,
-        width: '100%',
-        borderRadius: 22,
-        overflow: 'hidden',
-        boxShadow: '0 6px 24px rgba(0,0,0,0.14)',
-        fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
-        border: `2px solid ${STOP_RED}`,
-        background: '#FAFAFA',
-      }}
-    >
-      {/* 헤더 — padding 비례 확대 (emoji 96 기준 × 0.375 = 36px top/bottom) */}
-      <div
-        style={{
-          background: STOP_RED,
-          padding: '36px 56px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 28,
-        }}
-      >
-        <span style={{ fontSize: 88, flexShrink: 0 }}>🚫</span>
-        <div>
-          <div
-            style={{
-              color: '#FFFFFF',
-              fontSize: 34,
-              fontWeight: 700,
-              opacity: 0.85,
-              letterSpacing: 1,
-            }}
-          >
-            AUTO-REPLY GATE
-          </div>
-          <div style={{ color: '#FFFFFF', fontSize: 58, fontWeight: 900 }}>
-            5조건 검사
-          </div>
-        </div>
-        {/* HITL required 뱃지 — fontSize 44 × padding 16×36 (ratio 0.36~0.82) */}
-        <div
-          style={{
-            marginLeft: 'auto',
-            background: 'rgba(255,255,255,0.22)',
-            borderRadius: 32,
-            padding: '16px 36px',
-            color: '#FFFFFF',
-            fontSize: 44,
-            fontWeight: 800,
-            letterSpacing: 0.5,
-          }}
-        >
-          HITL required
-        </div>
-      </div>
-
-      {/* 조건 목록 — gap/padding 비례 조정 */}
-      <div style={{ padding: '24px 44px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {CHECK_ITEMS.map((item, idx) => {
-          const itemOpacity = interpolate(
-            revealAt,
-            [0.25 + idx * 0.1, 0.25 + idx * 0.1 + 0.12],
-            [0, 1],
-            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-          );
-          return (
-            <div
-              key={item.label}
-              style={{
-                opacity: itemOpacity,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 24,
-                // padding: fontSize 42 기준 × 0.52~0.76 = 22×32
-                padding: '22px 32px',
-                borderRadius: 14,
-                background: item.pass ? '#EBF7EF' : '#FDECEA',
-                border: `1px solid ${item.pass ? '#A8D9B8' : '#F0B0A0'}`,
-              }}
-            >
-              {/* emoji: fontSize 42로 맞춤 (row height 확보) */}
-              <span style={{ fontSize: 42, flexShrink: 0 }}>{item.pass ? '✅' : '❌'}</span>
-              <span
-                style={{
-                  fontFamily: 'monospace',
-                  // fontSize: 44 유지 (±20% 범위 내)
-                  fontSize: 42,
-                  fontWeight: 700,
-                  color: item.pass ? '#1A6634' : STOP_RED,
-                  flex: 1,
-                }}
-              >
-                {item.label}
-              </span>
-              <span
-                style={{
-                  fontSize: 38,
-                  fontWeight: 800,
-                  color: item.pass ? '#2D8A4F' : STOP_RED,
-                  letterSpacing: 0.5,
-                  // PASS/FAIL 레이블 최소 너비 보장
-                  minWidth: 180,
-                  textAlign: 'right',
-                }}
-              >
-                {item.pass ? 'PASS' : 'FAIL → STOP'}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* STOP 사인 — padding/gap 비례 재구성 */}
-      <div
-        style={{
-          opacity: stopOpacity,
-          transform: `scale(${stopScale})`,
-          margin: '0 44px 40px',
-          // padding: fontSize 54 기준 × 0.74 = 40px
-          padding: '36px',
-          borderRadius: 18,
-          background: STOP_RED,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 32,
-        }}
-      >
-        <span style={{ fontSize: 88, flexShrink: 0 }}>🛑</span>
-        <div>
-          <div
-            style={{
-              color: '#FFFFFF',
-              // fontSize: 56→54 (−3.6%, 범위 내)
-              fontSize: 54,
-              fontWeight: 900,
-              letterSpacing: 1,
-            }}
-          >
-            AUTO-REPLY 차단
-          </div>
-          <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 38, marginTop: 6 }}>
-            guardrail 감지 → 운영자 HITL 검토 필요
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ─── 자막 컴포넌트 ──────────────────────────────────────────────────────────
-
-const Subtitle: React.FC<{ text: string; opacity: number }> = ({ text, opacity }) => (
+// ── 자막 ──────────────────────────────────────────────────────────────────
+const Caption: React.FC<{ text: string; op: number }> = ({ text, op }) => (
   <div
     style={{
       position: 'absolute',
-      bottom: 48,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      opacity,
-      background: SUBTITLE_BG,
-      borderRadius: 10,
-      padding: '10px 28px',
-      color: '#FFFFFF',
-      fontSize: 52,
+      bottom: 60,
+      left: 0,
+      right: 0,
+      display: 'flex',
+      justifyContent: 'center',
+      opacity: op,
+      pointerEvents: 'none',
+    }}
+  >
+    <div
+      style={{
+        background: 'rgba(10,10,20,0.78)',
+        border: '1px solid rgba(245,243,238,0.12)',
+        borderRadius: 8,
+        padding: '14px 44px',
+        fontFamily: SANS,
+        fontSize: 38,
+        fontWeight: 600,
+        color: WHITE,
+        letterSpacing: 0.3,
+        backdropFilter: 'blur(6px)',
+      }}
+    >
+      {text}
+    </div>
+  </div>
+);
+
+const Label: React.FC<{ text: string; color?: string; op: number }> = ({
+  text,
+  color = 'rgba(245,243,238,0.18)',
+  op,
+}) => (
+  <div
+    style={{
+      opacity: op,
+      display: 'inline-flex',
+      alignItems: 'center',
+      background: color,
+      borderRadius: 6,
+      padding: '8px 24px',
+      fontFamily: MONO,
+      fontSize: 32,
       fontWeight: 700,
-      letterSpacing: 0.3,
-      whiteSpace: 'nowrap',
-      fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
-      backdropFilter: 'blur(4px)',
+      color: WHITE,
+      letterSpacing: 1.5,
+      textTransform: 'uppercase',
     }}
   >
     {text}
   </div>
 );
 
-// ─── Outro 레이어 (Scene 5 마지막 30f) ────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// Scene 1 (0~180): Channel Talk 메시지 도착
+// ══════════════════════════════════════════════════════════════════════════
+const Scene1: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const op = sceneOp(frame, 0, 180);
+  const lf = frame;
 
-const OutroOverlay: React.FC<{ opacity: number }> = ({ opacity }) => (
-  <div
-    style={{
-      position: 'absolute',
-      inset: 0,
-      opacity,
-      background: 'rgba(26,26,26,0.88)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'column',
-      gap: 24,
-      pointerEvents: 'none',
-    }}
-  >
-    <div
-      style={{
-        color: '#FFFFFF',
-        fontSize: 144,
-        fontWeight: 900,
-        letterSpacing: 0.5,
-        fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
-        textAlign: 'center',
-      }}
-    >
-      위험·고가치 CS 는 사람이 판단
-    </div>
-    <div
-      style={{
-        color: 'rgba(255,255,255,0.65)',
-        fontSize: 72,
-        fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
-        textAlign: 'center',
-      }}
-    >
-      PMF Signal Radar — HITL 검토 플로우
-    </div>
-  </div>
-);
-
-// ─── HitlDemo (메인) ────────────────────────────────────────────────────────
-
-export const HitlDemo: React.FC = () => {
-  const frame = useCurrentFrame();
-
-  // ── Scene 1: 0~180 KakaoFrame intro ──
-  const s1Op = sceneOpacity(frame, 0, 180);
-  const inboundReveal = interpolate(frame, [60, 90], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
+  const labelOp = fadeIn(lf, 15, 20);
+  const cardScale = spring({
+    frame: lf - 30,
+    fps,
+    config: { damping: 22, stiffness: 180 },
   });
-
-  // ── Scene 2: 180~330 RadarBadge 분류 ──
-  const s2Op = sceneOpacity(frame, 180, 330);
-  const badgeFadeIn = interpolate(frame, [192, 240], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // ── Scene 3: 330~480 GateBlock ──
-  const s3Op = sceneOpacity(frame, 330, 480);
-  const gateRevealAt = interpolate(frame, [342, 468], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-  const s3KakaoOp = interpolate(frame, [330, 360], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // ── Scene 4: 480~660 TelegramFrame ──
-  const s4Op = sceneOpacity(frame, 480, 660);
-  // Fix: 카드 등장을 앞당김 — [492,630]→[480,560] 으로 단축
-  // TelegramFrame 내부 cardOpacity = revealAt[0.4,0.8] 구간이므로
-  // 480+80*0.4=512f(17.1s) 부터 카드 등장, 560f(18.7s) 에 완전 표시
-  const tgRevealAt = interpolate(frame, [480, 560], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-  const s4BadgeFade = interpolate(frame, [480, 510], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // ── Scene 5: 660~900 수동 답변 ──
-  const s5Op = sceneOpacity(frame, 660, 900, 12, 0);
-  const outboundReveal = interpolate(frame, [780, 816], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-  const outroOp = interpolate(frame, [870, 900], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // ── 자막 ──
-  const sub1Op = sceneOpacity(frame, 0, 180, 8, 8);
-  const sub2Op = sceneOpacity(frame, 180, 330, 8, 8);
-  const sub3Op = sceneOpacity(frame, 330, 480, 8, 8);
-  const sub4Op = sceneOpacity(frame, 480, 660, 8, 8);
-  const sub5Op = sceneOpacity(frame, 660, 870, 8, 8);
+  const cardOp = fadeIn(lf, 30, 24);
+  const textOp  = fadeIn(lf, 55, 30);
 
   return (
     <AbsoluteFill
       style={{
-        background: BG_PAGE,
-        fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
-        color: TEXT_DARK,
-        overflow: 'hidden',
+        opacity: op,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 40,
       }}
     >
-      {/* ────────────────────────────────────────────────────────────────────
-          Scene 1: KakaoFrame intro (0~180)
-          Round 9: KakaoFrame wrapper 1400×720 유지
-          (말풍선 maxWidth=76%는 shared 내부 — wrapper 크기로 말풍선 여유 확보)
-      ──────────────────────────────────────────────────────────────────── */}
+      <Label
+        text="Channel Talk  ·  B2B 리드  ·  inq-029"
+        color={`${CT_BLUE}22`}
+        op={labelOp}
+      />
+
       <div
         style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: s1Op,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '60px 80px 120px',
+          opacity: cardOp,
+          transform: `scale(${cardScale})`,
+          background: '#0D1A26',
+          border: `2px solid ${CT_BLUE}44`,
+          borderRadius: 24,
+          padding: '56px 80px',
+          maxWidth: 1320,
+          width: '100%',
+          boxShadow: `0 24px 80px rgba(26,154,213,0.12)`,
+          position: 'relative',
         }}
       >
-        {/* 배경 라벨 */}
         <div
           style={{
             position: 'absolute',
-            top: 40,
-            left: 120,
-            right: 120,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 5,
+            background: `linear-gradient(90deg, ${CT_BLUE}, transparent)`,
+            borderRadius: '24px 24px 0 0',
+          }}
+        />
+        <div
+          style={{
+            opacity: textOp,
+            fontFamily: SANS,
+            fontSize: 64,
+            fontWeight: 500,
+            color: WHITE,
+            lineHeight: 1.6,
+            letterSpacing: -0.2,
           }}
         >
-          <div
-            style={{
-              background: '#2D8A4F18',
-              border: '1px solid #2D8A4F40',
-              borderRadius: 8,
-              // padding: fontSize 48 기준 × 0.21~0.42 = 10×20 (기존 유지)
-              padding: '10px 20px',
-              fontSize: 48,
-              fontWeight: 700,
-              color: GREEN_ACCENT,
-            }}
-          >
-            Channel Talk · B2B 리드 인바운드
-          </div>
-          <div
-            style={{
-              background: '#F5F5F5',
-              borderRadius: 8,
-              padding: '10px 20px',
-              fontSize: 44,
-              color: TEXT_MUTED,
-              fontWeight: 600,
-            }}
-          >
-            inq-029
-          </div>
+          사내 CS 데이터를 넣어도 되는지 법무팀이 물어볼 것 같습니다.
+          <br />
+          데이터 삭제와 보관 정책이 있나요?
         </div>
-
-        {/* KakaoFrame wrapper: 1400×720 — 말풍선 여유 충분 */}
-        <div style={{ width: 1400, height: 720 }}>
-          <KakaoFrame
-            channelLabel={CHANNEL_LABEL}
-            messages={[INBOUND_MESSAGE]}
-            revealUpTo={inboundReveal}
-          />
+        <div
+          style={{
+            opacity: textOp * 0.5,
+            marginTop: 24,
+            fontFamily: SANS,
+            fontSize: 34,
+            color: `${CT_BLUE}99`,
+            textAlign: 'right',
+          }}
+        >
+          오후 3:42
         </div>
       </div>
 
-      {/* ────────────────────────────────────────────────────────────────────
-          Scene 2: RadarBadge 분류 (180~330)
-          Round 9: RadarBadge wrapper 1100→1000 (categoryLabel 72px 기준
-          내부 상단 padding 18×24 + emoji 72 + text 영역 여유 확보)
-          분류 결과 카드: padding 비례 확대 (value fontSize 52 기준 × 0.5~0.62)
-      ──────────────────────────────────────────────────────────────────── */}
+      <Caption text="Channel Talk 로 B2B 리드 문의 도착" op={sceneOp(frame, 15, 165)} />
+    </AbsoluteFill>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// Scene 2 (180~360): 분류 결과 — PRIVACY / STRONG / GUARDRAIL
+// ══════════════════════════════════════════════════════════════════════════
+const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
+  const op = sceneOp(frame, 180, 360);
+  const lf = frame - 180;
+
+  const labelOp = fadeIn(lf, 10, 18);
+
+  const words = [
+    { text: 'PRIVACY',   color: GREEN, delay: 15 },
+    { text: 'STRONG',    color: GOLD,  delay: 45 },
+    { text: 'GUARDRAIL', color: RED,   delay: 75 },
+  ];
+
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: op,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 0,
+      }}
+    >
+      <Label text="PMF Radar — 자동 분류 결과" op={labelOp} />
+      <div style={{ height: 48 }} />
+
+      {words.map(({ text, color, delay }) => {
+        const wordOp = fadeIn(lf, delay, 20);
+        const wordY  = interpolate(lf, [delay, delay + 20], [40, 0], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        });
+        return (
+          <div
+            key={text}
+            style={{
+              opacity: wordOp,
+              transform: `translateY(${wordY}px)`,
+              fontFamily: SERIF,
+              fontSize: text === 'GUARDRAIL' ? 120 : 160,
+              fontWeight: 400,
+              color,
+              lineHeight: 1.05,
+              letterSpacing: -2,
+            }}
+          >
+            {text}
+          </div>
+        );
+      })}
+
+      <Caption text="PMF Radar 분류: privacy / strong / guardrail" op={sceneOp(frame, 195, 345)} />
+    </AbsoluteFill>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// Scene 3 (360~540): 🛑 AUTO-REPLY 차단
+// ══════════════════════════════════════════════════════════════════════════
+const Scene3: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const op = sceneOp(frame, 360, 540);
+  const lf = frame - 360;
+
+  const stopScale = spring({
+    frame: lf - 15,
+    fps,
+    config: { damping: 18, stiffness: 200 },
+  });
+  const stopOp = fadeIn(lf, 15, 20);
+  const subOp  = fadeIn(lf, 50, 25);
+  const hitlOp = fadeIn(lf, 85, 25);
+
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: op,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 0,
+      }}
+    >
+      {/* STOP 아이콘 */}
       <div
         style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: s2Op,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: 44,
-          padding: '60px 120px',
+          opacity: stopOp,
+          transform: `scale(${stopScale})`,
+          fontSize: 160,
+          lineHeight: 1,
+          marginBottom: 32,
         }}
       >
-        {/* 상단 분류 타이틀 */}
+        🛑
+      </div>
+
+      {/* 메인 메시지 */}
+      <div
+        style={{
+          opacity: stopOp,
+          fontFamily: SERIF,
+          fontSize: 120,
+          fontWeight: 400,
+          color: RED,
+          lineHeight: 1.1,
+          letterSpacing: -1,
+          textAlign: 'center',
+        }}
+      >
+        AUTO-REPLY 차단
+      </div>
+
+      <div style={{ height: 40 }} />
+
+      {/* 서브 — guardrail 이유 */}
+      <div
+        style={{
+          opacity: subOp,
+          fontFamily: MONO,
+          fontSize: 44,
+          fontWeight: 700,
+          color: MUTED,
+          letterSpacing: 1,
+          textAlign: 'center',
+        }}
+      >
+        decisionType = guardrail → 자동 응답 금지
+      </div>
+
+      <div style={{ height: 48 }} />
+
+      {/* HITL required 뱃지 */}
+      <div
+        style={{
+          opacity: hitlOp,
+          background: `${RED}18`,
+          border: `2px solid ${RED}55`,
+          borderRadius: 12,
+          padding: '20px 56px',
+          fontFamily: MONO,
+          fontSize: 48,
+          fontWeight: 900,
+          color: RED,
+          letterSpacing: 2,
+          textTransform: 'uppercase',
+        }}
+      >
+        HITL required
+      </div>
+
+      <Caption text="Auto-Reply Gate 차단 → HITL required" op={sceneOp(frame, 375, 525)} />
+    </AbsoluteFill>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// Scene 4 (540~720): 📱 Telegram 알림 → 운영자
+// ══════════════════════════════════════════════════════════════════════════
+const Scene4: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const op = sceneOp(frame, 540, 720);
+  const lf = frame - 540;
+
+  const labelOp = fadeIn(lf, 10, 18);
+
+  const cardScale = spring({
+    frame: lf - 25,
+    fps,
+    config: { damping: 22, stiffness: 160 },
+  });
+  const cardOp  = fadeIn(lf, 25, 24);
+  const arrowOp = fadeIn(lf, 65, 25);
+  const targetOp = fadeIn(lf, 90, 25);
+
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: op,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 40,
+      }}
+    >
+      <Label
+        text="Telegram 알림 전송"
+        color={`${TG_BLUE}22`}
+        op={labelOp}
+      />
+
+      {/* Telegram 카드 */}
+      <div
+        style={{
+          opacity: cardOp,
+          transform: `scale(${cardScale})`,
+          background: '#0D1F2E',
+          border: `2px solid ${TG_BLUE}44`,
+          borderRadius: 24,
+          padding: '48px 72px',
+          maxWidth: 1100,
+          width: '100%',
+          boxShadow: `0 24px 80px rgba(42,171,238,0.12)`,
+          position: 'relative',
+        }}
+      >
         <div
           style={{
-            fontSize: 64,
-            fontWeight: 700,
-            color: TEXT_MUTED,
-            letterSpacing: 0.3,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 4,
+            background: `linear-gradient(90deg, ${TG_BLUE}, transparent)`,
+            borderRadius: '24px 24px 0 0',
           }}
-        >
-          PMF Radar 자동 분류 결과
-        </div>
-
-        {/* RadarBadge wrapper: 너비 1000으로 조정 (categoryLabel 72px 내부 padding 비례) */}
-        <div style={{ width: 1000 }}>
-          <RadarBadge
-            category={CLASSIFICATION.category}
-            categoryLabel={CLASSIFICATION.categoryLabel}
-            strength={CLASSIFICATION.strength}
-            color={CLASSIFICATION.color}
-            decisionType={CLASSIFICATION.decisionType}
-            source={CLASSIFICATION.source}
-            fadeIn={badgeFadeIn}
-          />
-        </div>
-
-        {/* 분류 결과 설명 카드 — padding/gap 비례 재구성 */}
+        />
+        {/* 헤더 */}
         <div
           style={{
             display: 'flex',
-            gap: 28,
-            opacity: interpolate(frame, [240, 270], [0, 1], {
-              extrapolateLeft: 'clamp',
-              extrapolateRight: 'clamp',
-            }),
+            alignItems: 'center',
+            gap: 20,
+            marginBottom: 32,
+          }}
+        >
+          <span style={{ fontSize: 72 }}>📱</span>
+          <div>
+            <div
+              style={{
+                fontFamily: MONO,
+                fontSize: 36,
+                fontWeight: 700,
+                color: TG_BLUE,
+                letterSpacing: 1,
+              }}
+            >
+              PMF Radar P2
+            </div>
+            <div
+              style={{
+                fontFamily: SANS,
+                fontSize: 32,
+                color: MUTED,
+                marginTop: 4,
+              }}
+            >
+              Bot  →  kimsanguine (운영자)
+            </div>
+          </div>
+        </div>
+
+        {/* 알림 내용 */}
+        <div
+          style={{
+            background: 'rgba(42,171,238,0.06)',
+            border: `1px solid ${TG_BLUE}25`,
+            borderRadius: 14,
+            padding: '28px 36px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 14,
           }}
         >
           {[
-            { label: '카테고리', value: 'privacy', color: GREEN_ACCENT },
-            { label: '신호 강도', value: 'strong',  color: GREEN_ACCENT },
-            { label: '결정 유형', value: 'guardrail', color: STOP_RED },
+            { label: 'category',    value: 'privacy',         color: GREEN },
+            { label: 'strength',    value: 'strong',           color: GOLD  },
+            { label: 'decision',    value: 'guardrail → HITL', color: RED   },
+            { label: 'channel',     value: 'Channel Talk',     color: TG_BLUE },
           ].map(({ label, value, color }) => (
             <div
               key={label}
               style={{
-                background: '#FFFFFF',
-                border: `1px solid ${color}40`,
-                borderRadius: 16,
-                // padding: label 40 / value 52 기준 → 20×40 (value × 0.38~0.77)
-                padding: '20px 40px',
-                textAlign: 'center',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                // 최소 너비: value 텍스트 길이 보장 (guardrail = 8자 × 52 × 0.55 ≈ 228px)
-                minWidth: 280,
+                display: 'flex',
+                alignItems: 'baseline',
+                gap: 16,
               }}
             >
-              <div style={{ fontSize: 38, color: TEXT_MUTED, fontWeight: 600, marginBottom: 10 }}>
+              <span
+                style={{
+                  fontFamily: MONO,
+                  fontSize: 34,
+                  fontWeight: 700,
+                  color: MUTED,
+                  width: 160,
+                  flexShrink: 0,
+                }}
+              >
                 {label}
-              </div>
-              <div style={{ fontSize: 52, fontWeight: 900, color, fontFamily: 'monospace' }}>
+              </span>
+              <span
+                style={{
+                  fontFamily: MONO,
+                  fontSize: 40,
+                  fontWeight: 900,
+                  color,
+                }}
+              >
                 {value}
-              </div>
+              </span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ────────────────────────────────────────────────────────────────────
-          Scene 3: Gate Block (330~480)
-          Round 9: 좌측 소형 KakaoFrame 너비 560→500 (GateBlock 영역 확보)
-          GateBlock 항목 비례는 GateBlock 컴포넌트 내부에서 처리
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* → 운영자 */}
       <div
         style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: s3Op,
+          opacity: arrowOp,
           display: 'flex',
           alignItems: 'center',
-          gap: 36,
-          padding: '56px 56px',
+          gap: 24,
         }}
       >
-        {/* 좌측 소형 KakaoFrame — 높이도 fontSize 48(내부) 기준 비례 */}
-        <div style={{ width: 500, height: 560, opacity: s3KakaoOp, flexShrink: 0 }}>
-          <KakaoFrame
-            channelLabel={CHANNEL_LABEL}
-            messages={[INBOUND_MESSAGE]}
-            revealUpTo={1}
-          />
-        </div>
-
-        {/* 화살표 */}
         <div
           style={{
-            opacity: s3KakaoOp,
-            fontSize: 72,
-            color: STOP_RED,
-            fontWeight: 900,
-            flexShrink: 0,
+            width: 120,
+            height: 2,
+            background: `linear-gradient(90deg, ${TG_BLUE}, transparent)`,
+            borderRadius: 2,
           }}
-        >
-          →
-        </div>
-
-        {/* 우측 GateBlock */}
-        <div style={{ flex: 1 }}>
-          <GateBlock revealAt={gateRevealAt} />
-        </div>
-      </div>
-
-      {/* ────────────────────────────────────────────────────────────────────
-          Scene 4: TelegramFrame 알림 (480~660)
-          Round 9: TelegramFrame 내부 label width=90 이 label fontSize=40 대비
-          좁음 (수신 시각 4자 × 40px ≈ 160px 필요) → shared 건드릴 수 없으므로
-          TelegramFrame wrapper 를 scale(1.1) 로 확대해 내부 grid 비례 보정.
-          좌측 RadarBadge wrapper 너비 520→480 으로 조정.
-      ──────────────────────────────────────────────────────────────────── */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: s4Op,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 32,
-          padding: '60px 60px',
-        }}
-      >
-        {/* 좌측 소형 RadarBadge */}
-        <div style={{ width: 480, flexShrink: 0 }}>
-          <div style={{ marginBottom: 16, opacity: s4BadgeFade }}>
-            <div
-              style={{
-                fontSize: 42,
-                color: TEXT_MUTED,
-                fontWeight: 600,
-                marginBottom: 14,
-                letterSpacing: 0.3,
-              }}
-            >
-              분류 결과 (HITL 트리거)
-            </div>
-            <RadarBadge
-              category={CLASSIFICATION.category}
-              categoryLabel={CLASSIFICATION.categoryLabel}
-              strength={CLASSIFICATION.strength}
-              color={CLASSIFICATION.color}
-              decisionType={CLASSIFICATION.decisionType}
-              source={CLASSIFICATION.source}
-              fadeIn={s4BadgeFade}
-            />
-          </div>
-
-          {/* HITL 플로우 화살표 */}
-          <div
-            style={{
-              opacity: interpolate(frame, [510, 540], [0, 1], {
-                extrapolateLeft: 'clamp',
-                extrapolateRight: 'clamp',
-              }),
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 8,
-              padding: '18px 0',
-            }}
-          >
-            <div style={{ width: 2, height: 36, background: STOP_RED, borderRadius: 2 }} />
-            <div style={{ fontSize: 40, color: STOP_RED }}>▼</div>
-            <div
-              style={{
-                background: STOP_RED + '18',
-                border: `1px solid ${STOP_RED}40`,
-                borderRadius: 12,
-                // padding: fontSize 38 기준 × 0.42~0.74 = 16×28
-                padding: '16px 28px',
-                fontSize: 38,
-                fontWeight: 700,
-                color: STOP_RED,
-                textAlign: 'center',
-              }}
-            >
-              guardrail → HITL required<br />운영자 Telegram 알림 전송
-            </div>
-          </div>
-        </div>
-
-        {/* 화살표 */}
-        <div style={{ fontSize: 72, color: '#5288C1', fontWeight: 900, flexShrink: 0, opacity: s4BadgeFade }}>
-          →
-        </div>
-
-        {/* 우측 TelegramFrame — height 860으로 확대 (내용물 총 높이 ~800px 수용) */}
-        <div style={{ flex: 1, height: 860, position: 'relative' }}>
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              // TelegramFrame 내부 label width=90 이 fontSize=40 대비 좁으므로
-              // wrapper 를 scale 확대해 grid cell 여유 확보
-              transform: 'scale(1.0)',
-              transformOrigin: 'center center',
-            }}
-          >
-            <TelegramFrame
-              botName="PMF Radar P2"
-              chatLabel="kimsanguine (운영자)"
-              signal={TELEGRAM_SIGNAL}
-              revealAt={tgRevealAt}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* ────────────────────────────────────────────────────────────────────
-          Scene 5: KakaoFrame 수동 답변 (660~900)
-          Round 9: KakaoFrame wrapper 1400×720 유지
-      ──────────────────────────────────────────────────────────────────── */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: s5Op,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: 28,
-          padding: '60px 60px',
-        }}
-      >
-        {/* 상단 운영자 라벨 */}
+        />
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 14,
-            opacity: interpolate(frame, [660, 690], [0, 1], {
-              extrapolateLeft: 'clamp',
-              extrapolateRight: 'clamp',
-            }),
+            opacity: targetOp,
+            fontFamily: SANS,
+            fontSize: 48,
+            fontWeight: 700,
+            color: WHITE,
           }}
         >
-          <div
-            style={{
-              background: '#2D8A4F18',
-              border: '1px solid #2D8A4F40',
-              borderRadius: 8,
-              padding: '10px 20px',
-              fontSize: 48,
-              fontWeight: 700,
-              color: GREEN_ACCENT,
-            }}
-          >
-            운영자 직접 검토 · 수동 답변
-          </div>
-          <div
-            style={{
-              background: '#F5F5F5',
-              borderRadius: 8,
-              padding: '10px 20px',
-              fontSize: 44,
-              color: TEXT_MUTED,
-              fontWeight: 600,
-            }}
-          >
-            kimsanguine
-          </div>
-        </div>
-
-        <div style={{ width: 1400, height: 720 }}>
-          <KakaoFrame
-            channelLabel={CHANNEL_LABEL}
-            messages={[INBOUND_MESSAGE, OUTBOUND_REPLY]}
-            revealUpTo={1 + outboundReveal}
-          />
+          운영자 검토 대기 중
         </div>
       </div>
 
-      {/* Outro 오버레이 (870~900) */}
-      <OutroOverlay opacity={outroOp} />
+      <Caption text="운영자 Telegram 으로 알림 전송" op={sceneOp(frame, 555, 705)} />
+    </AbsoluteFill>
+  );
+};
 
-      {/* ────────────────────────────────────────────────────────────────────
-          자막 (하단 고정, 장면별 fade)
-      ──────────────────────────────────────────────────────────────────── */}
-      <Subtitle text="Channel Talk 로 B2B 리드 문의 도착" opacity={sub1Op} />
-      <Subtitle text="PMF Radar 분류: privacy / strong / guardrail" opacity={sub2Op} />
-      <Subtitle text="Auto-Reply Gate 차단 → HITL required" opacity={sub3Op} />
-      <Subtitle text="운영자 Telegram 으로 알림 전송" opacity={sub4Op} />
-      <Subtitle text="운영자가 직접 검토 후 응답" opacity={sub5Op} />
+// ══════════════════════════════════════════════════════════════════════════
+// Scene 5 (720~900): 운영자 직접 답변 + outro
+// ══════════════════════════════════════════════════════════════════════════
+const Scene5: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const op = sceneOp(frame, 720, 900);
+  const lf = frame - 720;
+
+  const lineScale = spring({
+    frame: lf - 8,
+    fps,
+    config: { damping: 30, stiffness: 100 },
+  });
+  const topOp = fadeIn(lf, 20, 25);
+  const topY  = interpolate(lf, [20, 45], [30, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const botOp = fadeIn(lf, 55, 25);
+  const botY  = interpolate(lf, [55, 80], [20, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const tagOp = fadeIn(lf, 100, 25);
+
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: op,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 0,
+      }}
+    >
+      {/* 구분선 */}
+      <div
+        style={{
+          width: `${lineScale * 200}px`,
+          height: 3,
+          background: GREEN,
+          borderRadius: 2,
+          marginBottom: 56,
+        }}
+      />
+
+      <div
+        style={{
+          opacity: topOp,
+          transform: `translateY(${topY}px)`,
+          fontFamily: SERIF,
+          fontSize: 130,
+          fontWeight: 400,
+          color: WHITE,
+          lineHeight: 1.1,
+          letterSpacing: -2,
+          textAlign: 'center',
+        }}
+      >
+        위험·고가치 CS 는
+      </div>
+
+      <div
+        style={{
+          opacity: botOp,
+          transform: `translateY(${botY}px)`,
+          fontFamily: SERIF,
+          fontSize: 130,
+          fontWeight: 400,
+          color: GREEN,
+          lineHeight: 1.1,
+          letterSpacing: -2,
+          textAlign: 'center',
+        }}
+      >
+        사람이 판단
+      </div>
+
+      <div style={{ height: 64 }} />
+
+      <div
+        style={{
+          opacity: botOp * 0.7,
+          fontFamily: SANS,
+          fontSize: 44,
+          fontWeight: 400,
+          color: MUTED,
+          textAlign: 'center',
+          lineHeight: 1.7,
+          maxWidth: 960,
+        }}
+      >
+        운영자 직접 검토 후 맞춤 응답
+        <br />
+        guardrail 감지 시 AI 는 개입하지 않는다
+      </div>
+
+      <div style={{ height: 56 }} />
+
+      <div
+        style={{
+          opacity: tagOp,
+          fontFamily: MONO,
+          fontSize: 36,
+          fontWeight: 700,
+          color: MUTED,
+          letterSpacing: 2,
+          textTransform: 'uppercase',
+        }}
+      >
+        hplan · PMF Signal Radar — HITL 검토 플로우
+      </div>
+
+      <Caption text="운영자가 직접 검토 후 응답" op={sceneOp(frame, 735, 885)} />
+    </AbsoluteFill>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// HitlDemo — 메인
+// ══════════════════════════════════════════════════════════════════════════
+export const HitlDemo: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  return (
+    <AbsoluteFill
+      style={{
+        background: BG,
+        fontFamily: SANS,
+        overflow: 'hidden',
+      }}
+    >
+      {/* grain overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage:
+            'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.04\'/%3E%3C/svg%3E")',
+          backgroundSize: '200px 200px',
+          pointerEvents: 'none',
+          opacity: 0.5,
+        }}
+      />
+
+      {frame < 195 && <Scene1 frame={frame} fps={fps} />}
+      {frame >= 165 && frame < 375 && <Scene2 frame={frame} />}
+      {frame >= 345 && frame < 555 && <Scene3 frame={frame} fps={fps} />}
+      {frame >= 525 && frame < 735 && <Scene4 frame={frame} fps={fps} />}
+      {frame >= 705 && <Scene5 frame={frame} fps={fps} />}
     </AbsoluteFill>
   );
 };
