@@ -7,9 +7,8 @@ compatibility_flags = ["nodejs_compat"]
 # habix.ai 기존 Cloudflare 계정에 배포
 
 [vars]
-# SNS Topic ARN (서울/도쿄 리전 확인 후 실제 값으로 교체)
-# 예: arn:aws:sns:ap-northeast-1:123456789012:habix-ses-inbound
-SNS_TOPIC_ARN = "arn:aws:sns:ap-northeast-1:ACCOUNT_ID:habix-ses-inbound"
+# SNS Topic ARN — pmf-radar-email-inbound (Tokyo 리전)
+SNS_TOPIC_ARN = "arn:aws:sns:ap-northeast-1:576381986890:pmf-radar-email-inbound"
 
 # Supabase URL (공개값, secret 아님 — ypbsgiqyeztzdhtaedfi 신규 신설 P2 전용 project)
 SUPABASE_URL = "https://ypbsgiqyeztzdhtaedfi.supabase.co"

@@ -8,8 +8,18 @@
 #   이 파일은 git 에 커밋되어도 안전한 placeholder 만 포함한다.
 # =============================================================================
 
-name = "cs-inbox-pmf-radar-lab"
-main = "workers/src/index.ts"
+# =============================================================================
+# ⚠️ TODO: 메인 routing worker 미구현 — sub 3개로 production 운영 중
+# (workers/email-inbound, channel-talk, auto-reply)
+#
+# 메인 worker 신규 구현 시 workers/src/index.ts 작성 후 아래 주석 해제:
+#   - inbox.habix.ai/* 라우팅
+#   - service binding 으로 sub worker dispatch
+#   - [triggers].crons 활성화 (retention audit + pending batch flush)
+# =============================================================================
+
+# name = "cs-inbox-pmf-radar-lab"
+# main = "workers/src/index.ts"
 compatibility_date = "2024-11-01"
 
 # account_id 는 .dev.vars 또는 CI/CD 환경변수로 주입
@@ -73,12 +83,12 @@ AUTO_REPLY_DWELL_SECONDS = "30"
 # 이메일 인바운드 Worker (Phase 3)
 [[services]]
 binding = "EMAIL_INBOUND"
-service = "cs-email-inbound"
+service = "email-inbound"
 
 # Channel Talk receiver Worker (Phase 3)
 [[services]]
 binding = "CHANNEL_TALK"
-service = "cs-channel-talk"
+service = "channel-talk-inbound"
 
 # ---------------------------------------------------------------------------
 # Cron Triggers (Phase 3 — retention cleanup + Telegram batch flush)
