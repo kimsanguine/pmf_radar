@@ -18,7 +18,7 @@
  */
 
 import { parseCsv, parseXlsx } from "./parsers";
-import { normalizeRows } from "./normalize";
+import { normalizeRows, toInsertPair } from "./normalize";
 
 export interface Env {
   SUPABASE_URL: string;
@@ -171,28 +171,66 @@ function rowFromJson(obj: unknown): Record<string, string> {
   return out;
 }
 
+/**
+ * normalized rows → webhook_inbox + raw_payload_retention 두 테이블에 INSERT.
+ *
+ * 처리 순서:
+ *   1. toInsertPair 로 schema 정합 payload 생성 (id 제거, masked_message 이름 변환 등)
+ *   2. webhook_inbox 배치 INSERT (UNIQUE(source, message_id) 충돌 시 on_conflict=ignore)
+ *   3. raw_payload_retention 배치 INSERT (성공 건만 — 실패해도 inbox 롤백 안 함)
+ *
+ * on_conflict: Prefer: resolution=ignore-duplicates 사용 → UNIQUE 충돌 시 skip, 오류 아님.
+ */
 async function insertToSupabase(
   rows: ReturnType<typeof normalizeRows>,
   env: Env
 ): Promise<number> {
-  const response = await fetch(`${env.SUPABASE_URL}/rest/v1/webhook_inbox`, {
+  const pairs = rows.map(toInsertPair);
+  const inboxRows = pairs.map((p) => p.inbox);
+  const rawPayloadRows = pairs.map((p) => p.rawPayload);
+
+  // webhook_inbox INSERT
+  const inboxResp = await fetch(`${env.SUPABASE_URL}/rest/v1/webhook_inbox`, {
     method: "POST",
     headers: {
       apikey: env.SUPABASE_SERVICE_ROLE_KEY,
       Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
       "Content-Type": "application/json",
-      Prefer: "return=representation"
+      Prefer: "return=representation,resolution=ignore-duplicates",
     },
-    body: JSON.stringify(rows)
+    body: JSON.stringify(inboxRows),
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Supabase insert failed: ${response.status} ${errorText}`);
+  if (!inboxResp.ok) {
+    const errorText = await inboxResp.text();
+    throw new Error(`Supabase webhook_inbox INSERT 실패: ${inboxResp.status} ${errorText}`);
   }
 
-  const inserted = await response.json<unknown[]>();
-  return Array.isArray(inserted) ? inserted.length : 0;
+  const inserted = await inboxResp.json<unknown[]>();
+  const insertedCount = Array.isArray(inserted) ? inserted.length : 0;
+
+  // raw_payload_retention INSERT (실패는 경고만 — inbox 데이터 손실 방지 우선)
+  if (rawPayloadRows.length > 0) {
+    const rawResp = await fetch(`${env.SUPABASE_URL}/rest/v1/raw_payload_retention`, {
+      method: "POST",
+      headers: {
+        apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(rawPayloadRows),
+    });
+
+    if (!rawResp.ok) {
+      const rawErrText = await rawResp.text();
+      console.warn(
+        `[data-ingest] raw_payload_retention INSERT 경고: ${rawResp.status} ${rawErrText}`
+      );
+    }
+  }
+
+  return insertedCount;
 }
 
 function generateUploadId(): string {
