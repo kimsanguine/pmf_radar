@@ -73,14 +73,14 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
               borderRadius: 8,
               padding: '6px 14px',
               color: '#FFFFFF',
-              fontSize: 22,
+              fontSize: 44,
               fontWeight: 800,
               letterSpacing: 0.3,
             }}
           >
             {PRIORITY_LABEL[priority]}
           </div>
-          <span style={{ color: color, fontSize: 32, fontWeight: 900 }}>
+          <span style={{ color: color, fontSize: 64, fontWeight: 900 }}>
             {clusterName}
           </span>
         </div>
@@ -88,7 +88,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
         <span
           style={{
             fontFamily: 'monospace',
-            fontSize: 18,
+            fontSize: 36,
             fontWeight: 700,
             color: '#888888',
             letterSpacing: 1,
@@ -104,7 +104,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
         <div>
           <div
             style={{
-              fontSize: 18,
+              fontSize: 36,
               fontWeight: 800,
               color: color,
               letterSpacing: 0.8,
@@ -114,7 +114,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
           >
             Decision
           </div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A', lineHeight: 1.45 }}>
+          <div style={{ fontSize: 44, fontWeight: 700, color: '#1A1A1A', lineHeight: 1.45 }}>
             {decision}
           </div>
         </div>
@@ -131,7 +131,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
           >
             <div
               style={{
-                fontSize: 18,
+                fontSize: 36,
                 fontWeight: 800,
                 color: '#2D8A4F',
                 letterSpacing: 0.8,
@@ -140,7 +140,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
             >
               PUSH
             </div>
-            <div style={{ fontSize: 20, fontWeight: 600, color: '#1A4A2A', lineHeight: 1.4 }}>
+            <div style={{ fontSize: 40, fontWeight: 600, color: '#1A4A2A', lineHeight: 1.4 }}>
               {push}
             </div>
           </div>
@@ -156,7 +156,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
           >
             <div
               style={{
-                fontSize: 18,
+                fontSize: 36,
                 fontWeight: 800,
                 color: '#C8623A',
                 letterSpacing: 0.8,
@@ -165,7 +165,7 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
             >
               ANXIETY
             </div>
-            <div style={{ fontSize: 20, fontWeight: 600, color: '#4A1A0A', lineHeight: 1.4 }}>
+            <div style={{ fontSize: 40, fontWeight: 600, color: '#4A1A0A', lineHeight: 1.4 }}>
               {anxiety}
             </div>
           </div>

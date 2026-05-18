@@ -103,7 +103,7 @@ export const BubbleMap: React.FC<BubbleMapProps> = ({
               y={-8}
               textAnchor="middle"
               fill="#FFFFFF"
-              fontSize={Math.max(20, baseR * 0.52)}
+              fontSize={Math.max(40, baseR * 1.04)}
               fontWeight="800"
               fontFamily="Apple SD Gothic Neo, Noto Sans KR, sans-serif"
             >
@@ -116,7 +116,7 @@ export const BubbleMap: React.FC<BubbleMapProps> = ({
               y={18}
               textAnchor="middle"
               fill="rgba(255,255,255,0.85)"
-              fontSize={Math.max(16, baseR * 0.42)}
+              fontSize={Math.max(32, baseR * 0.84)}
               fontWeight="700"
               fontFamily="monospace"
             >

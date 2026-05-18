@@ -99,17 +99,17 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 28,
+            fontSize: 56,
             flexShrink: 0,
           }}
         >
           🤖
         </div>
         <div>
-          <div style={{ color: TG_TEXT, fontWeight: 700, fontSize: 24 }}>
+          <div style={{ color: TG_TEXT, fontWeight: 700, fontSize: 48 }}>
             {botName}
           </div>
-          <div style={{ color: TG_MUTED, fontSize: 18, marginTop: 2 }}>
+          <div style={{ color: TG_MUTED, fontSize: 36, marginTop: 2 }}>
             봇 · {chatLabel}
           </div>
         </div>
@@ -144,7 +144,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
           }}
         >
           {/* 봇 라벨 */}
-          <div style={{ color: TG_ACCENT, fontSize: 20, fontWeight: 700, marginBottom: 6, paddingLeft: 6 }}>
+          <div style={{ color: TG_ACCENT, fontSize: 40, fontWeight: 700, marginBottom: 6, paddingLeft: 6 }}>
             {botName}
           </div>
 
@@ -161,7 +161,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
             <div
               style={{
                 color: TG_ACCENT,
-                fontSize: 20,
+                fontSize: 40,
                 fontWeight: 800,
                 letterSpacing: 1,
                 marginBottom: 14,
@@ -183,7 +183,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
                   <span
                     style={{
                       color: TG_MUTED,
-                      fontSize: 20,
+                      fontSize: 40,
                       fontWeight: 600,
                       width: 90,
                       flexShrink: 0,
@@ -191,7 +191,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
                   >
                     {label}
                   </span>
-                  <span style={{ color: TG_TEXT, fontSize: 22, fontWeight: 700, lineHeight: 1.4 }}>
+                  <span style={{ color: TG_TEXT, fontSize: 44, fontWeight: 700, lineHeight: 1.4 }}>
                     {value}
                   </span>
                 </div>
@@ -209,7 +209,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
                     background: 'rgba(255,255,255,0.10)',
                     borderRadius: 10,
                     color: TG_TEXT,
-                    fontSize: 20,
+                    fontSize: 40,
                     fontWeight: 700,
                     textAlign: 'center',
                   }}
@@ -224,7 +224,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
           <div
             style={{
               color: TG_MUTED,
-              fontSize: 18,
+              fontSize: 36,
               marginTop: 6,
               paddingLeft: 6,
             }}
@@ -263,7 +263,7 @@ export const TelegramFrame: React.FC<TelegramFrameProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 20,
+            fontSize: 40,
             color: '#FFFFFF',
           }}
         >

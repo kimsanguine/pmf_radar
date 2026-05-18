@@ -136,12 +136,12 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
           gap: 14,
         }}
       >
-        <span style={{ fontSize: 32 }}>🚫</span>
+        <span style={{ fontSize: 64 }}>🚫</span>
         <div>
           <div
             style={{
               color: '#FFFFFF',
-              fontSize: 18,
+              fontSize: 36,
               fontWeight: 700,
               opacity: 0.85,
               letterSpacing: 1,
@@ -149,7 +149,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
           >
             AUTO-REPLY GATE
           </div>
-          <div style={{ color: '#FFFFFF', fontSize: 30, fontWeight: 900 }}>
+          <div style={{ color: '#FFFFFF', fontSize: 60, fontWeight: 900 }}>
             5조건 검사
           </div>
         </div>
@@ -161,7 +161,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
             borderRadius: 24,
             padding: '8px 18px',
             color: '#FFFFFF',
-            fontSize: 20,
+            fontSize: 40,
             fontWeight: 800,
             letterSpacing: 0.5,
           }}
@@ -193,11 +193,11 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
                 border: `1px solid ${item.pass ? '#A8D9B8' : '#F0B0A0'}`,
               }}
             >
-              <span style={{ fontSize: 24, flexShrink: 0 }}>{item.pass ? '✅' : '❌'}</span>
+              <span style={{ fontSize: 48, flexShrink: 0 }}>{item.pass ? '✅' : '❌'}</span>
               <span
                 style={{
                   fontFamily: 'monospace',
-                  fontSize: 22,
+                  fontSize: 44,
                   fontWeight: 700,
                   color: item.pass ? '#1A6634' : STOP_RED,
                   flex: 1,
@@ -207,7 +207,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
               </span>
               <span
                 style={{
-                  fontSize: 20,
+                  fontSize: 40,
                   fontWeight: 800,
                   color: item.pass ? '#2D8A4F' : STOP_RED,
                   letterSpacing: 0.5,
@@ -235,19 +235,19 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
           gap: 16,
         }}
       >
-        <span style={{ fontSize: 40 }}>🛑</span>
+        <span style={{ fontSize: 80 }}>🛑</span>
         <div>
           <div
             style={{
               color: '#FFFFFF',
-              fontSize: 28,
+              fontSize: 56,
               fontWeight: 900,
               letterSpacing: 1,
             }}
           >
             AUTO-REPLY 차단
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 20, marginTop: 4 }}>
+          <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 40, marginTop: 4 }}>
             guardrail 감지 → 운영자 HITL 검토 필요
           </div>
         </div>
@@ -270,7 +270,7 @@ const Subtitle: React.FC<{ text: string; opacity: number }> = ({ text, opacity }
       borderRadius: 10,
       padding: '10px 28px',
       color: '#FFFFFF',
-      fontSize: 26,
+      fontSize: 52,
       fontWeight: 700,
       letterSpacing: 0.3,
       whiteSpace: 'nowrap',
@@ -302,7 +302,7 @@ const OutroOverlay: React.FC<{ opacity: number }> = ({ opacity }) => (
     <div
       style={{
         color: '#FFFFFF',
-        fontSize: 72,
+        fontSize: 144,
         fontWeight: 900,
         letterSpacing: 0.5,
         fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
@@ -314,7 +314,7 @@ const OutroOverlay: React.FC<{ opacity: number }> = ({ opacity }) => (
     <div
       style={{
         color: 'rgba(255,255,255,0.65)',
-        fontSize: 36,
+        fontSize: 72,
         fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
         textAlign: 'center',
       }}
@@ -432,7 +432,7 @@ export const HitlDemo: React.FC = () => {
               border: '1px solid #2D8A4F40',
               borderRadius: 8,
               padding: '10px 20px',
-              fontSize: 24,
+              fontSize: 48,
               fontWeight: 700,
               color: GREEN_ACCENT,
             }}
@@ -444,7 +444,7 @@ export const HitlDemo: React.FC = () => {
               background: '#F5F5F5',
               borderRadius: 8,
               padding: '10px 20px',
-              fontSize: 22,
+              fontSize: 44,
               color: TEXT_MUTED,
               fontWeight: 600,
             }}
@@ -482,7 +482,7 @@ export const HitlDemo: React.FC = () => {
         {/* 상단 분류 타이틀 */}
         <div
           style={{
-            fontSize: 32,
+            fontSize: 64,
             fontWeight: 700,
             color: TEXT_MUTED,
             letterSpacing: 0.3,
@@ -530,10 +530,10 @@ export const HitlDemo: React.FC = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
               }}
             >
-              <div style={{ fontSize: 20, color: TEXT_MUTED, fontWeight: 600, marginBottom: 6 }}>
+              <div style={{ fontSize: 40, color: TEXT_MUTED, fontWeight: 600, marginBottom: 6 }}>
                 {label}
               </div>
-              <div style={{ fontSize: 26, fontWeight: 900, color, fontFamily: 'monospace' }}>
+              <div style={{ fontSize: 52, fontWeight: 900, color, fontFamily: 'monospace' }}>
                 {value}
               </div>
             </div>
@@ -569,7 +569,7 @@ export const HitlDemo: React.FC = () => {
         <div
           style={{
             opacity: s3KakaoOp,
-            fontSize: 36,
+            fontSize: 72,
             color: STOP_RED,
             fontWeight: 900,
             flexShrink: 0,
@@ -604,7 +604,7 @@ export const HitlDemo: React.FC = () => {
           <div style={{ marginBottom: 16, opacity: s4BadgeFade }}>
             <div
               style={{
-                fontSize: 22,
+                fontSize: 44,
                 color: TEXT_MUTED,
                 fontWeight: 600,
                 marginBottom: 12,
@@ -639,14 +639,14 @@ export const HitlDemo: React.FC = () => {
             }}
           >
             <div style={{ width: 2, height: 32, background: STOP_RED, borderRadius: 2 }} />
-            <div style={{ fontSize: 20, color: STOP_RED }}>▼</div>
+            <div style={{ fontSize: 40, color: STOP_RED }}>▼</div>
             <div
               style={{
                 background: STOP_RED + '18',
                 border: `1px solid ${STOP_RED}40`,
                 borderRadius: 8,
                 padding: '10px 18px',
-                fontSize: 20,
+                fontSize: 40,
                 fontWeight: 700,
                 color: STOP_RED,
                 textAlign: 'center',
@@ -658,7 +658,7 @@ export const HitlDemo: React.FC = () => {
         </div>
 
         {/* 화살표 */}
-        <div style={{ fontSize: 36, color: '#5288C1', fontWeight: 900, flexShrink: 0, opacity: s4BadgeFade }}>
+        <div style={{ fontSize: 72, color: '#5288C1', fontWeight: 900, flexShrink: 0, opacity: s4BadgeFade }}>
           →
         </div>
 
@@ -709,7 +709,7 @@ export const HitlDemo: React.FC = () => {
               border: '1px solid #2D8A4F40',
               borderRadius: 8,
               padding: '10px 20px',
-              fontSize: 24,
+              fontSize: 48,
               fontWeight: 700,
               color: GREEN_ACCENT,
             }}
@@ -721,7 +721,7 @@ export const HitlDemo: React.FC = () => {
               background: '#F5F5F5',
               borderRadius: 8,
               padding: '10px 20px',
-              fontSize: 22,
+              fontSize: 44,
               color: TEXT_MUTED,
               fontWeight: 600,
             }}
