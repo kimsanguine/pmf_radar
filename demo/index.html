@@ -1665,8 +1665,20 @@
       }
     }
   </style>
+
+  <!-- habix.ai 공유 GNB (site-system v1) — cross-origin import. radar 페이지에서는 도메인 스위처 hide. -->
+  <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css">
+  <style>
+    /* radar 페이지: GNB만 표시, 도메인 스위처 hide (사용자 결정 2026-05-18) */
+    .hx-switcher-nav,
+    .hx-mobile-drawer__switch-link,
+    .hx-mobile-drawer__divider { display: none !important; }
+  </style>
+  <script src="https://habix.ai/_shared/site-system.v1.js" defer></script>
 </head>
 <body>
+  <div data-hx-header data-domain="habix"></div>
+
   <nav class="nav" aria-label="habix navigation">
     <a class="nav-logo" href="#">HABIX<span>.AI</span></a>
     <ul class="nav-links">
