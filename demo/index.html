@@ -86,7 +86,7 @@
   </header>
 
   <!-- 15초 요약 · 알아두면 좋은 용어 (라이트 타겟 진입 보강 — habix.ai site-system v1 .hx-* 컴포넌트) -->
-  <section style="padding: 40px 0;">
+  <section class="hx-entry-section">
     <div class="sw">
       <div class="hx-summary">
         <span class="hx-summary-label">⏱ 15초 요약</span>
@@ -216,11 +216,11 @@
         <div class="integration-note" aria-label="live channel integration status">
           <div>
             <h3>Channel Talk live 연동</h3>
-            <p>현재 로컬 receiver stub은 `POST /api/webhooks/channel-talk`까지 준비되어 있습니다. 실제 연동에는 Channel Talk 관리자 화면의 Webhook 설정, 공개 HTTPS URL, token 검증값이 필요합니다.</p>
+            <p>현재 로컬 receiver stub은 <code>POST /api/webhooks/channel-talk</code>까지 준비되어 있습니다. 실제 연동에는 Channel Talk 관리자 화면의 Webhook 설정, 공개 HTTPS URL, token 검증값이 필요합니다.</p>
           </div>
           <div>
             <h3>Kakao 상담톡 live 연동</h3>
-            <p>현재 Kakao fixture와 `POST /api/webhooks/kakao` receiver stub이 있습니다. 실제 상담톡 메시지 수신은 비즈메시지/상담톡 파트너 접근권한과 공식 payload 확인 후 연결합니다.</p>
+            <p>현재 Kakao fixture와 <code>POST /api/webhooks/kakao</code> receiver stub이 있습니다. 실제 상담톡 메시지 수신은 비즈메시지/상담톡 파트너 접근권한과 공식 payload 확인 후 연결합니다.</p>
           </div>
         </div>
       </div>
@@ -376,7 +376,7 @@
           </summary>
           <article class="oc-card">
           <div class="oc-head">
-            <h2>오픈채팅 수동 입력 (정책상 자동 수집 X)</h2>
+            <h2>오픈채팅 수동 입력 — 자동 수집 차단</h2>
             <span class="oc-policy-badge">manual only · auto-collect blocked</span>
           </div>
           <div class="oc-body">
@@ -487,8 +487,8 @@
             </div>
           </article>
         </div>
-        <p class="sec-desc" style="margin-top:32px;margin-bottom:0;text-align:center;">
-          <strong>운영자는 메시지를 직접 분류하지 않습니다.</strong> radar 가 4 채널 인입 즉시 <strong style="color:var(--accent, #c8623a)">FAQ 답변 / 사람 검토 / 백로그 적재</strong> 중 한 경로로 자동 라우팅해요.
+        <p class="sec-desc sec-desc--center sec-desc--spaced">
+          <strong>운영자는 메시지를 직접 분류하지 않습니다.</strong> radar 가 4 채널 인입 즉시 <strong class="accent-text">FAQ 답변 / 사람 검토 / 백로그 적재</strong> 중 한 경로로 자동 라우팅해요.
         </p>
       </div>
     </section>
@@ -531,127 +531,16 @@
             <div class="radar-signal-quote">"다음 주 팀 교육 전에 데모 가능한가요?"</div>
           </article>
         </div>
-        <p class="sec-desc" style="margin-top:32px;margin-bottom:0;text-align:center;">
-          이 4 신호는 그대로 hplan 의 <strong>Evidence Gate</strong> 입력값이 됩니다. "환불 가능?" 같은 단순 FAQ 가 아닌, <strong style="color:var(--accent, #c8623a)">제품 방향을 바꿀 신호</strong>만 백로그로 승급해요.
+        <p class="sec-desc sec-desc--center sec-desc--spaced">
+          이 4 신호는 그대로 hplan 의 <strong>Evidence Gate</strong> 입력값이 됩니다. "환불 가능?" 같은 단순 FAQ 가 아닌, <strong class="accent-text">제품 방향을 바꿀 신호</strong>만 백로그로 승급해요.
         </p>
       </div>
     </section>
 
-    <style>
-      /* USE CASES — hplan-usecase 패턴 어댑테이션 */
-      .radar-usecases { padding: 80px 0; }
-      .radar-usecase-list {
-        max-width: 1080px;
-        margin: 0 auto;
-        display: grid;
-        gap: 12px;
-      }
-      .radar-usecase-row {
-        display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: 24px;
-        padding: 20px 24px;
-        background: #fff;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        align-items: start;
-        transition: border-color 0.15s ease;
-      }
-      .radar-usecase-row:hover { border-color: #c8623a; }
-      .radar-usecase-user {
-        font-weight: 600;
-        font-size: 15px;
-        color: #1f2937;
-        letter-spacing: -0.01em;
-        line-height: 1.5;
-      }
-      .radar-usecase-user::before { content: '💬 '; margin-right: 4px; }
-      .radar-usecase-radar {
-        font-size: 14px;
-        color: #4b5563;
-        line-height: 1.7;
-      }
-      .radar-usecase-tag {
-        display: inline-block;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 4px;
-        margin-right: 8px;
-        margin-bottom: 4px;
-        letter-spacing: 0.05em;
-      }
-      .radar-usecase-tag.tag-faq { background: #ecfeff; color: #0891b2; }
-      .radar-usecase-tag.tag-hitl { background: #fef2f2; color: #dc2626; }
-      .radar-usecase-tag.tag-signal { background: #fff7ed; color: #c8623a; }
-      @media (max-width: 720px) {
-        .radar-usecase-row { grid-template-columns: 1fr; padding: 16px; gap: 12px; }
-      }
-
-      /* 4 신호 카드 — hplan-why-grid 패턴 어댑테이션 */
-      .radar-signals { padding: 80px 0; background: #f9fafb; }
-      .radar-signals.alt { background: #f9fafb; }
-      .radar-signal-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 16px;
-        max-width: 1080px;
-        margin: 0 auto;
-      }
-      .radar-signal-card {
-        padding: 28px 24px;
-        background: #fff;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        border-top: 4px solid #c8623a;
-      }
-      .radar-signal-card.signal-push { border-top-color: #dc2626; }
-      .radar-signal-card.signal-anxiety { border-top-color: #f59e0b; }
-      .radar-signal-card.signal-workaround { border-top-color: #10b981; }
-      .radar-signal-card.signal-trigger { border-top-color: #0891b2; }
-      .radar-signal-num {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.15em;
-        color: #c8623a;
-      }
-      .signal-push .radar-signal-num { color: #dc2626; }
-      .signal-anxiety .radar-signal-num { color: #f59e0b; }
-      .signal-workaround .radar-signal-num { color: #10b981; }
-      .signal-trigger .radar-signal-num { color: #0891b2; }
-      .radar-signal-title {
-        font-size: 17px;
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        color: #1f2937;
-        margin: 10px 0 8px;
-      }
-      .radar-signal-sub {
-        font-size: 13px;
-        color: #4b5563;
-        line-height: 1.6;
-        margin-bottom: 14px;
-      }
-      .radar-signal-quote {
-        font-size: 13px;
-        color: #1f2937;
-        background: #fafaf9;
-        border-left: 3px solid #c8623a;
-        padding: 10px 12px;
-        border-radius: 4px;
-        font-style: italic;
-        line-height: 1.5;
-      }
-      .signal-push .radar-signal-quote { border-left-color: #dc2626; }
-      .signal-anxiety .radar-signal-quote { border-left-color: #f59e0b; }
-      .signal-workaround .radar-signal-quote { border-left-color: #10b981; }
-      .signal-trigger .radar-signal-quote { border-left-color: #0891b2; }
-    </style>
+    <!-- radar-usecases / radar-signals 스타일은 radar.css 로 이동 (Round 6B surgical) -->
 
     <!-- CAVEAT — radar 를 안 써도 되는 때 (라이트 타겟 신뢰감 ↑) -->
-    <section style="padding: 40px 0;">
+    <section class="hx-entry-section">
       <div class="sw">
         <div class="hx-caveat">
           <span class="hx-caveat-label">근데 말이죠</span>
