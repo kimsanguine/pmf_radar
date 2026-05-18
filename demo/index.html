@@ -1732,6 +1732,41 @@
     </div>
   </header>
 
+  <!-- 15초 요약 · 알아두면 좋은 용어 (라이트 타겟 진입 보강 — habix.ai site-system v1 .hx-* 컴포넌트) -->
+  <section style="padding: 40px 0;">
+    <div class="sw" style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+      <div class="hx-summary">
+        <span class="hx-summary-label">⏱ 15초 요약</span>
+        <p>
+          카카오톡·채널톡으로 매일 들어오는 <strong>고객 문의</strong>를 자동으로 정리해서,
+          <strong>"어떤 불만이 반복되는지"</strong>와 <strong>"무엇을 다음에 만들면 되는지"</strong> 를 한 화면에 보여주는 도구예요.
+          답변 초안 작성부터 제품 개선 백로그까지 한 흐름으로 이어집니다.
+          <strong>AI PM 강의 실습 데모</strong>로도 동작합니다.
+        </p>
+      </div>
+
+      <div class="hx-glossary">
+        <span class="hx-glossary-label">📖 알아두면 좋은 용어</span>
+        <dl>
+          <dt>PMF (Product-Market Fit)</dt>
+          <dd>제품이 시장에 진짜 필요한지 — 즉 "이걸 만들었더니 정말 사람들이 쓰는가" 여부예요. 고객 문의에서 PMF 신호를 잡아낸다는 게 이 도구의 핵심.</dd>
+
+          <dt>PII 마스킹 (Personal Information Masking)</dt>
+          <dd>이름·전화번호·주소 같은 개인정보를 <em>분석 전에 자동으로 가려주는 작업</em>이에요. 원본 메시지는 안전하게 보관됩니다.</dd>
+
+          <dt>Push / Anxiety / Workaround / Trigger</dt>
+          <dd>hplan 에서 가져온 <strong>4 가지 PMF 신호 분류</strong>. "고객이 무엇에 밀려서 / 무엇을 걱정해서 / 어떻게 임시방편으로 / 어떤 계기에" 우리 제품을 찾는지 자동으로 태깅합니다.</dd>
+
+          <dt>답변 분기 (Route)</dt>
+          <dd>들어온 문의를 <strong>FAQ 자동 응답</strong>으로 보낼지, <strong>사람 검토</strong>로 보낼지 자동으로 나눠줘요. 운영자가 모든 메시지를 다 볼 필요가 없어집니다.</dd>
+
+          <dt>백로그 (Backlog)</dt>
+          <dd>"다음에 만들 것 / 인터뷰할 것 / 일단 보류할 것" 의 목록. radar 가 모은 신호가 그대로 hplan 의 Build / Interview / Hold 백로그로 연결됩니다.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
   <section class="stats" aria-label="summary metrics">
     <div class="stat"><b id="metricInquiries">INPUT</b><span>문의 유입</span><small>카카오 · 채널톡 · CSV · 수동</small></div>
     <div class="stat"><b id="metricChannels">MASK</b><span>개인정보 보호</span><small>분석 전 PII 마스킹</small></div>
@@ -2067,6 +2102,22 @@
           <div class="flow-step"><b>02 classify</b><strong>hplan 신호 분류</strong><span>Push, Anxiety, Workaround, Trigger로 고객 문장을 재해석합니다.</span></div>
           <div class="flow-step"><b>03 visualize</b><strong>PMF Radar</strong><span>반복성, 위험도, 증거 강도를 bubble map과 heatmap으로 보여줍니다.</span></div>
           <div class="flow-step"><b>04 decide</b><strong>hplan 개선 루프</strong><span>Build, Interview, Hold, What Not To Build를 명시합니다.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAVEAT — radar 를 안 써도 되는 때 (라이트 타겟 신뢰감 ↑) -->
+    <section style="padding: 40px 0;">
+      <div class="sw" style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+        <div class="hx-caveat">
+          <span class="hx-caveat-label">근데 말이죠</span>
+          <h3 class="hx-caveat-title">radar 를 안 써도 되는 때도 있어요</h3>
+          <ul>
+            <li><strong>고객 문의가 주 5 건 이하</strong>인 단계 — 그 정도면 메시지를 직접 읽고 직감으로 패턴을 잡는 게 더 빠르고 정확해요.</li>
+            <li><strong>이미 CS 팀이 운영 중인 회사</strong> — 사내 ticketing 도구(Zendesk·Intercom·채널톡 자체 분석)가 같은 역할을 하고 있다면 중복이에요.</li>
+            <li><strong>"문의 분석" 자체가 인사이트의 핵심</strong>인 경우 — UX 리서치처럼 한 건 한 건을 깊이 보는 게 목적이라면 자동 정리가 손실이에요.</li>
+            <li><strong>강의 데모로만 보고 싶을 때</strong> — 운영 중인 비즈니스가 없다면 LLM 분류 기능(<code>/api/classify</code>)은 로컬 server.py 만 띄워 보세요.</li>
+          </ul>
         </div>
       </div>
     </section>
