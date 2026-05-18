@@ -424,6 +424,212 @@
         </article>
       </div>
     </section>
+
+    <!-- USE CASES — 카카오톡 메시지 ↔ radar 자동 반응 (hplan 스타일) -->
+    <section class="sec radar-usecases" id="use-cases" aria-label="카카오톡 메시지 자동 처리 시나리오">
+      <div class="sw">
+        <div class="sec-head">
+          <div>
+            <p class="sec-eye">// daily_messages → radar_routes</p>
+            <h2 class="sec-ttl">고객이 카카오톡에 보내는 말 ↔ radar 가 자동으로 하는 일</h2>
+          </div>
+          <p class="sec-desc">
+            <strong>운영자 1인이 가장 자주 받는 4 종류의 메시지</strong>가 들어왔을 때, radar 가 어떤 경로로 보내고 무엇을 백로그에 적어두는지 — 한 줄로 본 시나리오예요.
+          </p>
+        </div>
+        <div class="radar-usecase-list">
+          <article class="radar-usecase-row">
+            <div class="radar-usecase-user">"환불 가능한가요? 어제 결제했는데 마음이 바뀌었어요."</div>
+            <div class="radar-usecase-radar">
+              <span class="radar-usecase-tag tag-faq">FAQ 자동 응답 후보</span>
+              7 일 이내 환불 규정을 담은 답변 초안을 만들고, 환불 키워드라 <strong>사람 검토 큐로 동시 푸시</strong>. 운영자가 확인 후 1 클릭 발송.
+            </div>
+          </article>
+          <article class="radar-usecase-row">
+            <div class="radar-usecase-user">"결제가 안 돼요. 카드 정보는 010-XXXX-XXXX 인데..."</div>
+            <div class="radar-usecase-radar">
+              <span class="radar-usecase-tag tag-hitl">사람 검토 강제</span>
+              <strong>PII 자동 마스킹</strong>(전화·카드) 후 <strong>Push 신호 태깅</strong>. 같은 결제 실패가 3 건 누적되면 hplan Backlog 에 "결제 페이지 디버그" 카드로 자동 승급.
+            </div>
+          </article>
+          <article class="radar-usecase-row">
+            <div class="radar-usecase-user">"엑셀로 한꺼번에 올릴 수 있나요? 지금은 100 번 복붙 중이에요."</div>
+            <div class="radar-usecase-radar">
+              <span class="radar-usecase-tag tag-signal">Workaround 신호 감지</span>
+              "복붙으로 우회 중" 발화 = <strong>Workaround 신호</strong>. radar 가 Evidence Map 우상단(반복성·위험도 모두 높음)에 점을 찍고 <strong>Build now</strong> 후보로 표시.
+            </div>
+          </article>
+          <article class="radar-usecase-row">
+            <div class="radar-usecase-user">"개인정보 처리방침 어디서 보나요? 회사에 제출해야 해서요."</div>
+            <div class="radar-usecase-radar">
+              <span class="radar-usecase-tag tag-faq">FAQ 자동 응답</span>
+              정책 페이지 링크 + B2B 도입 안내 답변 초안. 동시에 "B2B 도입 검토 = Trigger 신호" 로 태깅되어 영업 백로그로 분기.
+            </div>
+          </article>
+        </div>
+        <p class="sec-desc" style="margin-top:32px;margin-bottom:0;text-align:center;">
+          <strong>운영자는 메시지를 직접 분류하지 않습니다.</strong> radar 가 4 채널 인입 즉시 <strong style="color:var(--accent, #c8623a)">FAQ 답변 / 사람 검토 / 백로그 적재</strong> 중 한 경로로 자동 라우팅해요.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4 신호 카드 — Push / Anxiety / Workaround / Trigger (hplan MISSING_SKILLS grid 스타일) -->
+    <section class="sec radar-signals alt" id="signals" aria-label="PMF 4 신호 분류 카드">
+      <div class="sw">
+        <div class="sec-head">
+          <div>
+            <p class="sec-eye">// pmf_signal_taxonomy</p>
+            <h2 class="sec-ttl">radar 가 찾는 PMF 신호 4 가지</h2>
+          </div>
+          <p class="sec-desc">
+            "고객이 무엇에 밀려서 / 무엇을 걱정해서 / 어떻게 우회해서 / 어떤 계기에" 우리를 찾는지 — 4 가지 신호로 분류합니다. <strong>실제 카카오톡 발화 예시</strong>로 어떤 모양인지 보세요.
+          </p>
+        </div>
+        <div class="radar-signal-grid">
+          <article class="radar-signal-card signal-push">
+            <div class="radar-signal-num">SIGNAL 1</div>
+            <div class="radar-signal-title">Push — 밀려서 우리에게 옴</div>
+            <div class="radar-signal-sub">기존 도구·프로세스의 고통이 너무 커서 새 도구를 찾는 상태</div>
+            <div class="radar-signal-quote">"엑셀로 100 번 복붙 중인데 이거 자동화 안 되나요?"</div>
+          </article>
+          <article class="radar-signal-card signal-anxiety">
+            <div class="radar-signal-num">SIGNAL 2</div>
+            <div class="radar-signal-title">Anxiety — 걱정해서 못 들어옴</div>
+            <div class="radar-signal-sub">관심은 있지만 보안·환불·품질 불안으로 결제·실행을 미루는 상태</div>
+            <div class="radar-signal-quote">"개인정보 익명화 기준 먼저 보고 결제하고 싶어요."</div>
+          </article>
+          <article class="radar-signal-card signal-workaround">
+            <div class="radar-signal-num">SIGNAL 3</div>
+            <div class="radar-signal-title">Workaround — 임시방편으로 버팀</div>
+            <div class="radar-signal-sub">기능이 부족해서 다른 도구·수동 작업으로 우회 중인 상태. <strong>Build now 1 순위</strong> 신호.</div>
+            <div class="radar-signal-quote">"리포트는 따로 노션에 옮겨서 만들고 있어요."</div>
+          </article>
+          <article class="radar-signal-card signal-trigger">
+            <div class="radar-signal-num">SIGNAL 4</div>
+            <div class="radar-signal-title">Trigger — 계기가 와서 들어옴</div>
+            <div class="radar-signal-sub">팀 도입·연말 정산·계약 갱신 같은 외부 이벤트로 도입 결정을 압축한 상태</div>
+            <div class="radar-signal-quote">"다음 주 팀 교육 전에 데모 가능한가요?"</div>
+          </article>
+        </div>
+        <p class="sec-desc" style="margin-top:32px;margin-bottom:0;text-align:center;">
+          이 4 신호는 그대로 hplan 의 <strong>Evidence Gate</strong> 입력값이 됩니다. "환불 가능?" 같은 단순 FAQ 가 아닌, <strong style="color:var(--accent, #c8623a)">제품 방향을 바꿀 신호</strong>만 백로그로 승급해요.
+        </p>
+      </div>
+    </section>
+
+    <style>
+      /* USE CASES — hplan-usecase 패턴 어댑테이션 */
+      .radar-usecases { padding: 80px 0; }
+      .radar-usecase-list {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        gap: 12px;
+      }
+      .radar-usecase-row {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 24px;
+        padding: 20px 24px;
+        background: #fff;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        align-items: start;
+        transition: border-color 0.15s ease;
+      }
+      .radar-usecase-row:hover { border-color: #c8623a; }
+      .radar-usecase-user {
+        font-weight: 600;
+        font-size: 15px;
+        color: #1f2937;
+        letter-spacing: -0.01em;
+        line-height: 1.5;
+      }
+      .radar-usecase-user::before { content: '💬 '; margin-right: 4px; }
+      .radar-usecase-radar {
+        font-size: 14px;
+        color: #4b5563;
+        line-height: 1.7;
+      }
+      .radar-usecase-tag {
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-right: 8px;
+        margin-bottom: 4px;
+        letter-spacing: 0.05em;
+      }
+      .radar-usecase-tag.tag-faq { background: #ecfeff; color: #0891b2; }
+      .radar-usecase-tag.tag-hitl { background: #fef2f2; color: #dc2626; }
+      .radar-usecase-tag.tag-signal { background: #fff7ed; color: #c8623a; }
+      @media (max-width: 720px) {
+        .radar-usecase-row { grid-template-columns: 1fr; padding: 16px; gap: 12px; }
+      }
+
+      /* 4 신호 카드 — hplan-why-grid 패턴 어댑테이션 */
+      .radar-signals { padding: 80px 0; background: #f9fafb; }
+      .radar-signals.alt { background: #f9fafb; }
+      .radar-signal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      .radar-signal-card {
+        padding: 28px 24px;
+        background: #fff;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        border-top: 4px solid #c8623a;
+      }
+      .radar-signal-card.signal-push { border-top-color: #dc2626; }
+      .radar-signal-card.signal-anxiety { border-top-color: #f59e0b; }
+      .radar-signal-card.signal-workaround { border-top-color: #10b981; }
+      .radar-signal-card.signal-trigger { border-top-color: #0891b2; }
+      .radar-signal-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: #c8623a;
+      }
+      .signal-push .radar-signal-num { color: #dc2626; }
+      .signal-anxiety .radar-signal-num { color: #f59e0b; }
+      .signal-workaround .radar-signal-num { color: #10b981; }
+      .signal-trigger .radar-signal-num { color: #0891b2; }
+      .radar-signal-title {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: #1f2937;
+        margin: 10px 0 8px;
+      }
+      .radar-signal-sub {
+        font-size: 13px;
+        color: #4b5563;
+        line-height: 1.6;
+        margin-bottom: 14px;
+      }
+      .radar-signal-quote {
+        font-size: 13px;
+        color: #1f2937;
+        background: #fafaf9;
+        border-left: 3px solid #c8623a;
+        padding: 10px 12px;
+        border-radius: 4px;
+        font-style: italic;
+        line-height: 1.5;
+      }
+      .signal-push .radar-signal-quote { border-left-color: #dc2626; }
+      .signal-anxiety .radar-signal-quote { border-left-color: #f59e0b; }
+      .signal-workaround .radar-signal-quote { border-left-color: #10b981; }
+      .signal-trigger .radar-signal-quote { border-left-color: #0891b2; }
+    </style>
+
     <!-- ───────────────────────────────────────────
          오픈채팅 수동 입력 섹션 (P2.2 신규)
          정책: 자동 수집 금지 (KAKAO_INTEGRATION_SPEC §2.5, P2_DESIGN §3 C3)
