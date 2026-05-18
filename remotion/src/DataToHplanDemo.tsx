@@ -219,13 +219,13 @@ const SubtitleBar: React.FC<{ frame: number }> = ({ frame }) => {
     <div
       style={{
         position: 'absolute',
-        bottom: 40,
+        bottom: 56,
         left: '50%',
         transform: 'translateX(-50%)',
         opacity: Math.min(fadeIn, fadeOut),
         background: 'rgba(26, 26, 26, 0.82)',
-        borderRadius: 12,
-        padding: '16px 36px',
+        borderRadius: 14,
+        padding: '20px 48px',
         fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
         fontSize: 60,
         fontWeight: 700,
@@ -309,8 +309,8 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
       {/* 중앙 KakaoFrame */}
       <div
         style={{
-          width: 760,
-          height: 620,
+          width: 960,
+          height: 780,
           opacity: switchFade,
         }}
       >
@@ -325,11 +325,11 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          top: 80,
-          right: 160,
+          top: 60,
+          right: 100,
           background: '#1A1A1A',
-          borderRadius: 14,
-          padding: '16px 28px',
+          borderRadius: 20,
+          padding: '24px 40px',
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
           color: '#FAF8F4',
           textAlign: 'center',
@@ -347,11 +347,11 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          top: 80,
-          left: 160,
+          top: 60,
+          left: 100,
           display: 'flex',
           flexDirection: 'column',
-          gap: 12,
+          gap: 20,
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
         }}
       >
@@ -364,15 +364,15 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
               key={ch}
               style={{
                 background: ch === 'kakao' ? '#FEE500' : '#1A9AD5',
-                borderRadius: 10,
-                padding: '10px 20px',
+                borderRadius: 16,
+                padding: '16px 32px',
                 fontSize: 44,
                 fontWeight: 800,
                 color: ch === 'kakao' ? '#1A1A1A' : '#FFFFFF',
                 opacity: cnt > 0 ? 1 : 0.3,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 10,
+                gap: 16,
               }}
             >
               <span>{ch === 'kakao' ? '카카오톡' : 'Channel Talk'}</span>
@@ -428,7 +428,7 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          top: 60,
+          top: 40,
           left: 0,
           right: 0,
           textAlign: 'center',
@@ -446,10 +446,10 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          top: 120,
-          left: 80,
-          right: 80,
-          bottom: 100,
+          top: 160,
+          left: 40,
+          right: 40,
+          bottom: 120,
         }}
       >
         <BubbleMap
@@ -463,10 +463,10 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          bottom: 110,
-          right: 100,
+          bottom: 130,
+          right: 60,
           display: 'flex',
-          gap: 16,
+          gap: 24,
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
           opacity: interpolate(animationProgress, [0.6, 1], [0, 1], {
             extrapolateLeft: 'clamp',
@@ -536,9 +536,9 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           height: '100%',
           display: 'flex',
           alignItems: 'center',
-          paddingLeft: 80,
-          paddingTop: 80,
-          paddingBottom: 80,
+          paddingLeft: 40,
+          paddingTop: 60,
+          paddingBottom: 60,
           boxSizing: 'border-box',
         }}
       >
@@ -557,9 +557,9 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           height: '100%',
           display: 'flex',
           alignItems: 'center',
-          paddingRight: 80,
-          paddingTop: 80,
-          paddingBottom: 80,
+          paddingRight: 40,
+          paddingTop: 60,
+          paddingBottom: 60,
           boxSizing: 'border-box',
           opacity: drilldownFade,
         }}
@@ -568,7 +568,7 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           {/* Cluster 헤더 */}
           <div
             style={{
-              marginBottom: 16,
+              marginBottom: 24,
               fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
             }}
           >
@@ -660,7 +660,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          top: 52,
+          top: 40,
           left: 0,
           right: 0,
           textAlign: 'center',
@@ -685,10 +685,10 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          top: 110,
-          left: 80,
+          top: 140,
+          left: 60,
           width: '50%',
-          bottom: 100,
+          bottom: 120,
           display: 'flex',
           alignItems: 'center',
         }}
@@ -710,10 +710,10 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          top: 110,
-          right: 80,
-          width: '38%',
-          bottom: 100,
+          top: 140,
+          right: 60,
+          width: '40%',
+          bottom: 120,
           display: 'flex',
           alignItems: 'center',
           opacity: chartRevealAt > 0 ? 1 : 0,
@@ -723,8 +723,8 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
           style={{
             width: '100%',
             background: '#FFFFFF',
-            borderRadius: 14,
-            padding: '28px 28px',
+            borderRadius: 20,
+            padding: '40px 40px',
             boxShadow: '0 6px 24px rgba(0,0,0,0.10)',
             borderLeft: '6px solid #1A1A1A',
           }}
