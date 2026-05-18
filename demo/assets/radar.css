@@ -1640,14 +1640,28 @@
 
     /* ───────────────────────────────────────────
        site-system.v1.css 미로드 시 최소 fallback
-       (외부 CDN 다운 또는 네트워크 차단 대응)
+       (외부 CDN 다운, stale cache, 네트워크 차단 대응)
+       JS markup 루트 클래스는 .hx-site-header (.hx-header 아님 — 2026-05-18 정정)
     ─────────────────────────────────────────── */
-    [data-hx-header]:not(:has(.hx-header)) {
+    [data-hx-header]:not(:has(.hx-site-header)) {
       display: block;
       height: 56px;
       background: var(--bg-2);
       border-bottom: 1px solid var(--border);
     }
+
+    /* site-system.v1.css 미로드 시 inject 된 nav markup 의 raw bullet/펼침 방지 안전망.
+       v1.css 가 정상 로드되면 동일 셀렉터의 더 specific 한 룰이 cascade 로 이긴다. */
+    .hx-nav__list,
+    .hx-nav-dd__menu,
+    .hx-mobile-drawer__nav-list,
+    .hx-switcher,
+    .hx-foot-col__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .hx-nav-dd__menu { display: none; }
 
     /* radar 페이지: GNB만 표시, 도메인 스위처 hide (사용자 결정 2026-05-18) */
     .hx-switcher-nav,
