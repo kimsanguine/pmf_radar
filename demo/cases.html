@@ -13,12 +13,40 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
 
-  <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css">
+  <!-- ?v=… cache buster: site-system.v1.css/js 가 immutable+s-maxage 31536000 이라 inplace 변경 시
+       사용자 브라우저 캐시 stale 가능 → URL 키 갱신으로 강제 무효화 (2026-05-18 GNB 회귀 fix). -->
+  <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css?v=20260518">
   <style>
     .hx-switcher-nav,
     .hx-mobile-drawer__switch-link,
     .hx-mobile-drawer__divider { display: none !important; }
     .hx-mobile-drawer:not(.is-open) { display: none !important; }
+
+    /* site-system.v1.css 미로드 시 GNB layout/raw bullet 방지 안전망.
+       v1.css 정상 로드되면 동일 셀렉터의 더 specific 한 룰이 cascade 로 override.
+       2026-05-18 회귀 fix — token 의존 없는 hardcoded color 로 robust. */
+    .hx-nav__list,
+    .hx-nav-dd__menu,
+    .hx-mobile-drawer__nav-list,
+    .hx-switcher,
+    .hx-foot-col__list { list-style: none; margin: 0; padding: 0; }
+    .hx-site-header { display: block; background: #f3f0ea; border-bottom: 1px solid #e8e3d8; }
+    .hx-site-header__inner {
+      max-width: 1180px; margin: 0 auto; padding: 0 32px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .hx-header-actions { display: inline-flex; align-items: center; gap: 16px; }
+    .hx-nav { display: inline-flex; align-items: center; }
+    .hx-nav__list { display: inline-flex; align-items: center; gap: 22px; }
+    .hx-nav__item { position: relative; display: inline-flex; align-items: center; }
+    .hx-nav__link,
+    .hx-nav__trigger {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 13px; font-weight: 600; color: #3d3830;
+      text-decoration: none; cursor: pointer; white-space: nowrap;
+    }
+    .hx-logo { display: inline-flex; align-items: center; color: #3d3830; text-decoration: none; }
+    .hx-nav-dd__menu { display: none; }
 
     :root {
       --bg: #faf8f4;
@@ -287,6 +315,6 @@
 
   <div data-hx-footer></div>
 
-  <script type="module" src="https://habix.ai/_shared/site-system.v1.js"></script>
+  <script type="module" src="https://habix.ai/_shared/site-system.v1.js?v=20260518"></script>
 </body>
 </html>
