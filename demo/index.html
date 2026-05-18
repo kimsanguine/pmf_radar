@@ -129,9 +129,9 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 380px;
+      grid-template-columns: minmax(0, 1fr) 320px;
       gap: 52px;
-      align-items: end;
+      align-items: start;
     }
 
     .eye {
@@ -2390,12 +2390,12 @@
       return clusters.map((cluster, index) => {
         const risk = cluster.riskTotal / cluster.signals.length;
         const x = total <= 4
-          ? 150 + index * (total === 1 ? 0 : 500 / (total - 1))
-          : 100 + (cluster.signals.length / maxCount) * 560 - (index % 2) * 22;
+          ? 130 + index * (total === 1 ? 0 : 540 / (total - 1))
+          : 90 + index * (660 / Math.max(1, total - 1));
         const y = 350 - risk * 58 + (index % 3) * 16;
         return {
           ...cluster,
-          x: Math.max(112, Math.min(666, x)),
+          x: Math.max(80, Math.min(680, x)),
           y: Math.max(82, Math.min(318, y)),
           r: Math.max(22, Math.min(52, 18 + cluster.signals.length * 3 + cluster.strong * 5))
         };
