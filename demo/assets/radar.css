@@ -1513,7 +1513,7 @@
       .sw { width: min(100% - 32px, 1180px); }
       .hero { padding: 58px 0 54px; } /* 의도된 비표준: 모바일 hero 비대칭 */
       h1 {
-        max-width: 340px;
+        max-width: min(560px, 100%);
         font-size: 34px;
         line-height: 1.18;
       }
@@ -1526,6 +1526,19 @@
       .source { grid-template-columns: 34px 1fr; }
       .source small { grid-column: 2; }
       .signal-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    @media (max-width: 480px) {
+      .source-filter {
+        flex-wrap: wrap;
+        gap: 8px;
+        height: auto;
+        padding: 12px;
+      }
+      .source-filter .chip {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 0;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
