@@ -1456,9 +1456,97 @@
       font-weight: 700;
     }
 
+    /* ─────────────────────────────────────────
+       oc-collapsible — 폼 접이식 wrapper
+       (페이지 비대칭 해소 — 기본 접힘 상태)
+    ─────────────────────────────────────────── */
+    .oc-collapsible {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .oc-collapsible > .oc-card {
+      border: 0;
+      border-radius: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .oc-summary {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 18px 24px;
+      cursor: pointer;
+      list-style: none;
+      background: rgba(250,248,244,.6);
+      transition: background .15s ease;
+    }
+
+    .oc-summary::-webkit-details-marker { display: none; }
+    .oc-summary:hover { background: rgba(250,248,244,.95); }
+    .oc-summary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    .oc-summary-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--bg);
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      transition: transform .2s ease, background .2s ease, color .2s ease;
+    }
+
+    .oc-collapsible[open] .oc-summary-icon {
+      transform: rotate(45deg);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .oc-summary-text {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .oc-summary-text b {
+      color: var(--dark);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .oc-summary-hint {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .02em;
+    }
+
+    .oc-summary-badge { flex: 0 0 auto; }
+
+    .oc-collapsible[open] .oc-summary {
+      border-bottom: 1px solid var(--border);
+    }
+
     @media (max-width: 768px) {
       .oc-body { grid-template-columns: 1fr; }
       .oc-left { border-right: 0; border-bottom: 1px solid var(--border); }
+      .oc-summary { padding: 14px 16px; gap: 10px; }
+      .oc-summary-badge { order: 3; width: 100%; }
     }
 
     .footer {

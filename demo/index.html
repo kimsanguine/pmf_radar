@@ -16,7 +16,7 @@
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
   <!-- habix.ai 공유 GNB (site-system v1) — cross-origin import. radar 페이지에서는 도메인 스위처 hide. -->
   <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css">
-  <link rel="stylesheet" href="assets/radar.css?v=20260518c">
+  <link rel="stylesheet" href="assets/radar.css?v=20260518d">
   <style>
     /* drawer desktop stuck 강제 hide — HTML inline 이라 radar.css disk cache 와 무관 즉시 적용 (2026-05-18 회귀 fix) */
     .hx-mobile-drawer:not(.is-open) { display: none !important; }
@@ -359,7 +359,16 @@
 
     <section class="oc-sec" id="openchat-paste" aria-label="오픈채팅 수동 입력">
       <div class="sw">
-        <article class="oc-card">
+        <details class="oc-collapsible">
+          <summary class="oc-summary" aria-label="오픈채팅 메시지 직접 붙여넣기 폼 열기">
+            <span class="oc-summary-icon" aria-hidden="true">＋</span>
+            <span class="oc-summary-text">
+              <b>오픈채팅 메시지 직접 붙여넣기</b>
+              <span class="oc-summary-hint">→ Push / Anxiety / Workaround / Trigger 분류 받기 (운영자 전용 · 수동 입력만)</span>
+            </span>
+            <span class="oc-policy-badge oc-summary-badge">manual only · auto-collect blocked</span>
+          </summary>
+          <article class="oc-card">
           <div class="oc-head">
             <h2>오픈채팅 수동 입력 (정책상 자동 수집 X)</h2>
             <span class="oc-policy-badge">manual only · auto-collect blocked</span>
@@ -426,6 +435,7 @@
             <span id="ocResultMsg">붙여넣기 후 버튼을 클릭하면 PMF Radar에 결과가 표시됩니다.</span>
           </div>
         </article>
+        </details>
       </div>
     </section>
 
