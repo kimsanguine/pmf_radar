@@ -28,7 +28,7 @@
     html { scroll-behavior: smooth; }
     body {
       min-height: 100vh;
-      padding-top: 56px; /* site-system GNB (fixed 56px) 보정 */
+      /* site-system v1 GNB 는 sticky (자체 normal flow) — padding-top 추가 시 GNB 위에 빈 공간 발생 → 0 */
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
