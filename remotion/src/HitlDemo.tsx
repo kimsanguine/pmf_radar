@@ -118,7 +118,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
         opacity: panelOpacity,
         transform: `translateY(${panelTranslateY}px)`,
         width: '100%',
-        borderRadius: 14,
+        borderRadius: 22,
         overflow: 'hidden',
         boxShadow: '0 6px 24px rgba(0,0,0,0.14)',
         fontFamily: 'Apple SD Gothic Neo, Noto Sans KR, sans-serif',
@@ -130,13 +130,13 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
       <div
         style={{
           background: STOP_RED,
-          padding: '18px 24px',
+          padding: '32px 48px',
           display: 'flex',
           alignItems: 'center',
-          gap: 14,
+          gap: 24,
         }}
       >
-        <span style={{ fontSize: 64 }}>🚫</span>
+        <span style={{ fontSize: 96 }}>🚫</span>
         <div>
           <div
             style={{
@@ -158,10 +158,10 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
           style={{
             marginLeft: 'auto',
             background: 'rgba(255,255,255,0.22)',
-            borderRadius: 24,
-            padding: '8px 18px',
+            borderRadius: 32,
+            padding: '14px 32px',
             color: '#FFFFFF',
-            fontSize: 40,
+            fontSize: 48,
             fontWeight: 800,
             letterSpacing: 0.5,
           }}
@@ -171,7 +171,7 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
       </div>
 
       {/* 조건 목록 */}
-      <div style={{ padding: '18px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ padding: '28px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
         {CHECK_ITEMS.map((item, idx) => {
           const itemOpacity = interpolate(
             revealAt,
@@ -186,9 +186,9 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
                 opacity: itemOpacity,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 14,
-                padding: '12px 16px',
-                borderRadius: 10,
+                gap: 24,
+                padding: '20px 28px',
+                borderRadius: 16,
                 background: item.pass ? '#EBF7EF' : '#FDECEA',
                 border: `1px solid ${item.pass ? '#A8D9B8' : '#F0B0A0'}`,
               }}
@@ -225,17 +225,17 @@ const GateBlock: React.FC<{ revealAt: number }> = ({ revealAt }) => {
         style={{
           opacity: stopOpacity,
           transform: `scale(${stopScale})`,
-          margin: '0 24px 24px',
-          padding: '20px',
-          borderRadius: 12,
+          margin: '0 40px 40px',
+          padding: '32px',
+          borderRadius: 18,
           background: STOP_RED,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 16,
+          gap: 24,
         }}
       >
-        <span style={{ fontSize: 80 }}>🛑</span>
+        <span style={{ fontSize: 96 }}>🛑</span>
         <div>
           <div
             style={{
@@ -411,16 +411,16 @@ export const HitlDemo: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '100px 120px 160px',
+          padding: '60px 80px 120px',
         }}
       >
         {/* 배경 라벨 */}
         <div
           style={{
             position: 'absolute',
-            top: 60,
-            left: 200,
-            right: 200,
+            top: 40,
+            left: 120,
+            right: 120,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -453,7 +453,7 @@ export const HitlDemo: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ width: 1200, height: 580 }}>
+        <div style={{ width: 1400, height: 720 }}>
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
             messages={[INBOUND_MESSAGE]}
@@ -476,7 +476,7 @@ export const HitlDemo: React.FC = () => {
           justifyContent: 'center',
           flexDirection: 'column',
           gap: 40,
-          padding: '80px 200px',
+          padding: '60px 120px',
         }}
       >
         {/* 상단 분류 타이틀 */}
@@ -491,7 +491,7 @@ export const HitlDemo: React.FC = () => {
           PMF Radar 자동 분류 결과
         </div>
 
-        <div style={{ width: 900 }}>
+        <div style={{ width: 1100 }}>
           <RadarBadge
             category={CLASSIFICATION.category}
             categoryLabel={CLASSIFICATION.categoryLabel}
@@ -524,8 +524,8 @@ export const HitlDemo: React.FC = () => {
               style={{
                 background: '#FFFFFF',
                 border: `1px solid ${color}40`,
-                borderRadius: 10,
-                padding: '10px 20px',
+                borderRadius: 14,
+                padding: '16px 32px',
                 textAlign: 'center',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
               }}
@@ -552,12 +552,12 @@ export const HitlDemo: React.FC = () => {
           opacity: s3Op,
           display: 'flex',
           alignItems: 'center',
-          gap: 48,
-          padding: '80px 80px',
+          gap: 32,
+          padding: '60px 60px',
         }}
       >
         {/* 좌측 소형 KakaoFrame */}
-        <div style={{ width: 480, height: 500, opacity: s3KakaoOp, flexShrink: 0 }}>
+        <div style={{ width: 560, height: 580, opacity: s3KakaoOp, flexShrink: 0 }}>
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
             messages={[INBOUND_MESSAGE]}
@@ -595,12 +595,12 @@ export const HitlDemo: React.FC = () => {
           opacity: s4Op,
           display: 'flex',
           alignItems: 'center',
-          gap: 48,
-          padding: '80px 80px',
+          gap: 32,
+          padding: '60px 60px',
         }}
       >
         {/* 좌측 소형 RadarBadge */}
-        <div style={{ width: 420, flexShrink: 0 }}>
+        <div style={{ width: 520, flexShrink: 0 }}>
           <div style={{ marginBottom: 16, opacity: s4BadgeFade }}>
             <div
               style={{
@@ -644,8 +644,8 @@ export const HitlDemo: React.FC = () => {
               style={{
                 background: STOP_RED + '18',
                 border: `1px solid ${STOP_RED}40`,
-                borderRadius: 8,
-                padding: '10px 18px',
+                borderRadius: 12,
+                padding: '16px 28px',
                 fontSize: 40,
                 fontWeight: 700,
                 color: STOP_RED,
@@ -663,7 +663,7 @@ export const HitlDemo: React.FC = () => {
         </div>
 
         {/* 우측 TelegramFrame */}
-        <div style={{ flex: 1, height: 520 }}>
+        <div style={{ flex: 1, height: 660 }}>
           <TelegramFrame
             botName="PMF Radar P2"
             chatLabel="kimsanguine (운영자)"
@@ -688,7 +688,7 @@ export const HitlDemo: React.FC = () => {
           justifyContent: 'center',
           flexDirection: 'column',
           gap: 24,
-          padding: '80px 80px',
+          padding: '60px 60px',
         }}
       >
         {/* 상단 운영자 라벨 */}
@@ -730,7 +730,7 @@ export const HitlDemo: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ width: 1200, height: 580 }}>
+        <div style={{ width: 1400, height: 720 }}>
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
             messages={[INBOUND_MESSAGE, OUTBOUND_REPLY]}
