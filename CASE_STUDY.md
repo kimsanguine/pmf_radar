@@ -106,10 +106,10 @@ remotion/             ← 데모 영상 컴포넌트
 
 ### 5.2 수치
 
-- **92 test PASS**: Python 40 + TS 49 + retention 3
+- **107 test PASS**: Python 40 + TS 64 + retention 3 (data-ingest +15)
 - **27 validate_schemas check PASS / 5 SKIP / 0 FAIL**
 - **3 DB migration** scripts (`20260518000001~3`)
-- **4 Cloudflare Workers** = 약 1,656 LOC TypeScript
+- **5 Cloudflare Workers** = 약 2,100 LOC TypeScript (email-inbound, channel-talk, auto-reply, data-ingest, _shared)
 - **1,500+ LOC Python** (server + scripts + tests)
 - **6 weeks** from kickoff to production-ready (P1 강의 + P2 라이브)
 
