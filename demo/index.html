@@ -33,7 +33,7 @@
     html { scroll-behavior: smooth; }
     body {
       min-height: 100vh;
-      padding-top: 56px;
+      padding-top: 56px; /* site-system GNB (fixed 56px) 보정 */
       background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
@@ -1656,7 +1656,7 @@
       .signal-row { grid-template-columns: 1fr; gap: 4px; }
     }
 
-      @media (prefers-reduced-motion: reduce) {
+    @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after {
         animation-duration: .001ms !important;
@@ -1734,7 +1734,7 @@
 
   <!-- 15초 요약 · 알아두면 좋은 용어 (라이트 타겟 진입 보강 — habix.ai site-system v1 .hx-* 컴포넌트) -->
   <section style="padding: 40px 0;">
-    <div class="sw" style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+    <div class="sw">
       <div class="hx-summary">
         <span class="hx-summary-label">⏱ 15초 요약</span>
         <p>
@@ -2108,7 +2108,7 @@
 
     <!-- CAVEAT — radar 를 안 써도 되는 때 (라이트 타겟 신뢰감 ↑) -->
     <section style="padding: 40px 0;">
-      <div class="sw" style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+      <div class="sw">
         <div class="hx-caveat">
           <span class="hx-caveat-label">근데 말이죠</span>
           <h3 class="hx-caveat-title">radar 를 안 써도 되는 때도 있어요</h3>
