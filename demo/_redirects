@@ -1,0 +1,14 @@
+# PMF Radar — Cloudflare Pages 리디렉션 정책
+#
+# 목적: 존재하지 않는 정적 자산(assets/*)에 대해 SPA fallback(200 + HTML)
+#       을 차단하고 정확한 404 를 반환한다.
+#
+# 규칙:
+#   - SPA fallback 줄 "/* /index.html 200" 을 의도적으로 포함하지 않는다.
+#   - demo/404.html 이 존재하면 Cloudflare Pages 가 미매칭 경로에
+#     HTTP 404 + 404.html 을 자동 반환한다.
+#   - 따라서 정상 경로(index.html, cases.html)는 추가 규칙 없이
+#     Pages 정적 파일 서빙 기본 동작으로 처리된다.
+#
+# 변경 이력:
+#   2026-05-18  최초 작성 — P0-2 silent 404 → 200 HTML 차단
