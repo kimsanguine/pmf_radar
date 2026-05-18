@@ -25,10 +25,10 @@
       --bg-3: #ebe7da;
       --dark: #1a1a2e;
       --dark-2: #0a0a14;
-      --accent: #c8623a;
+      --accent: #a6492a;       /* WCAG AA — radar.css 와 통일 */
       --accent-2: #d9744f;
       --text: #3d3830;
-      --muted: #7a7068;
+      --muted: #5e5850;        /* contrast fix — radar.css 와 통일 */
       --border: #e8e3d8;
       --green: #4caf82;
       --yellow: #d6a238;
@@ -146,9 +146,10 @@
       margin-bottom: 16px;
     }
     /* contrast fix: 배경 농도 상향 + 텍스트 색 진하게 (WCAG AA 4.5 이상 목표) */
-    .case-tag.t-auto    { background: rgba(76, 175, 130, .22); color: #2d7a57; }    /* #2d7a57 on light bg ≥ 4.5 */
-    .case-tag.t-hitl    { background: rgba(200, 90, 58, .22); color: #7a2c14; }     /* #7a2c14 on light bg ≥ 4.5 */
-    .case-tag.t-data    { background: rgba(214, 162, 56, .22); color: #7a5a10; }    /* #7a5a10 on light bg ≥ 4.5 */
+    /* solid bg + white text — alpha 합성 무시 정공법 (axe-core 실측 1.92/2.27/2.75 fail 후 정정) */
+    .case-tag.t-auto    { background: #2d7a57; color: #fff; }
+    .case-tag.t-hitl    { background: #7a2c14; color: #fff; }
+    .case-tag.t-data    { background: #7a5a10; color: #fff; }
 
     .case-title {
       font-size: 26px;
