@@ -1,5 +1,20 @@
 /* radar.habix.ai 데모 페이지 JS — index.html 에서 분리 (Round 2 monolith split, 2026-05-18) */
 
+    /* Hold 계열 버블 색 (categoryRules.praise / .other 공용) */
+    const HOLD_COLOR = "#9a9288";
+
+    /**
+     * 에러를 console + addLog(logArea) 로 표면화한다.
+     * @param {string} context  어느 함수/작업에서 발생했는지
+     * @param {Error}  error    catch 된 에러 객체
+     */
+    function reportError(context, error) {
+      const msg = error?.message || String(error) || "알 수 없는 에러";
+      console.error(`[radar] ${context}:`, error);
+      // addLog 는 function 선언으로 호이스팅됨 → 호출 시점 무관하게 안전.
+      addLog(`${context} 실패 — ${msg}`);
+    }
+
     const fallbackInquiries = [
       { id: "inq-001", channel: "mock_kakao", segment: "Claude Code 첫 설치 수강생", message: "맥에서 설치하다가 zsh: command not found가 떠서 40분째 멈춰있어요. 강의는 좋은데 여기서 막히니까 시작도 못 하겠어요.", label_hint: "setup" },
       { id: "inq-010", channel: "mock_kakao", segment: "실습 중인 PM", message: "Claude가 만든 결과가 맞는지 틀린지 판단하는 기준을 모르겠어요. 좋은 결과물 예시와 나쁜 예시를 같이 보여주면 좋겠어요.", label_hint: "output_quality" },
@@ -84,7 +99,7 @@
         hold: "모든 업무 템플릿을 한 번에 제작"
       },
       praise: {
-        name: "칭찬", color: "#9a9288", decisionType: "hold", risk: 1,
+        name: "칭찬", color: HOLD_COLOR, decisionType: "hold", risk: 1,
         push: "감탄은 있으나 반복 행동은 아직 없음",
         anxiety: "후기와 제품 증거를 혼동할 수 있음",
         decision: "후기 후보로 보관하고 build evidence로 과대해석하지 않는다",
@@ -92,7 +107,7 @@
         hold: "칭찬만 보고 기능 우선순위 결정"
       },
       other: {
-        name: "기타 신호", color: "#9a9288", decisionType: "hold", risk: 2,
+        name: "기타 신호", color: HOLD_COLOR, decisionType: "hold", risk: 2,
         push: "아직 PMF evidence로 쓰기에는 맥락이 부족함",
         anxiety: "막연한 의견을 제품 요구사항으로 오해할 수 있음",
         decision: "추가 인터뷰 전까지 보관한다",
@@ -593,9 +608,10 @@
     async function loadInitialData() {
       try {
         const response = await fetch("../data/sample_inquiries.json");
-        if (!response.ok) throw new Error("sample fetch failed");
+        if (!response.ok) throw new Error(`sample fetch failed (HTTP ${response.status})`);
         state.inquiries = await response.json();
       } catch (error) {
+        reportError("loadInitialData", error);
         state.inquiries = fallbackInquiries;
       }
       renderAll();
@@ -617,7 +633,7 @@
             message: item.message || item.text || item.content || item.body || ""
           }));
         } catch (error) {
-          // Optional fixtures are loaded when present; the manual import remains the fallback.
+          reportError(`loadFixtureData(${path})`, error);
         }
       }
       if (records.length) {
@@ -663,16 +679,26 @@
       }
     });
     document.getElementById("loadSampleCsv").addEventListener("click", async () => {
-      const response = await fetch("../data/manual_import_sample.csv");
-      const csv = await response.text();
-      state.pendingFileRecords = parseCsvText(csv);
-      addLog(`manual_import_sample.csv에서 ${state.pendingFileRecords.length}개 record를 불러왔습니다.`);
+      try {
+        const response = await fetch("../data/manual_import_sample.csv");
+        if (!response.ok) throw new Error(`CSV fetch 실패 (HTTP ${response.status})`);
+        const csv = await response.text();
+        state.pendingFileRecords = parseCsvText(csv);
+        addLog(`manual_import_sample.csv에서 ${state.pendingFileRecords.length}개 record를 불러왔습니다.`);
+      } catch (error) {
+        reportError("loadSampleCsv", error);
+      }
     });
     document.getElementById("loadWebhookInbox").addEventListener("click", async () => {
-      const response = await fetch("/api/webhooks/inbox");
-      const data = await response.json();
-      state.pendingFileRecords = data.records || [];
-      addLog(`webhook inbox에서 ${state.pendingFileRecords.length}개 record를 불러왔습니다.`);
+      try {
+        const response = await fetch("/api/webhooks/inbox");
+        if (!response.ok) throw new Error(`webhook inbox fetch 실패 (HTTP ${response.status})`);
+        const data = await response.json();
+        state.pendingFileRecords = data.records || [];
+        addLog(`webhook inbox에서 ${state.pendingFileRecords.length}개 record를 불러왔습니다.`);
+      } catch (error) {
+        reportError("loadWebhookInbox", error);
+      }
     });
     document.getElementById("clearPendingImports").addEventListener("click", () => {
       state.pendingFileRecords = [];
@@ -856,9 +882,9 @@
         renderAll();
 
       } catch (error) {
-        // API 실패 시 로컬 기준으로 폴백
+        // API 실패 시 로컬 기준으로 폴백. 기존 gptSignals 는 보존한다.
+        reportError("ocRunClassify", error);
         state.mode = "local";
-        state.gptSignals = [];
         setWorkflowStage(5, `서버 분석 실패: ${error.message}. 로컬 기준으로 분석합니다.`);
         setRunMeta({ engine: "로컬 기준 분석 (오픈채팅 폴백)", latency: "fallback", gate: "evidence" });
         document.getElementById("ocResultMsg").innerHTML = `서버 연결 실패 — <em>로컬 기준</em>으로 ${records.length}건 분류 완료. <a href="#lab" style="color:var(--accent);font-weight:700">Radar 보기 ↓</a>`;
