@@ -75,15 +75,17 @@ const CATEGORY_COLOR: Record<string, string> = {
 //   설치실패↔PM사고연결: dist≈301 > 172 ✓
 //   설치실패↔품질판단:   dist≈219 > 160 ✓
 //   기타 모두 여유 확보 ✓
-// R14: cluster name 짧게 (BubbleMap fontSize=r*1.04 기준 안전 길이)
-// 설치실패(4자×fontSize 104=416 < r 100×2=200) → 변경: 짧은 alias
-const _r14CacheBust = 'r14-v3-2026-05-19';
+// R15: cluster radius 키움 + fontSize 20% 안 (r×0.85) + viewBox 1900×900 확대
+// 수학: r=160 fontSize=136 → '설치' width 150 < diameter 320 ✓
+const _r15CacheBust = 'r15-v3-bubble-big';
+// R17: viewBox 2400×1100 + cluster x spread (간격 > 라벨 width 646)
+// y stagger (위/아래 교차) 로 라벨 영역 분리. cluster 간 거리 > r1+r2+label width 보장.
 const CLUSTERS: BubbleCluster[] = [
-  { x: 270, y: 280, r: 120, color: '#C8623A', name: '설치',     count: 2 },
-  { x: 580, y: 200, r: 88,  color: '#C8623A', name: 'PM 사고',  count: 1 },
-  { x: 820, y: 320, r: 80,  color: '#2D8A4F', name: '개인정보', count: 1 },
-  { x: 1020, y: 200, r: 80, color: '#D6A238', name: '재방문',   count: 1 },
-  { x: 440, y: 460, r: 80,  color: '#C8623A', name: '품질판단', count: 1 },
+  { x: 380,  y: 350, r: 160, color: '#C8623A', name: '설치 실패',   count: 2 },
+  { x: 1100, y: 350, r: 120, color: '#C8623A', name: 'PM 사고 연결', count: 1 },
+  { x: 1800, y: 350, r: 105, color: '#2D8A4F', name: '개인정보',     count: 1 },
+  { x: 720,  y: 850, r: 105, color: '#D6A238', name: '재방문 의향',  count: 1 },
+  { x: 1500, y: 850, r: 105, color: '#C8623A', name: '품질 판단',   count: 1 },
 ];
 
 const FOCUS_CLUSTER = {
@@ -465,7 +467,7 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
         <BubbleMap
           clusters={CLUSTERS}
           animationProgress={animationProgress}
-          viewBox="0 0 1300 580"
+          viewBox="0 0 2400 1100"
         />
       </div>
 
@@ -559,7 +561,7 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           clusters={CLUSTERS}
           highlightIndex={0}
           animationProgress={1}
-          viewBox="0 0 1300 580"
+          viewBox="0 0 2400 1100"
         />
       </div>
 

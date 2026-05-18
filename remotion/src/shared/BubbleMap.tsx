@@ -97,30 +97,30 @@ export const BubbleMap: React.FC<BubbleMapProps> = ({
               strokeWidth={isHighlighted ? 2.5 : 1}
             />
 
-            {/* cluster 이름 */}
+            {/* cluster 이름 — cluster 밖 아래 라벨 (한글 4~6자가 cluster 안 못 들어감 → 외부 라벨 패턴) */}
             <text
               x={0}
-              y={-8}
+              y={baseR + Math.max(32, baseR * 0.85) + 8}
               textAnchor="middle"
-              fill="#FFFFFF"
-              fontSize={Math.max(40, baseR * 1.04)}
+              fill="#1A1A1A"
+              fontSize={Math.max(32, baseR * 0.85)}
               fontWeight="800"
               fontFamily="Apple SD Gothic Neo, Noto Sans KR, sans-serif"
             >
               {cluster.name}
             </text>
 
-            {/* 건수 */}
+            {/* 건수 — cluster 안 가운데 (큰 숫자만, 한글 없음) */}
             <text
               x={0}
-              y={18}
+              y={baseR * 0.32}
               textAnchor="middle"
-              fill="rgba(255,255,255,0.85)"
-              fontSize={Math.max(32, baseR * 0.84)}
-              fontWeight="700"
+              fill="#FFFFFF"
+              fontSize={Math.max(48, baseR * 1.1)}
+              fontWeight="900"
               fontFamily="monospace"
             >
-              {cluster.count}건
+              {cluster.count}
             </text>
           </g>
         );
