@@ -18,8 +18,10 @@
   <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css">
   <link rel="stylesheet" href="assets/radar.css?v=20260518d">
   <style>
-    /* drawer desktop stuck 강제 hide — HTML inline 이라 radar.css disk cache 와 무관 즉시 적용 (2026-05-18 회귀 fix) */
+    /* HTML inline rules — radar.css disk cache / stale-while-revalidate 와 무관 즉시 적용 (2026-05-18 회귀 fix) */
     .hx-mobile-drawer:not(.is-open) { display: none !important; }
+    /* site-system v1 GNB 는 sticky (normal flow). body padding-top 추가 시 GNB 위 빈 공간 발생 → 0 강제. */
+    body { padding-top: 0 !important; }
   </style>
   <script type="module" src="https://habix.ai/_shared/site-system.v1.js"></script>
 </head>
