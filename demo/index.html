@@ -14,16 +14,18 @@
   <!-- Pretendard: site-system.v1.css 가 제공하지만 demo standalone 환경 보장 -->
   <link rel="preload" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
-  <!-- habix.ai 공유 GNB (site-system v1) — cross-origin import. radar 페이지에서는 도메인 스위처 hide. -->
-  <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css">
-  <link rel="stylesheet" href="assets/radar.css?v=20260518e">
+  <!-- habix.ai 공유 GNB (site-system v1) — cross-origin import. radar 페이지에서는 도메인 스위처 hide.
+       ?v=… 캐시 버스터: site-system.v1.css/js 가 immutable+s-maxage 31536000 이라 inplace 변경 시
+       사용자 브라우저 캐시 stale 가능 → URL 키 갱신으로 강제 무효화 (2026-05-18 GNB 회귀 fix). -->
+  <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css?v=20260518">
+  <link rel="stylesheet" href="assets/radar.css?v=20260518f">
   <style>
     /* HTML inline rules — radar.css disk cache / stale-while-revalidate 와 무관 즉시 적용 (2026-05-18 회귀 fix) */
     .hx-mobile-drawer:not(.is-open) { display: none !important; }
     /* site-system v1 GNB 는 sticky (normal flow). body padding-top 추가 시 GNB 위 빈 공간 발생 → 0 강제. */
     body { padding-top: 0 !important; }
   </style>
-  <script type="module" src="https://habix.ai/_shared/site-system.v1.js"></script>
+  <script type="module" src="https://habix.ai/_shared/site-system.v1.js?v=20260518"></script>
 </head>
 <body>
   <div data-hx-header data-domain="habix"></div>

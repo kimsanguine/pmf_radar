@@ -1650,8 +1650,9 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* site-system.v1.css 미로드 시 inject 된 nav markup 의 raw bullet/펼침 방지 안전망.
-       v1.css 가 정상 로드되면 동일 셀렉터의 더 specific 한 룰이 cascade 로 이긴다. */
+    /* site-system.v1.css 미로드 시 inject 된 nav markup 의 raw bullet/펼침 방지 + layout 안전망.
+       v1.css 가 정상 로드되면 동일 셀렉터의 더 specific 한 룰이 cascade 로 이긴다.
+       2026-05-18 보강: list-style 만으로는 nav 가 vertical stack 됨 — flex/gap/header inner 까지 포함. */
     .hx-nav__list,
     .hx-nav-dd__menu,
     .hx-mobile-drawer__nav-list,
@@ -1661,6 +1662,32 @@
       margin: 0;
       padding: 0;
     }
+    .hx-site-header {
+      display: block;
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .hx-site-header__inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .hx-header-actions { display: inline-flex; align-items: center; gap: 16px; }
+    .hx-nav { display: inline-flex; align-items: center; }
+    .hx-nav__list { display: inline-flex; align-items: center; gap: 22px; }
+    .hx-nav__item { position: relative; display: inline-flex; align-items: center; }
+    .hx-nav__link,
+    .hx-nav__trigger {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 13px; font-weight: 600;
+      color: var(--text); text-decoration: none; cursor: pointer; white-space: nowrap;
+    }
+    .hx-logo { display: inline-flex; align-items: center; color: var(--text); text-decoration: none; }
     .hx-nav-dd__menu { display: none; }
 
     /* radar 페이지: GNB만 표시, 도메인 스위처 hide (사용자 결정 2026-05-18) */
