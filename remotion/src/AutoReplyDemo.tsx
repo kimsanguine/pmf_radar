@@ -77,7 +77,7 @@ const Subtitle: React.FC<{ text: string; opacity: number }> = ({ text, opacity }
         borderRadius: 10,
         padding: '12px 32px',
         color: '#FFFFFF',
-        fontSize: 28,
+        fontSize: 56,
         fontWeight: 600,
         fontFamily: FONT,
         letterSpacing: 0.3,
@@ -109,7 +109,7 @@ const GateChecklist: React.FC<{
     >
       <div
         style={{
-          fontSize: 24,
+          fontSize: 48,
           fontWeight: 800,
           color: NAVY,
           letterSpacing: 1.2,
@@ -148,7 +148,7 @@ const GateChecklist: React.FC<{
           >
             <span
               style={{
-                fontSize: 32,
+                fontSize: 64,
                 lineHeight: 1,
                 flexShrink: 0,
                 color: cond.pass ? '#388E3C' : '#C62828',
@@ -158,7 +158,7 @@ const GateChecklist: React.FC<{
             </span>
             <span
               style={{
-                fontSize: 22,
+                fontSize: 44,
                 fontWeight: 600,
                 color: DARK,
                 fontFamily: FONT,
@@ -221,7 +221,7 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
       >
         <div
           style={{
-            fontSize: 80,
+            fontSize: 160,
             fontWeight: 900,
             color: TEAL,
             fontFamily: FONT,
@@ -233,7 +233,7 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
         </div>
         <div
           style={{
-            fontSize: 80,
+            fontSize: 160,
             fontWeight: 900,
             color: DARK,
             fontFamily: FONT,
@@ -248,12 +248,12 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
       <div
         style={{
           opacity: subOpacity,
-          fontSize: 32,
+          fontSize: 64,
           color: '#555555',
           fontFamily: FONT,
           textAlign: 'center',
           lineHeight: 1.6,
-          maxWidth: 860,
+          maxWidth: 1400,
         }}
       >
         반복 문의를 5조건 Auto-Reply Gate 로 필터링,
@@ -274,11 +274,11 @@ const OutroPanel: React.FC<{ progress: number }> = ({ progress }) => {
           gap: 16,
         }}
       >
-        <span style={{ fontSize: 36 }}>⚡</span>
+        <span style={{ fontSize: 72 }}>⚡</span>
         <span
           style={{
             color: '#FFFFFF',
-            fontSize: 30,
+            fontSize: 60,
             fontWeight: 800,
             fontFamily: FONT,
             letterSpacing: 0.5,
@@ -320,7 +320,7 @@ const SectionLabel: React.FC<{ text: string; color?: string }> = ({
 }) => (
   <div
     style={{
-      fontSize: 22,
+      fontSize: 44,
       fontWeight: 800,
       color,
       letterSpacing: 2,
@@ -442,7 +442,7 @@ export const AutoReplyDemo: React.FC = () => {
               >
                 <div
                   style={{
-                    fontSize: 64,
+                    fontSize: 128,
                     fontWeight: 900,
                     color: NAVY,
                     fontFamily: FONT,
@@ -454,7 +454,7 @@ export const AutoReplyDemo: React.FC = () => {
                 </div>
                 <div
                   style={{
-                    fontSize: 36,
+                    fontSize: 72,
                     color: '#666666',
                     fontFamily: FONT,
                     fontWeight: 500,
@@ -567,13 +567,13 @@ export const AutoReplyDemo: React.FC = () => {
                     transform: `scale(${checkScale})`,
                   }}
                 >
-                  <span style={{ fontSize: 48, color: '#FFFFFF', lineHeight: 1 }}>
+                  <span style={{ fontSize: 96, color: '#FFFFFF', lineHeight: 1 }}>
                     ✓
                   </span>
                 </div>
                 <div
                   style={{
-                    fontSize: 48,
+                    fontSize: 96,
                     fontWeight: 900,
                     color: TEAL,
                     fontFamily: FONT,
@@ -583,7 +583,7 @@ export const AutoReplyDemo: React.FC = () => {
                 </div>
                 <div
                   style={{
-                    fontSize: 28,
+                    fontSize: 56,
                     color: '#555555',
                     fontFamily: FONT,
                     lineHeight: 1.6,

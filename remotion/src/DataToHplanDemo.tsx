@@ -114,7 +114,7 @@ const PriorityChart: React.FC<{
     >
       <div
         style={{
-          fontSize: 22,
+          fontSize: 44,
           fontWeight: 800,
           color: '#888888',
           letterSpacing: 1,
@@ -150,12 +150,12 @@ const PriorityChart: React.FC<{
                 marginBottom: 8,
               }}
             >
-              <span style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A' }}>
+              <span style={{ fontSize: 44, fontWeight: 700, color: '#1A1A1A' }}>
                 {item.label}
               </span>
               <span
                 style={{
-                  fontSize: 22,
+                  fontSize: 44,
                   fontWeight: 800,
                   color: PRIORITY_BAR_COLOR[item.priority],
                 }}
@@ -227,7 +227,7 @@ const SubtitleBar: React.FC<{ frame: number }> = ({ frame }) => {
         borderRadius: 12,
         padding: '16px 36px',
         fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
-        fontSize: 30,
+        fontSize: 60,
         fontWeight: 700,
         color: '#FFFFFF',
         letterSpacing: 0.3,
@@ -335,10 +335,10 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
           textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: 56, fontWeight: 900, color: '#C8623A' }}>
+        <div style={{ fontSize: 112, fontWeight: 900, color: '#C8623A' }}>
           {totalVisible}
         </div>
-        <div style={{ fontSize: 22, fontWeight: 600, marginTop: 4, opacity: 0.8 }}>
+        <div style={{ fontSize: 44, fontWeight: 600, marginTop: 4, opacity: 0.8 }}>
           건 문의
         </div>
       </div>
@@ -366,7 +366,7 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
                 background: ch === 'kakao' ? '#FEE500' : '#1A9AD5',
                 borderRadius: 10,
                 padding: '10px 20px',
-                fontSize: 22,
+                fontSize: 44,
                 fontWeight: 800,
                 color: ch === 'kakao' ? '#1A1A1A' : '#FFFFFF',
                 opacity: cnt > 0 ? 1 : 0.3,
@@ -382,7 +382,7 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
                     background: 'rgba(0,0,0,0.18)',
                     borderRadius: 12,
                     padding: '2px 10px',
-                    fontSize: 20,
+                    fontSize: 40,
                     fontWeight: 900,
                   }}
                 >
@@ -433,7 +433,7 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
           right: 0,
           textAlign: 'center',
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
-          fontSize: 40,
+          fontSize: 80,
           fontWeight: 900,
           color: '#1A1A1A',
           letterSpacing: 0.3,
@@ -492,7 +492,7 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
                 flexShrink: 0,
               }}
             />
-            <span style={{ fontSize: 22, fontWeight: 600, color: '#555555' }}>
+            <span style={{ fontSize: 44, fontWeight: 600, color: '#555555' }}>
               {item.label}
             </span>
           </div>
@@ -574,7 +574,7 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           >
             <div
               style={{
-                fontSize: 20,
+                fontSize: 40,
                 fontWeight: 800,
                 color: '#888888',
                 letterSpacing: 1,
@@ -586,7 +586,7 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
             </div>
             <div
               style={{
-                fontSize: 44,
+                fontSize: 88,
                 fontWeight: 900,
                 color: FOCUS_CLUSTER.color,
               }}
@@ -595,7 +595,7 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
             </div>
             <div
               style={{
-                fontSize: 24,
+                fontSize: 48,
                 fontWeight: 600,
                 color: '#555555',
                 marginTop: 4,
@@ -670,7 +670,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
       >
         <div
           style={{
-            fontSize: 24,
+            fontSize: 48,
             fontWeight: 800,
             color: '#888888',
             letterSpacing: 1,
@@ -747,10 +747,10 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
               }),
             }}
           >
-            <span style={{ fontSize: 22, fontWeight: 600, color: '#888888' }}>
+            <span style={{ fontSize: 44, fontWeight: 600, color: '#888888' }}>
               총 문의
             </span>
-            <span style={{ fontSize: 36, fontWeight: 900, color: '#1A1A1A' }}>
+            <span style={{ fontSize: 72, fontWeight: 900, color: '#1A1A1A' }}>
               6건
             </span>
           </div>
@@ -764,7 +764,7 @@ const Scene4: React.FC<{ frame: number }> = ({ frame }) => {
           bottom: 52,
           right: 80,
           fontFamily: 'monospace',
-          fontSize: 20,
+          fontSize: 40,
           fontWeight: 700,
           color: '#CCCCCC',
           letterSpacing: 2,

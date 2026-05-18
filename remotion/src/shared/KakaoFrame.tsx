@@ -58,7 +58,7 @@ const Bubble: React.FC<{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 22,
+              fontSize: 44,
               color: TEXT_MUTED,
               fontWeight: 700,
               flexShrink: 0,
@@ -66,7 +66,7 @@ const Bubble: React.FC<{
           >
             {msg.author.charAt(0)}
           </div>
-          <span style={{ fontSize: 16, color: TEXT_MUTED, whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 32, color: TEXT_MUTED, whiteSpace: 'nowrap' }}>
             {msg.author.split('—')[0].trim()}
           </span>
         </div>
@@ -84,13 +84,13 @@ const Bubble: React.FC<{
       >
         <div
           style={{
-            padding: '16px 22px',
+            padding: '22px 30px',
             borderRadius: isOut
               ? '22px 22px 4px 22px'
               : '22px 22px 22px 4px',
             background: isOut ? OUTBOUND_BG : INBOUND_BG,
             color: TEXT_DARK,
-            fontSize: 24,
+            fontSize: 48,
             fontWeight: 600,
             lineHeight: 1.5,
             boxShadow: '0 1px 3px rgba(0,0,0,0.10)',
@@ -98,7 +98,7 @@ const Bubble: React.FC<{
         >
           {msg.text}
         </div>
-        <span style={{ fontSize: 16, color: TIME_COLOR, flexShrink: 0 }}>
+        <span style={{ fontSize: 32, color: TIME_COLOR, flexShrink: 0 }}>
           {msg.time}
         </span>
       </div>
@@ -156,7 +156,7 @@ export const KakaoFrame: React.FC<KakaoFrameProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 24,
+            fontSize: 48,
           }}
         >
           💬
@@ -165,7 +165,7 @@ export const KakaoFrame: React.FC<KakaoFrameProps> = ({
           style={{
             color: '#FFFFFF',
             fontWeight: 700,
-            fontSize: 22,
+            fontSize: 44,
             letterSpacing: 0.3,
           }}
         >
@@ -219,7 +219,7 @@ export const KakaoFrame: React.FC<KakaoFrameProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 20,
+            fontSize: 40,
           }}
         >
           ▶

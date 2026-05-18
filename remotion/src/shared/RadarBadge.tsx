@@ -74,12 +74,12 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span style={{ fontSize: 36 }}>{DECISION_ICON[decisionType]}</span>
+          <span style={{ fontSize: 72 }}>{DECISION_ICON[decisionType]}</span>
           <div>
-            <div style={{ color: '#FFFFFF', fontSize: 18, fontWeight: 700, opacity: 0.85, letterSpacing: 1 }}>
+            <div style={{ color: '#FFFFFF', fontSize: 36, fontWeight: 700, opacity: 0.85, letterSpacing: 1 }}>
               PMF RADAR
             </div>
-            <div style={{ color: '#FFFFFF', fontSize: 36, fontWeight: 900, lineHeight: 1.2 }}>
+            <div style={{ color: '#FFFFFF', fontSize: 72, fontWeight: 900, lineHeight: 1.2 }}>
               {categoryLabel}
             </div>
           </div>
@@ -90,7 +90,7 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
             borderRadius: 24,
             padding: '8px 18px',
             color: '#FFFFFF',
-            fontSize: 20,
+            fontSize: 40,
             fontWeight: 700,
             letterSpacing: 0.5,
           }}
@@ -107,7 +107,7 @@ export const RadarBadge: React.FC<RadarBadgeProps> = ({
             border: `2px solid ${color}`,
             borderRadius: 8,
             padding: '6px 14px',
-            fontSize: 20,
+            fontSize: 40,
             fontWeight: 800,
             color: color,
             fontFamily: 'monospace',
