@@ -1565,3 +1565,6 @@
     .hx-switcher-nav,
     .hx-mobile-drawer__switch-link,
     .hx-mobile-drawer__divider { display: none !important; }
+    /* mobile drawer 자체도 is-open 아니면 항상 hide — site-system v1 의 default display:none 이
+       어떤 cascade 로 override 되어 desktop 에 펼쳐진 상태로 stuck (2026-05-18 라이브 회귀 fix). */
+    .hx-mobile-drawer:not(.is-open) { display: none !important; }
