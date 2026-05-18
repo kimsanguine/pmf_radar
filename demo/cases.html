@@ -62,10 +62,10 @@
       font-family: var(--mono);
       font-size: 12px;
       font-weight: 700;
-      color: var(--accent);
+      color: #7a3520;    /* contrast fix: 12px bold on #faf8f4 → #7a3520 (≥ 4.5) */
       letter-spacing: .18em;
       text-transform: uppercase;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     h1 {
       font-size: clamp(34px, 4.4vw, 52px);
@@ -81,7 +81,7 @@
       color: var(--accent);
     }
     .hero-desc {
-      font-size: 17px;
+      font-size: 16px;
       color: var(--muted);
       max-width: 720px;
       line-height: 1.75;
@@ -96,9 +96,9 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 11px 22px;
+      padding: 12px 24px;
       border-radius: 4px;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: 0;
       transition: transform .15s ease, background .15s ease;
@@ -143,11 +143,12 @@
       text-transform: uppercase;
       padding: 4px 10px;
       border-radius: 4px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
-    .case-tag.t-auto    { background: rgba(76, 175, 130, .14); color: var(--green); }
-    .case-tag.t-hitl    { background: rgba(200, 90, 58, .14); color: var(--red); }
-    .case-tag.t-data    { background: rgba(214, 162, 56, .14); color: var(--yellow); }
+    /* contrast fix: 배경 농도 상향 + 텍스트 색 진하게 (WCAG AA 4.5 이상 목표) */
+    .case-tag.t-auto    { background: rgba(76, 175, 130, .22); color: #2d7a57; }    /* #2d7a57 on light bg ≥ 4.5 */
+    .case-tag.t-hitl    { background: rgba(200, 90, 58, .22); color: #7a2c14; }     /* #7a2c14 on light bg ≥ 4.5 */
+    .case-tag.t-data    { background: rgba(214, 162, 56, .22); color: #7a5a10; }    /* #7a5a10 on light bg ≥ 4.5 */
 
     .case-title {
       font-size: 26px;
@@ -157,10 +158,10 @@
       margin-bottom: 12px;
     }
     .case-msg {
-      font-size: 15px;
+      font-size: 16px;
       color: var(--text);
       line-height: 1.75;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     .case-list {
       list-style: none;
@@ -176,10 +177,11 @@
       margin-right: 6px;
     }
     .case-cross {
-      margin-top: 22px;
+      margin-top: 24px; /* spacing 4배수 정렬 */
       font-family: var(--mono);
       font-size: 12px;
-      color: var(--accent);
+      font-weight: 700;  /* contrast fix: 12px small text는 bold로 AA 달성 */
+      color: #7a3520;    /* #a6492a보다 진하게: 12px bold on #faf8f4 ≥ 4.5 */
     }
 
     .footer {
@@ -193,8 +195,8 @@
       align-items: center;
       gap: 24px;
       flex-wrap: wrap;
-      font-size: 13px;
-      color: var(--muted);
+      font-size: 14px; /* typo 4단계: 13→14 */
+      color: #5e5850;  /* contrast fix: #7a7068(4.25) → #5e5850(≥4.5) on #f3f0ea */
     }
     .footer-links { display: flex; gap: 20px; }
     .footer-links a:hover { color: var(--accent); }
