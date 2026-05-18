@@ -44,18 +44,19 @@ export const BubbleMap: React.FC<BubbleMapProps> = ({
       <rect width="100%" height="100%" fill="url(#grid)" />
 
       {clusters.map((cluster, i) => {
-        // 각 bubble: progress 0→(i/n) 구간 진입 후 fade-in 0.12 폭
-        const threshold = n > 1 ? i / (n - 1) : 0;
+        // stagger 진입. 마지막 cluster 까지 fadeWidth 가 input range 안에 들도록 (1 - fadeWidth) 로 cap.
+        // Remotion interpolate inputRange 가 monotonically strictly increasing 필수 — Math.min(1, ...) 이 동일값 만들면 throw.
         const fadeWidth = 0.15;
+        const threshold = (i / Math.max(1, n)) * (1 - fadeWidth);
         const opacity = interpolate(
           animationProgress,
-          [threshold, Math.min(1, threshold + fadeWidth)],
+          [threshold, threshold + fadeWidth],
           [0, 1],
           { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
         );
         const scale = interpolate(
           animationProgress,
-          [threshold, Math.min(1, threshold + fadeWidth)],
+          [threshold, threshold + fadeWidth],
           [0.4, 1],
           { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
         );

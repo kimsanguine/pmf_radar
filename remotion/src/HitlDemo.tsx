@@ -64,14 +64,20 @@ function sceneOpacity(
   fadeIn = 12,
   fadeOut = 12,
 ): number {
-  const inVal = interpolate(frame, [startFrame, startFrame + fadeIn], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-  const outVal = interpolate(frame, [endFrame - fadeOut, endFrame], [1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  // fadeIn/fadeOut 가 0 이면 interpolate inputRange 가 [x, x] = 같은 끝값 →
+  // Remotion strict 검증 throw. 0 케이스는 step function 으로 short-circuit.
+  const inVal = fadeIn > 0
+    ? interpolate(frame, [startFrame, startFrame + fadeIn], [0, 1], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      })
+    : (frame >= startFrame ? 1 : 0);
+  const outVal = fadeOut > 0
+    ? interpolate(frame, [endFrame - fadeOut, endFrame], [1, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      })
+    : (frame < endFrame ? 1 : 0);
   return Math.min(inVal, outVal);
 }
 
