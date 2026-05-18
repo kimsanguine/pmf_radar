@@ -12,3 +12,6 @@
 #
 # 변경 이력:
 #   2026-05-18  최초 작성 — P0-2 silent 404 → 200 HTML 차단
+
+# Static demo mock — server.py 안 띄운 환경에서 /api/health 가 404 → console error 방지
+/api/health    /api/health.json    200
