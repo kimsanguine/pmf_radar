@@ -4,7 +4,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "render": "remotion render src/index.ts HplanPmfDemo ../demo/assets/hplan-pmf-demo.mp4 --codec=h264 --pixel-format=yuv420p",
+    "preview": "remotion studio",
+    "render:hero": "remotion render src/index.ts HplanPmfDemo ../demo/assets/hplan-pmf-demo.mp4 --codec=h264 --pixel-format=yuv420p",
+    "render:v1": "remotion render src/index.ts auto-reply-demo ../demo/assets/auto-reply-demo.mp4 --codec=h264 --pixel-format=yuv420p",
+    "render:v2": "remotion render src/index.ts hitl-demo ../demo/assets/hitl-demo.mp4 --codec=h264 --pixel-format=yuv420p",
+    "render:v3": "remotion render src/index.ts data-to-hplan-demo ../demo/assets/data-to-hplan-demo.mp4 --codec=h264 --pixel-format=yuv420p",
     "still": "remotion still src/index.ts HplanPmfDemo ../demo/assets/hplan-pmf-demo-poster.png --frame=45"
   },
   "dependencies": {
@@ -14,6 +18,8 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "typescript": "^5.7.3"
   }
 }
