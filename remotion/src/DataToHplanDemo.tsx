@@ -65,19 +65,22 @@ const CATEGORY_COLOR: Record<string, string> = {
   output_quality: '#C8623A',
 };
 
-// Round 9: BubbleMap cluster radius 확대
-// 기존: r=55/40/34/34/34 → 후: r=72/52/44/44/44
+// Fix 3: BubbleMap 글자 overlap 해소
+// r 확대 + x/y 좌표 spread + viewBox "0 0 1300 580" 으로 확장
 // BubbleMap 내부 fontSize = max(40, r×1.04)
-//   r=55 → fontSize≈57 (버블 d=110, 2글자 한글 클리핑 위험)
-//   r=72 → fontSize≈75 (버블 d=144, 2글자 한글 여유 확보)
-//   r=52 → fontSize≈54 (버블 d=104, 적정)
-//   r=44 → fontSize≈46 (버블 d=88, 짧은 이름 OK)
+//   r=100 → fontSize=104 (설치 실패 2글자, d=200, 내부 여유 충분)
+//   r=72  → fontSize≈75  (PM 사고 연결 5글자, d=144)
+//   r=60  → fontSize≈62  (3~4글자, d=120)
+// 클러스터 간 최소 거리 > r1+r2 검증:
+//   설치실패↔PM사고연결: dist≈301 > 172 ✓
+//   설치실패↔품질판단:   dist≈219 > 160 ✓
+//   기타 모두 여유 확보 ✓
 const CLUSTERS: BubbleCluster[] = [
-  { x: 210, y: 230, r: 72, color: '#C8623A', name: '설치 실패', count: 2 },
-  { x: 430, y: 160, r: 52, color: '#C8623A', name: 'PM 사고 연결', count: 1 },
-  { x: 620, y: 260, r: 44, color: '#2D8A4F', name: '개인정보', count: 1 },
-  { x: 740, y: 155, r: 44, color: '#D6A238', name: '재방문 의향', count: 1 },
-  { x: 320, y: 345, r: 44, color: '#C8623A', name: '품질 판단', count: 1 },
+  { x: 270, y: 280, r: 100, color: '#C8623A', name: '설치 실패',   count: 2 },
+  { x: 560, y: 200, r: 72,  color: '#C8623A', name: 'PM 사고 연결', count: 1 },
+  { x: 800, y: 320, r: 60,  color: '#2D8A4F', name: '개인정보',     count: 1 },
+  { x: 960, y: 190, r: 60,  color: '#D6A238', name: '재방문 의향',  count: 1 },
+  { x: 420, y: 440, r: 60,  color: '#C8623A', name: '품질 판단',   count: 1 },
 ];
 
 const FOCUS_CLUSTER = {
@@ -320,25 +323,25 @@ const Scene1: React.FC<{ frame: number }> = ({ frame }) => {
       </div>
 
       {/* 우상단 메시지 카운터 카드
-          Round 9: padding 24×40 → 36×56 (숫자 112 × 0.32~0.50) */}
+          Fix 2: 채널 태그(fontSize 44)와 비례 맞춤 — 숫자 80, padding 24×40 */}
       <div
         style={{
           position: 'absolute',
           top: 60,
           right: 100,
           background: '#1A1A1A',
-          borderRadius: 24,
-          padding: '36px 56px',
+          borderRadius: 20,
+          padding: '24px 40px',
           fontFamily: '"Pretendard Variable", "Pretendard", "Noto Sans KR", sans-serif',
           color: '#FAF8F4',
           textAlign: 'center',
-          minWidth: 200,
+          minWidth: 160,
         }}
       >
-        <div style={{ fontSize: 112, fontWeight: 900, color: '#C8623A', lineHeight: 1 }}>
+        <div style={{ fontSize: 80, fontWeight: 900, color: '#C8623A', lineHeight: 1 }}>
           {totalVisible}
         </div>
-        <div style={{ fontSize: 44, fontWeight: 600, marginTop: 12, opacity: 0.8 }}>
+        <div style={{ fontSize: 40, fontWeight: 600, marginTop: 8, opacity: 0.8 }}>
           건 문의
         </div>
       </div>
@@ -459,7 +462,7 @@ const Scene2: React.FC<{ frame: number }> = ({ frame }) => {
         <BubbleMap
           clusters={CLUSTERS}
           animationProgress={animationProgress}
-          viewBox="0 0 900 430"
+          viewBox="0 0 1300 580"
         />
       </div>
 
@@ -553,7 +556,7 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
           clusters={CLUSTERS}
           highlightIndex={0}
           animationProgress={1}
-          viewBox="0 0 760 430"
+          viewBox="0 0 1300 580"
         />
       </div>
 

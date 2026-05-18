@@ -365,7 +365,10 @@ export const HitlDemo: React.FC = () => {
 
   // ── Scene 4: 480~660 TelegramFrame ──
   const s4Op = sceneOpacity(frame, 480, 660);
-  const tgRevealAt = interpolate(frame, [492, 630], [0, 1], {
+  // Fix: 카드 등장을 앞당김 — [492,630]→[480,560] 으로 단축
+  // TelegramFrame 내부 cardOpacity = revealAt[0.4,0.8] 구간이므로
+  // 480+80*0.4=512f(17.1s) 부터 카드 등장, 560f(18.7s) 에 완전 표시
+  const tgRevealAt = interpolate(frame, [480, 560], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -678,8 +681,8 @@ export const HitlDemo: React.FC = () => {
           →
         </div>
 
-        {/* 우측 TelegramFrame — scale(1.12) wrapper 로 내부 grid label width 보정 */}
-        <div style={{ flex: 1, height: 660, position: 'relative' }}>
+        {/* 우측 TelegramFrame — height 860으로 확대 (내용물 총 높이 ~800px 수용) */}
+        <div style={{ flex: 1, height: 860, position: 'relative' }}>
           <div
             style={{
               width: '100%',
