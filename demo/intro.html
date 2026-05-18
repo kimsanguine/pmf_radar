@@ -43,10 +43,10 @@
     .hx-foot-col__list { list-style: none; margin: 0; padding: 0; }
     .hx-site-header { display: block; background: #f3f0ea; border-bottom: 1px solid #e8e3d8; }
     .hx-site-header__inner {
-      max-width: 1180px; margin: 0 auto; padding: 0 32px; height: 56px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 56px;
+      display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px;
     }
-    .hx-header-actions { display: inline-flex; align-items: center; gap: 16px; }
+    .hx-header-actions { display: inline-flex; align-items: center; gap: 16px; justify-self: end; }
     .hx-nav { display: inline-flex; align-items: center; }
     .hx-nav__list { display: inline-flex; align-items: center; gap: 22px; }
     .hx-nav__item { position: relative; display: inline-flex; align-items: center; }
@@ -57,7 +57,22 @@
       text-decoration: none; cursor: pointer; white-space: nowrap;
     }
     .hx-logo { display: inline-flex; align-items: center; color: #3d3830; text-decoration: none; }
-    .hx-nav-dd__menu { display: none; }
+    /* dropdown — opacity/visibility 기반 (v1.css 호환). display:none 으로 hide 하면
+       v1.css 정상 케이스에서도 hover 룰을 cascade 후순위로 이겨 dropdown 영구 hidden. */
+    .hx-nav-dd__menu {
+      position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      opacity: 0; visibility: hidden; pointer-events: none;
+      min-width: 240px; padding: 8px;
+      background: #ffffff; border: 1px solid #e8e3d8; border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.1); z-index: 1100;
+      transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+    }
+    .hx-nav-dd:hover > .hx-nav-dd__menu,
+    .hx-nav-dd:focus-within > .hx-nav-dd__menu {
+      opacity: 1; visibility: visible; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* ─── Design tokens (radar.css 카논 동일) ─── */
     :root {
