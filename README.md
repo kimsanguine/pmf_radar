@@ -29,7 +29,9 @@
 
 ## 라이브 데모
 
-(배포 후 추가)
+🚀 **https://pmf-radar.pages.dev/** (Cloudflare Pages)
+
+> 정적 UI 데모입니다. **LLM 분류 기능** (`/api/classify`) 은 로컬에서 `server.py` 실행 시 작동 — 빠른 시작 섹션 참조.
 
 ## 빠른 시작 — 로컬 데모 (5분)
 
