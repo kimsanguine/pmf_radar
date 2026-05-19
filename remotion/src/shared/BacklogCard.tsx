@@ -54,48 +54,60 @@ export const BacklogCard: React.FC<BacklogCardProps> = ({
         borderLeft: `6px solid ${color}`,
       }}
     >
-      {/* 헤더 */}
+      {/* 헤더 — R18: column stack 으로 변경 (좁은 wrapper 에서 헤더 overflow 해소)
+          R17 까지: P5 + clusterName + hplan backlog 한 row → 폭 부족시 깨짐
+          R18: row 1 = "hplan backlog" 라벨, row 2 = P5 + clusterName */}
       <div
         style={{
           background: color + '12',
-          padding: '20px 24px',
+          padding: '18px 24px',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
+          gap: 8,
           borderBottom: `1px solid ${color}20`,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {/* 우선순위 배지 */}
+        {/* row 1: hplan backlog 라벨 (단독 상단) */}
+        <span
+          style={{
+            fontFamily: 'monospace',
+            fontSize: 32,
+            fontWeight: 700,
+            color: '#888888',
+            letterSpacing: 1.2,
+          }}
+        >
+          hplan backlog
+        </span>
+        {/* row 2: P5 배지 + clusterName */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'nowrap' }}>
           <div
             style={{
               background: PRIORITY_BG[priority],
               borderRadius: 8,
               padding: '6px 14px',
               color: '#FFFFFF',
-              fontSize: 44,
+              fontSize: 38,
               fontWeight: 800,
               letterSpacing: 0.3,
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
             }}
           >
             {PRIORITY_LABEL[priority]}
           </div>
-          <span style={{ color: color, fontSize: 64, fontWeight: 900 }}>
+          {/* R18: clusterName fontSize 64→56 (−12.5%, 사용자 한도 20% 내) */}
+          <span
+            style={{
+              color: color,
+              fontSize: 56,
+              fontWeight: 900,
+              whiteSpace: 'nowrap',
+            }}
+          >
             {clusterName}
           </span>
         </div>
-        {/* hplan 라벨 */}
-        <span
-          style={{
-            fontFamily: 'monospace',
-            fontSize: 36,
-            fontWeight: 700,
-            color: '#888888',
-            letterSpacing: 1,
-          }}
-        >
-          hplan backlog
-        </span>
       </div>
 
       {/* 내용 */}

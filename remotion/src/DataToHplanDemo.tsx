@@ -80,6 +80,8 @@ const CATEGORY_COLOR: Record<string, string> = {
 const _r15CacheBust = 'r15-v3-bubble-big';
 // R17: viewBox 2400×1100 + cluster x spread (간격 > 라벨 width 646)
 // y stagger (위/아래 교차) 로 라벨 영역 분리. cluster 간 거리 > r1+r2+label width 보장.
+// R18: BacklogCard 헤더 column stack (shared/BacklogCard.tsx) + Scene 3 카드 영역 자막 overlap 해소.
+const _r18CacheBust = 'r18-v3-backlog-stack-2026-05-19';
 const CLUSTERS: BubbleCluster[] = [
   { x: 380,  y: 350, r: 160, color: '#C8623A', name: '설치 실패',   count: 2 },
   { x: 1100, y: 350, r: 120, color: '#C8623A', name: 'PM 사고 연결', count: 1 },
@@ -544,10 +546,10 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
         position: 'relative',
       }}
     >
-      {/* 좌측 BubbleMap (60%) */}
+      {/* 좌측 BubbleMap (56%) — R18: 우측 카드폭 확장(44%)에 맞춤 */}
       <div
         style={{
-          width: '60%',
+          width: '56%',
           height: '100%',
           display: 'flex',
           alignItems: 'center',
@@ -565,16 +567,18 @@ const Scene3: React.FC<{ frame: number }> = ({ frame }) => {
         />
       </div>
 
-      {/* 우측 drilldown 카드 (40%) */}
+      {/* 우측 drilldown 카드 (40%)
+          R18: paddingBottom 60→160 (자막 SubtitleBar bottom 56 영역 회피)
+          R18: width 40%→44% (BacklogCard 헤더 새 column 헤더에 폭 여유) */}
       <div
         style={{
-          width: '40%',
+          width: '44%',
           height: '100%',
           display: 'flex',
           alignItems: 'center',
           paddingRight: 40,
           paddingTop: 60,
-          paddingBottom: 60,
+          paddingBottom: 160,
           boxSizing: 'border-box',
           opacity: drilldownFade,
         }}

@@ -13,6 +13,15 @@ const INBOUND_MESSAGE: KakaoMessage = {
   type: 'inbound',
 };
 
+// R18.2: Scene 3 메시지 — wrapper word-break: keep-all 적용으로 한국어 어절 단위 break 보장
+// wrapper 900 + keep-all → "사내 데이터 보안 검토 / 필요합니다" 자연스러운 어절 break
+const INBOUND_SUMMARY: KakaoMessage = {
+  author: 'B2B 리드 — 사내 데이터 보안 검토',
+  text: '사내 데이터 보안 검토 필요합니다',
+  time: '오후 3:42',
+  type: 'inbound',
+};
+
 const OUTBOUND_REPLY: KakaoMessage = {
   author: '운영자 — kimsanguine (수동 검토)',
   text: '실데이터 사용 전에는 익명화 샘플과 보관/삭제 기준부터 확인하겠습니다. 별도 보안 검토 자료를 메일로 전달드릴게요.',
@@ -373,6 +382,8 @@ export const HitlDemo: React.FC = () => {
   });
   // R14 cache bust marker — bundle hash 강제 변경 (Remotion cache deep clear)
   const _r14 = 'cache-bust-2026-05-19';
+  // R18.3: Scene 3 KakaoFrame width 700 + keep-all (GateBlock 폭 1064 회복, 좌우 균형)
+  const _r18 = 'r18-3-v2-scene3-balanced-2026-05-19';
   const s4BadgeFade = interpolate(frame, [480, 510], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -572,11 +583,23 @@ export const HitlDemo: React.FC = () => {
           padding: '56px 56px',
         }}
       >
-        {/* 좌측 소형 KakaoFrame — 높이도 fontSize 48(내부) 기준 비례 */}
-        <div style={{ width: 500, height: 560, opacity: s3KakaoOp, flexShrink: 0 }}>
+        {/* 좌측 소형 KakaoFrame — R18.3: wrapper 900→700 (GateBlock 폭 회복) + keep-all 유지
+            900 일 때 GateBlock 폭 764 가 영문 라벨 두~세 줄로 깨짐 → 700 으로 줄여 GateBlock 1064 회복
+            wrapper 700 × bubble 76% = 532 → padding 60 차감 → text 472px
+            메시지 "사내 데이터 보안 검토 / 필요합니다" 어절 단위 두 줄 자연 break */}
+        <div
+          style={{
+            width: 700,
+            height: 560,
+            opacity: s3KakaoOp,
+            flexShrink: 0,
+            wordBreak: 'keep-all',
+            overflowWrap: 'break-word',
+          }}
+        >
           <KakaoFrame
             channelLabel={CHANNEL_LABEL}
-            messages={[INBOUND_MESSAGE]}
+            messages={[INBOUND_SUMMARY]}
             revealUpTo={1}
           />
         </div>
