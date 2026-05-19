@@ -104,12 +104,18 @@ supabase db push
 
 ## Remotion 시연 영상
 
+3 use case: V1 (`auto-reply-demo`) / V2 (`hitl-demo`) / V3 (`data-to-hplan-demo`).
+
 ```bash
 cd remotion
 npm install
-npm run render     # demo/assets/hplan-pmf-demo.mp4
-npm run still      # demo/assets/hplan-pmf-demo-poster.png
+
+# Composition ID 는 kebab-case (PascalCase 아님)
+npx remotion render src/index.ts hitl-demo out/hitl-demo.mp4 --overwrite
+npx remotion render src/index.ts data-to-hplan-demo out/data-to-hplan-demo.mp4 --overwrite
 ```
+
+> **운영 규칙·표준 deploy 시퀀스·7 표준 함정**: [docs/REMOTION_GUIDELINES.md](./docs/REMOTION_GUIDELINES.md). V1 절대 수정 금지·shared 컴포넌트 영향 grep·mp4 파일명 cache buster (`.v16.mp4` → `.v17.mp4`) 등.
 
 ## 테스트
 

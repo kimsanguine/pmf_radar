@@ -69,12 +69,13 @@ Thumbs.db
 # Showcase 비공개 영역 (hplan 방법론·내부 진행·영업 정보)
 # =============================================================================
 
-# --- Internal docs (5개만 화이트리스트) ---
+# --- Internal docs (화이트리스트) ---
 docs/*
 !docs/PRD.md
 !docs/PRD-P2.md
 !docs/P2_DESIGN.md
 !docs/SPEC.md
+!docs/REMOTION_GUIDELINES.md
 
 # --- hplan 방법론 (skill 비공개 원칙) ---
 hplan/
