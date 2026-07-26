@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pmf-radar-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-contracts:
+    name: Python contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+      - name: Run Python tests
+        run: python -m unittest discover -s tests -v
+      - name: Validate schema contracts
+        run: python scripts/validate_schemas.py
+
+  workers:
+    name: ${{ matrix.worker }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        worker:
+          - workers/email-inbound
+          - workers/channel-talk
+          - workers/auto-reply
+          - workers/data-ingest
+    defaults:
+      run:
+        working-directory: ${{ matrix.worker }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@1e60f620b9541d58c361d033d260d187a64a2ef9 # v4.0.4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ matrix.worker }}/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run unit tests
+        run: npm test
+      - name: Type-check
+        run: npm run type-check
+
+  integration-contract:
+    name: Integration schema contract
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/integration
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@1e60f620b9541d58c361d033d260d187a64a2ef9 # v4.0.4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tests/integration/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run integration tests
+        run: npm test

@@ -37,8 +37,8 @@ Growth bridge.
 | Repository schema validator | passed with documented SKIP items |
 | Cross-repository import | one PMF event imported by Signal to Growth |
 
-No GitHub Actions workflow ran for this branch. Local tests are not remote CI
-evidence.
+The CI workflow has been added. Remote execution evidence is pending the next
+branch push; local tests are not remote CI evidence.
 
 ## Current implementation boundary
 
@@ -78,10 +78,13 @@ npm run type-check
 Run this for `email-inbound`, `channel-talk`, `auto-reply`, and `data-ingest`.
 Run `npm test` once more under `tests/integration`.
 
-### 2. Add remote CI
+### 2. Confirm remote CI
 
-This is the next independent change. Mirror the verified local suites without
-deploying a Worker or applying a database migration.
+`.github/workflows/ci.yml` mirrors the local Python, four Worker, and
+integration-contract suites without deploying a Worker or applying a database
+migration. After the next branch push, record the workflow URL and each job
+result here. A successful source CI run is not a provider, Supabase, or
+Production verification.
 
 ### 3. Design the restricted projection
 

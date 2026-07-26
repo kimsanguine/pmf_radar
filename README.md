@@ -157,6 +157,9 @@ cd tests/integration     && npm install && npx vitest run   # 23 test (migration
 
 전수 통과 기준: **156 test PASS** (Python 40 + TS 113 + retention 3).
 
+GitHub Actions CI는 Python contracts, 4개 Worker의 test/type-check, integration
+schema contract를 실행하며 Worker deploy와 Supabase migration은 수행하지 않습니다.
+
 ## 디렉토리 구조
 
 ```text
