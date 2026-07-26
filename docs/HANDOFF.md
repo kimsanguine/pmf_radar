@@ -52,6 +52,8 @@ This source CI is not provider, Supabase, or Production evidence.
   reference.
 - The export adapter is pure and local. No queue, DB trigger, scheduler, or
   external network write invokes it.
+- `toStgOutboxRow()` now prepares a privacy-reduced database row, but no Worker
+  invokes it until a PMF Radar Supabase project has the reviewed migration.
 - No Production worker, database migration, provider credential, or customer
   event was used for this bridge.
 
@@ -110,6 +112,10 @@ approval. It has no trigger, scheduler, or network consumer.
 
 After the projection contract is reviewed, create a migration and contract
 tests. Applying it to Supabase is a separate approval.
+
+The migration and local row builder now exist. The Supabase account currently
+has no PMF Radar project, so do not apply this migration to `signal-to-growth-test`
+or another unrelated project.
 
 ### 5. Wire an outbox/queue boundary
 
