@@ -37,8 +37,10 @@ Growth bridge.
 | Repository schema validator | passed with documented SKIP items |
 | Cross-repository import | one PMF event imported by Signal to Growth |
 
-The CI workflow has been added. Remote execution evidence is pending the next
-branch push; local tests are not remote CI evidence.
+GitHub Actions CI passed for this branch on 2026-07-26: Python contracts, four
+Worker test/type-check jobs, and the integration contract job. Evidence:
+https://github.com/kimsanguine/pmf_radar/actions/runs/30189050922
+This source CI is not provider, Supabase, or Production evidence.
 
 ## Current implementation boundary
 
@@ -86,7 +88,7 @@ migration. After the next branch push, record the workflow URL and each job
 result here. A successful source CI run is not a provider, Supabase, or
 Production verification.
 
-### 3. Design the restricted projection
+### 3. Review the restricted projection
 
 Define a source contract for:
 
@@ -98,7 +100,11 @@ Define a source contract for:
 - restricted raw-payload reference;
 - export status, retry count, and dead-letter reason.
 
-Do not add raw customer text or direct identifiers.
+The proposed contract is in
+[`RESTRICTED_PROJECTION_CONTRACT.md`](./RESTRICTED_PROJECTION_CONTRACT.md).
+The prepared migration is `20260726000005_signal_to_growth_outbox.sql`, with
+an integration contract test. Do not apply it to Supabase without separate
+approval. It has no trigger, scheduler, or network consumer.
 
 ### 4. Prepare, but do not apply, the database change
 
