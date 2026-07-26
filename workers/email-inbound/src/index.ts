@@ -142,7 +142,7 @@ async function handleSubscriptionConfirmation(subscribeUrl: string, messageId: s
 // Notification 처리 (SES 이메일 파싱 → normalize → Supabase placeholder)
 // ---------------------------------------------------------------------------
 
-async function processNotification(snsMsg: SnsMessage, env: Env): Promise<void> {
+async function processNotification(snsMsg: SnsMessage, _env: Env): Promise<void> {
   try {
     const normalized = await normalizeSesPayload(snsMsg.Message, true);
 

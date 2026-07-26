@@ -88,10 +88,12 @@ async function importPublicKeyFromPem(pem: string): Promise<CryptoKey> {
   // DER 파싱 후 SubjectPublicKeyInfo offset 을 수동으로 추출해야 함.
   // 단순화: Workers 에서 사용 가능한 "raw" X.509 는 없으므로 커스텀 DER 파서 사용.
   const spkiDer = extractSpkiFromX509Der(derBuffer);
+  const spkiBuffer = new ArrayBuffer(spkiDer.byteLength);
+  new Uint8Array(spkiBuffer).set(spkiDer);
 
   return await crypto.subtle.importKey(
     "spki",
-    spkiDer,
+    spkiBuffer,
     { name: "RSASSA-PKCS1-v1_5", hash: "SHA-1" },
     false,
     ["verify"]

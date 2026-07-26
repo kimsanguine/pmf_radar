@@ -42,8 +42,10 @@ REHEARSAL_SCHEMA = ROOT / "data" / "rehearsal_signal_schema.json"
 ADAPTER_SCHEMA = ROOT / "data" / "channel_adapter_schema.json"
 SAMPLE_INQUIRIES = ROOT / "data" / "sample_inquiries.json"
 REHEARSAL_INQUIRIES = ROOT / "data" / "rehearsal_inquiries_10.json"
-SAMPLE_OUTPUT = ROOT / "outputs" / "signal_extraction_sample.json"
-REHEARSAL_OUTPUT = ROOT / "outputs" / "rehearsal_signal_extraction_10.json"
+# Generated outputs/ is intentionally ignored. Validation uses tracked,
+# credential-free public fixtures so a clean checkout is reproducible.
+SAMPLE_OUTPUT = ROOT / "data" / "validation" / "signal_extraction_sample.json"
+REHEARSAL_OUTPUT = ROOT / "data" / "validation" / "rehearsal_signal_extraction_10.json"
 WEBHOOK_PAYLOAD_SCHEMA = ROOT / "data" / "webhook_payload_schema.json"
 AUTO_REPLY_TEMPLATES = ROOT / "data" / "auto_reply_templates.json"
 
@@ -609,16 +611,16 @@ _PENDING_CREATION_DOCS = {
 
 
 def check_23(failures: list[str]) -> None:
-    """[[...]], ./xxx.md, docs/xxx.md 형식 cross-reference 실재 검증."""
+    """Obsidian, Markdown, and inline docs paths resolve to tracked files."""
     target_docs = [README, P2_DESIGN, PRD_P2, SPEC_MD]
     broken_refs: list[str] = []
 
     # obsidian [[...]] 패턴
     obsidian_re = re.compile(r"\[\[([^\]]+)\]\]")
-    # 상대경로 ./xxx.md 패턴
-    relative_re = re.compile(r"\]\((\./[^\)]+\.md[^\)]*)\)")
-    # docs/xxx.md 패턴 (backtick 안 또는 plain)
-    docs_re = re.compile(r"`(docs/[^`]+\.md)`|(?<!\()docs/([^\s\)]+\.md)")
+    # 일반 Markdown link target. Anchor는 match 밖에서 제거한다.
+    markdown_re = re.compile(r"\]\(([^)\s]+\.md(?:#[^)]*)?)\)")
+    # backtick 안의 root-relative docs path
+    inline_docs_re = re.compile(r"`(docs/[A-Za-z0-9_./-]+\.md)`")
 
     for doc in target_docs:
         if not doc.exists():
@@ -634,16 +636,16 @@ def check_23(failures: list[str]) -> None:
             if not candidates:
                 broken_refs.append(f"{doc.relative_to(ROOT)}: [[{ref_name}]] — 파일 미존재")
 
-        # ./xxx.md 검사
-        for m in relative_re.finditer(text):
+        # Markdown link target 검사
+        for m in markdown_re.finditer(text):
             ref_path = m.group(1).split("#")[0]  # anchor 제거
             resolved = (doc_dir / ref_path).resolve()
             if not resolved.exists():
                 broken_refs.append(f"{doc.relative_to(ROOT)}: {ref_path} — 파일 미존재")
 
-        # docs/xxx.md 검사
-        for m in docs_re.finditer(text):
-            ref_path = m.group(1) or m.group(2)
+        # inline-code root-relative docs path 검사
+        for m in inline_docs_re.finditer(text):
+            ref_path = m.group(1)
             if ref_path in _PENDING_CREATION_DOCS:
                 # Round 2 신설 예정 문서 — broken ref 아님
                 continue

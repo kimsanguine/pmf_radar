@@ -8,24 +8,43 @@
 
 "AI 가 답변을 잘한다" 가 아니라, **흩어진 고객 불편이 PMF 증거 → 기회 → 실험 → 제품 개선안으로 바뀌는 과정** 을 코드로 구현한다.
 
+강의 검증 범위는 공개 고객 문의 50개, 리허설 10건, 본편 90분,
+Input→Normalize→Mask→Classify→Reply/HITL→Backlog의 6단계입니다.
+
 ## 아키텍처
 
 ```
 [4 채널]                 [Cloudflare Workers]              [Supabase]
                               │
- email (SES)        ──→  email-inbound  ─┐
- Channel Talk       ──→  channel-talk    ├──→  webhook_inbox ──→ signal_inbox
- Kakao Consultalk   ──→  (P2.4 예정)     │         │                  │
+ email (SES)        ──→  email-inbound* ─┐
+ Channel Talk       ──→  channel-talk*   ├──→  webhook_inbox ──→ signal_inbox
+ Kakao Consultalk   ──→  (P2.4 미구현)   │         │                  │
  오픈채팅 수동       ──→  data-ingest    ─┘         ▼                  ▼
                                               auto-reply ──→ Telegram
                                                               운영자 통지
 ```
 
-- **`workers/email-inbound`** — AWS SES → SNS HTTPS → Worker → Supabase (SNS Signature v1 검증)
-- **`workers/channel-talk`** — URL query token 검증 → Worker → Supabase
+`*` email-inbound와 channel-talk는 normalization까지 구현돼 있으며,
+현재 source의 Supabase insert는 placeholder입니다. 실제 insert가 연결된
+경로는 data-ingest입니다.
+
+- **`workers/email-inbound`** — AWS SES → SNS HTTPS → normalization (SNS Signature v1 검증)
+- **`workers/channel-talk`** — URL query token 검증 → normalization
 - **`workers/auto-reply`** — Tiered Auto-Reply 5조건 AND 룰 + Telegram 통지
-- **`workers/_shared`** — PII 마스킹 / idempotency / product_scope 분류 (재사용 모듈)
+- **`workers/_shared`** — PII 마스킹 / idempotency / product_scope / Signal to Growth export 계약
 - **`supabase/migrations`** — 6 테이블 + 12 RLS policy + view + trigger + pg_cron
+
+### Signal to Growth 연결
+
+PMF Radar는 장기 실행되는 CS ingress와 개인정보 경계를 담당하고,
+[Signal to Growth](https://github.com/kimsanguine/signal-to-growth)는
+검증된 이벤트를 human-reviewed signal, decision, metric, outcome으로
+연결합니다. 현재 구현은 network write가 없는 portable export adapter와
+fixture·negative test까지입니다. 자동 worker wiring이나 Production 운영
+상태는 아닙니다.
+
+자세한 계약과 hplan 경계는
+[Signal to Growth handoff](./docs/SIGNAL_TO_GROWTH_INTEGRATION.md)를 참고하세요.
 
 ## 라이브 데모
 
@@ -166,6 +185,7 @@ pmf_radar/
 - **[docs/PRD-P2.md](./docs/PRD-P2.md)** — P2 운영자 라이브 PRD
 - **[docs/P2_DESIGN.md](./docs/P2_DESIGN.md)** — 4채널 통합 + Tiered Auto-Reply 설계
 - **[docs/SPEC.md](./docs/SPEC.md)** — 스키마 + 인터페이스 명세
+- **[docs/SIGNAL_TO_GROWTH_INTEGRATION.md](./docs/SIGNAL_TO_GROWTH_INTEGRATION.md)** — PMF Radar → Signal to Growth → hplan 경계
 
 ## License
 

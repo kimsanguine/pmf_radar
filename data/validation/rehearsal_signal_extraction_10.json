@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "fixture": true,
+    "schema": "data/rehearsal_signal_schema.json",
+    "parent_schema": "data/signal_schema.json",
+    "source": "public_dummy"
+  },
+  "records": [
+    {
+      "id": "public-dummy-001",
+      "evidence_strength": "medium",
+      "cluster": "초기 설정 복구",
+      "push": "기존 문서에서 필요한 단계를 빠르게 찾기 어렵다.",
+      "anxiety": "설정을 잘못 바꾸어 기존 데이터에 영향을 줄까 걱정한다.",
+      "workaround": "운영자에게 같은 질문을 반복한다.",
+      "trigger": "설정 실패를 스스로 복구할 수 있는가.",
+      "suggested_action": "improve_material"
+    }
+  ],
+  "clusters": [
+    {
+      "name": "초기 설정 복구",
+      "record_ids": ["public-dummy-001"]
+    }
+  ],
+  "what_not_to_build": [
+    "빈도와 영향이 확인되기 전 전면 자동 응답"
+  ],
+  "human_checkpoint": "운영자가 원문 locator와 반복 빈도를 확인한다."
+}

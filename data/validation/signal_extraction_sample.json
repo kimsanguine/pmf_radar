@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "fixture": true,
+    "schema": "data/signal_schema.json",
+    "source": "public_dummy"
+  },
+  "records": [
+    {
+      "id": "public-dummy-001",
+      "channel": "manual",
+      "customer_segment": "초기 SaaS 운영자",
+      "raw_message": "설정 단계를 다시 확인할 수 있는 안내가 필요합니다.",
+      "category": "basic_faq",
+      "emotion": "confused",
+      "pain": "초기 설정 순서를 다시 찾는 데 시간이 든다.",
+      "push": "기존 문서에서 필요한 단계를 빠르게 찾기 어렵다.",
+      "pull": "현재 상태에 맞는 짧은 설정 안내를 원한다.",
+      "habit": "문서를 검색하고 이전 메시지를 다시 읽는다.",
+      "anxiety": "설정을 잘못 바꾸어 기존 데이터에 영향을 줄까 걱정한다.",
+      "workaround": "운영자에게 같은 질문을 반복한다.",
+      "buying_or_retention_trigger": "설정 실패를 스스로 복구할 수 있는가.",
+      "evidence_strength": "medium",
+      "evidence_reason": "구체적인 반복 행동은 있으나 빈도와 경제적 영향은 확인되지 않았다.",
+      "suggested_action": "improve_material",
+      "hplan_gate": "evidence",
+      "priority": 3
+    }
+  ]
+}
