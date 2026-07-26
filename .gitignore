@@ -76,6 +76,9 @@ docs/*
 !docs/P2_DESIGN.md
 !docs/SPEC.md
 !docs/REMOTION_GUIDELINES.md
+!docs/CLASSROOM_TRIAL_PACK.md
+!docs/SIGNAL_TO_GROWTH_INTEGRATION.md
+!docs/HANDOFF.md
 
 # --- hplan 방법론 (skill 비공개 원칙) ---
 hplan/

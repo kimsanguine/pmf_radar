@@ -52,3 +52,6 @@ signal-to-growth import-pmf-radar \
 Signal to Growth가 만드는 hplan intake는 Build Gate 입력 초안이다.
 `hplan_gate_decision`은 Signal to Growth에서 만들지 않는다. hplan이 자체
 evidence gate와 사람 승인을 통과한 뒤에만 구현 handoff가 생성된다.
+
+현재 branch의 정확한 검증 상태와 다음 작업은
+[`HANDOFF.md`](./HANDOFF.md)에서 이어간다.

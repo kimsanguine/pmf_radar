@@ -45,6 +45,8 @@ fixture·negative test까지입니다. 자동 worker wiring이나 Production 운
 
 자세한 계약과 hplan 경계는
 [Signal to Growth handoff](./docs/SIGNAL_TO_GROWTH_INTEGRATION.md)를 참고하세요.
+현재 branch 상태와 다음 구현 순서는
+[Continuation handoff](./docs/HANDOFF.md)에 고정합니다.
 
 ## 라이브 데모
 
@@ -140,20 +142,20 @@ npx remotion render src/index.ts data-to-hplan-demo out/data-to-hplan-demo.mp4 -
 
 ```bash
 # Python
-pytest tests/ -v                                       # 17 test
-python3 scripts/validate_schemas.py --report           # 27 check
+pytest tests/ -v                                       # 40 test
+python3 scripts/validate_schemas.py --report           # 28 entries
 
 # TypeScript Workers
 cd workers/email-inbound && npm test                   # vitest 21
 cd workers/channel-talk  && npm test                   # vitest 7
 cd workers/auto-reply    && npm test                   # vitest 33 (atomic claim/finalize + race 3종 + stale recovery)
-cd workers/data-ingest   && npm test                   # vitest 24 (parsers + normalize + inbox-mapper schema 정합)
+cd workers/data-ingest   && npm test                   # vitest 29 (parsers + normalize + STG export)
 
 # Integration (schema-contract)
 cd tests/integration     && npm install && npx vitest run   # 23 test (migration ground truth 자동 검증)
 ```
 
-전수 통과 기준: **151 test PASS** (Python 40 + TS 108 + retention 3).
+전수 통과 기준: **156 test PASS** (Python 40 + TS 113 + retention 3).
 
 ## 디렉토리 구조
 
@@ -186,6 +188,7 @@ pmf_radar/
 - **[docs/P2_DESIGN.md](./docs/P2_DESIGN.md)** — 4채널 통합 + Tiered Auto-Reply 설계
 - **[docs/SPEC.md](./docs/SPEC.md)** — 스키마 + 인터페이스 명세
 - **[docs/SIGNAL_TO_GROWTH_INTEGRATION.md](./docs/SIGNAL_TO_GROWTH_INTEGRATION.md)** — PMF Radar → Signal to Growth → hplan 경계
+- **[docs/HANDOFF.md](./docs/HANDOFF.md)** — 현재 상태, 검증 증거, 다음 구현 순서
 
 ## License
 
