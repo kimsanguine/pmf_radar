@@ -266,6 +266,7 @@
           id: row.id || row.message_id || `csv-${Date.now()}-${index}`,
           channel: row.channel || row.source || "manual_csv",
           segment: row.segment || row.customer_segment || "csv import",
+          label_hint: Object.hasOwn(categoryRules, row.label_hint) ? row.label_hint : undefined,
           message: row.message || row.text || ""
         };
       }).filter((row) => row.message);
@@ -588,6 +589,11 @@
       try {
         const response = await fetch("/api/health");
         const data = await response.json();
+        if (response.ok && data.ok === true && data.status !== "static-demo") {
+          const inbox = document.getElementById("loadWebhookInbox");
+          inbox.disabled = false;
+          inbox.textContent = "webhook inbox";
+        }
         state.apiReady = Boolean(data.openai_key);
         state.apiModel = data.model || "-";
         const status = document.getElementById("apiStatus");

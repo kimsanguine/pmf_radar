@@ -17,7 +17,7 @@
   <!-- habix.ai 공유 GNB (site-system v1) — cross-origin import. radar 페이지에서는 도메인 스위처 hide.
        ?v=… 캐시 버스터: site-system.v1.css/js 가 immutable+s-maxage 31536000 이라 inplace 변경 시
        사용자 브라우저 캐시 stale 가능 → URL 키 갱신으로 강제 무효화 (2026-05-18 GNB 회귀 fix). -->
-  <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css?v=20260519-nav-absolute">
+  <link rel="stylesheet" href="https://habix.ai/_shared/site-system.v1.css?v=20260714-loop-qa">
   <link rel="stylesheet" href="assets/radar.css?v=20260518g">
   <style>
     /* HTML inline rules — radar.css disk cache / stale-while-revalidate 와 무관 즉시 적용 (2026-05-18 회귀 fix) */
@@ -25,7 +25,7 @@
     /* site-system v1 GNB 는 sticky (normal flow). body padding-top 추가 시 GNB 위 빈 공간 발생 → 0 강제. */
     body { padding-top: 0 !important; }
   </style>
-  <script type="module" src="https://habix.ai/_shared/site-system.v1.js?v=20260519-nav-absolute"></script>
+  <script type="module" src="https://habix.ai/_shared/site-system.v1.js?v=20261124-gnb-b1"></script>
 </head>
 <body>
   <div data-hx-header data-domain="habix"></div>
@@ -269,7 +269,7 @@
                 <button class="mini-btn secondary" id="loadSampleCsv">CSV sample</button>
               </div>
               <div class="import-actions">
-                <button class="mini-btn secondary" id="loadWebhookInbox">webhook inbox</button>
+                <button class="mini-btn secondary" id="loadWebhookInbox" disabled>webhook inbox (데모에서는 비활성)</button>
                 <button class="mini-btn secondary" id="clearPendingImports">pending 비우기</button>
               </div>
               <p class="adapter-note">수동 붙여넣기, 예시 데이터, CSV/JSON upload를 같은 adapter schema로 정규화한 뒤 hplan 기준으로 다시 분석합니다.</p>
@@ -558,6 +558,6 @@
 
   <div data-hx-footer></div>
 
-  <script src="assets/radar.js" defer></script>
+  <script src="assets/radar.js?v=20261124-inbox" defer></script>
 </body>
 </html>
